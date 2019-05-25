@@ -1,0 +1,5 @@
+node_modules/
+.vscode
+tests/cypress/screenshots
+tests/cypress/videos
+.coverage

@@ -1,0 +1,24 @@
+db.getCollection('users').insert(
+{
+    "_id" : "ryfEzeGqzRvW7FbL5",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    },
+    "username" : "testuser"
+});
+
+db.getCollection('users').insert(
+{
+    "_id" : "SBa9xuWdNc7Y7gQ4r",
+    "createdAt" : ISODate("2019-03-16T16:58:14.339Z"),
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$PSdv3eOu.pIdOXqczv5GZ.Ego9Ka.3dIUdsz3BqWNJixa3QXdlYT."
+        },
+    },
+    "username" : "admin",
+    "admin" : true
+});
