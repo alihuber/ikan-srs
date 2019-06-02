@@ -4,7 +4,7 @@
   "scripts": {
     "start": "meteor run",
     "start-test-server": "METEOR_LOCAL_DIR=.meteor/test meteor",
-    "test": "BABEL_ENV=COVERAGE COVERAGE=1 COVERAGE_OUT_HTML=1 COVERAGE_VERBOSE=1 COVERAGE_APP_FOLDER=$PWD/ meteor --inspect test --once --driver-package cultofcoders:mocha",
+    "test": "BABEL_ENV=COVERAGE COVERAGE=1 COVERAGE_OUT_HTML=1 COVERAGE_VERBOSE=1 COVERAGE_APP_FOLDER=$PWD/ meteor --inspect test --driver-package cultofcoders:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package cultofcoders:mocha",
     "cypress:open": "cypress open",
     "integration-test": "start-server-and-test start-test-server http://localhost:3000 cypress:open",

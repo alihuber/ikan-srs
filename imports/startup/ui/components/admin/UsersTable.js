@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { toast } from 'react-toastify';
-import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -19,6 +18,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 import AddUserDialog from './AddUserDialog';
 import EditUserDialog from './EditUserDialog';
+import { USERS_QUERY, DELETE_USER_MUTATION, UPDATE_USER_MUTATION, CREATE_USER_MUTATION } from '../../../../api/users/constants';
 
 const styles = theme => ({
   root: {
@@ -41,42 +41,6 @@ const styles = theme => ({
     fontSize: 20,
   },
 });
-
-const USERS_QUERY = gql`
-  query {
-    users {
-      _id
-      admin
-      username
-    }
-  }
-`;
-
-const CREATE_USER = gql`
-  mutation createUser($username: String!, $password: String!, $admin: Boolean!) {
-    createUser(username: $username, password: $password, admin: $admin) {
-      _id
-      username
-      admin
-    }
-  }
-`;
-
-const UPDATE_USER = gql`
-  mutation updateUser($userId: String!, $username: String!, $password: String, $admin: Boolean!) {
-    updateUser(userId: $userId, username: $username, password: $password, admin: $admin) {
-      _id
-      username
-      admin
-    }
-  }
-`;
-
-const DELETE_USER = gql`
-  mutation deleteUser($userId: String!) {
-    deleteUser(userId: $userId)
-  }
-`;
 
 const UsersTable = (props) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -157,7 +121,7 @@ const UsersTable = (props) => {
                                 Edit
                                 <EditIcon className={classNames(props.classes.rightIcon, props.classes.iconSmall)} />
                               </Button>
-                              <Mutation mutation={DELETE_USER}>
+                              <Mutation mutation={DELETE_USER_MUTATION}>
                                 {(deleteUser) => {
                                   return (
                                     <Button
@@ -173,7 +137,7 @@ const UsersTable = (props) => {
                                   );
                                 }}
                               </Mutation>
-                              <Mutation mutation={UPDATE_USER}>
+                              <Mutation mutation={UPDATE_USER_MUTATION}>
                                 {(updateUser) => {
                                   return (
                                     <EditUserDialog
@@ -194,7 +158,7 @@ const UsersTable = (props) => {
                       })}
                   </TableBody>
                 </Table>
-                <Mutation mutation={CREATE_USER}>
+                <Mutation mutation={CREATE_USER_MUTATION}>
                   {(createUser) => {
                     return <AddUserDialog open={addDialogOpen} onClose={handleAddClose} createUser={createUser} refetch={refetch} />;
                   }}

@@ -5,7 +5,8 @@ import first from 'lodash/first';
 export default {
   Query: {
     currentUser(obj, args, context) {
-      const user = context.user;
+      const reqUser = context.user;
+      const user = reqUser && Meteor.users.findOne({ username: reqUser.username });
       if (user) {
         return user;
       } else {
@@ -18,20 +19,6 @@ export default {
         return [];
       }
       return Meteor.users.find({}, { fields: { emails: 1, admin: 1, username: 1 } }).fetch();
-    },
-  },
-  User: {
-    email: (user) => {
-      const email = user && first(user.emails);
-      if (email) {
-        return email.address;
-      } else {
-        return null;
-      }
-    },
-    admin: (user) => {
-      const foundUser = Meteor.users.findOne(user._id);
-      return foundUser && foundUser.admin;
     },
   },
   Mutation: {
@@ -62,20 +49,25 @@ export default {
       if (admin !== adminBefore) {
         Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
       }
-      return first(Meteor.users.find({ _id: userId }, { fields: { admin: 1, username: 1 } }).fetch());
+      return Meteor.users.findOne({ _id: userId }, { fields: { admin: 1, username: 1 } });
     },
     deleteUser(obj, args, context) {
       const { userId } = args;
       const user = context.user;
       if (!user.admin) {
-        return false;
+        throw new Error('not authorized');
       }
-      try {
-        Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
-        Meteor.users.remove({ _id: userId });
-        return true;
-      } catch (err) {
-        console.log(err);
+      const userToDelete = Meteor.users.findOne({ _id: userId });
+      if (userToDelete) {
+        try {
+          Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
+          Meteor.users.remove({ _id: userId });
+          return true;
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      } else {
         return false;
       }
     },

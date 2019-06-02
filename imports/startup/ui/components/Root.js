@@ -2,9 +2,9 @@
 import React, { useGlobal } from 'reactn';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { ToastContainer } from 'react-toastify';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
+import { CURRENT_USER_QUERY } from '../../../api/users/constants';
 import Layout from './Layout.js';
 import Routing from './Routing.js';
 import CurrentUserContext from '../contexts/CurrentUserContext';
@@ -29,22 +29,12 @@ const theme = createMuiTheme({
   },
 });
 
-const USER_QUERY = gql`
-  query {
-    currentUser {
-      _id
-      admin
-      username
-    }
-  }
-`;
-
 const Root = () => {
   const layout = Layout;
   const [loading, setLoading] = useGlobal('loading');
   return (
     <MuiThemeProvider theme={theme}>
-      <Query query={USER_QUERY}>
+      <Query query={CURRENT_USER_QUERY}>
         {({ data }) => {
           if (data) {
             const { currentUser } = data;
