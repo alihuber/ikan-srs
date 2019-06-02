@@ -57,7 +57,7 @@ const Navbar = (props) => {
             {currentUser => (
               <React.Fragment>
                 {!currentUser || !currentUser._id ? (
-                  <Button color="inherit" component={NavLink} to="/login">
+                  <Button name="loginButton" color="inherit" component={NavLink} to="/login">
                     Login
                   </Button>
                 ) : null}
@@ -68,12 +68,12 @@ const Navbar = (props) => {
                   </Typography>
                 ) : null}
                 {currentUser && currentUser.admin ? (
-                  <Button color="inherit" onClick={() => handleUsers(history)}>
+                  <Button name="usersButton" color="inherit" onClick={() => handleUsers(history)}>
                     Users
                   </Button>
                 ) : null}
                 {currentUser && currentUser._id ? (
-                  <Button color="inherit" onClick={() => handleLogout(history)}>
+                  <Button name="logoutButton" color="inherit" onClick={() => handleLogout(history)}>
                     Logout
                   </Button>
                 ) : null}

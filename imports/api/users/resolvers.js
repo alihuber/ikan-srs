@@ -30,9 +30,11 @@ export default {
       }
       const userId = Accounts.createUser({
         username,
-        admin,
         password,
       });
+      if (admin) {
+        Meteor.users.update({ _id: userId }, { $set: { admin } });
+      }
       return first(Meteor.users.find({ _id: userId }, { fields: { admin: 1, username: 1 } }).fetch());
     },
     updateUser(obj, args, context) {

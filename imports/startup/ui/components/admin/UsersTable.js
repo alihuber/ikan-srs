@@ -84,7 +84,11 @@ const UsersTable = (props) => {
             return (
               <>
                 <Button
-                  size="small" variant="contained" color="secondary" className={props.classes.button}
+                  name="addUserButton"
+                  size="small"
+                  variant="contained"
+                  color="secondary"
+                  className={props.classes.button}
                   onClick={handleAddClickOpen}
                 >
                   Add User
@@ -112,6 +116,7 @@ const UsersTable = (props) => {
                             <TableCell>{user.admin ? <CheckIcon /> : null}</TableCell>
                             <TableCell>
                               <Button
+                                name={'editUser_' + user._id}
                                 size="small"
                                 variant="contained"
                                 color="secondary"
@@ -125,6 +130,7 @@ const UsersTable = (props) => {
                                 {(deleteUser) => {
                                   return (
                                     <Button
+                                      name={'deleteUser_' + user._id}
                                       size="small"
                                       variant="contained"
                                       color="secondary"

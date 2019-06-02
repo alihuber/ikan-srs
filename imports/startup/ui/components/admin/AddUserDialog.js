@@ -71,6 +71,7 @@ const AddUserDialog = (props) => {
               type="submit"
               variant="contained"
               color="primary"
+              name="createUserButton"
               disabled={isSubmitting}
               onClick={handleSubmit}
               className={classes.button}

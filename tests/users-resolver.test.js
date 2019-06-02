@@ -125,7 +125,25 @@ if (Meteor.isServer) {
       assert.equal(res.errors[0].message, 'Variable "$username" of required type "String!" was not provided.');
     });
 
-    it('creates an user', async () => {
+    it('creates an admin user', async () => {
+      resetDatabase();
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+      });
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: CREATE_USER_MUTATION,
+        variables: { username: 'newuser', password: 'newpassword', admin: true },
+      });
+      assert.equal(res.data.createUser.username, 'newuser');
+      assert.equal(res.data.createUser.admin, true);
+
+      const { query } = createTestClient(server);
+      const res2 = await query({ query: USERS_QUERY });
+      assert.equal(res2.data.users.length, 1);
+    });
+
+    it('creates an non-admin user', async () => {
       resetDatabase();
       const { server } = constructTestServer({
         context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
@@ -189,9 +207,9 @@ if (Meteor.isServer) {
       });
       const id = Accounts.createUser({
         username: 'testuser',
-        admin: true,
         password: 'example123',
       });
+      Meteor.users.update({ _id: id }, { $set: { admin: true } });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: UPDATE_USER_MUTATION,

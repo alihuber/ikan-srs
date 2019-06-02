@@ -68,6 +68,7 @@ const EditUserDialog = (props) => {
           </div>
           <div className={classes.buttonContainer}>
             <Button
+              name="updateUserButton"
               type="submit"
               variant="contained"
               color="primary"
