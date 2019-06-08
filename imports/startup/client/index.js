@@ -8,6 +8,7 @@ import { render } from 'react-dom';
 import 'react-toastify/dist/ReactToastify.min.css';
 import LoadingContext from '../ui/contexts/LoadingContext';
 import Root from '../ui/components/Root';
+import 'uniforms-bridge-simple-schema-2';
 
 const client = new ApolloClient({
   uri: '/graphql',

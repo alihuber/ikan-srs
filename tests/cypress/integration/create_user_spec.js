@@ -26,10 +26,10 @@ describe('create-user', () => {
         cy.get('table').should('contain', 'admin');
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name="addUserButton"]').click();
-        cy.get(':nth-child(1) > .col-xs-12 > .MuiFormControl-root-123 > .MuiInputBase-root-140 > .MuiInputBase-input-150').type('newuser');
+        cy.get('#uniforms-0001-0001').type('newuser');
         cy.get('input[name=password]').type('newpassword');
         cy.get('input[name=admin]').click();
-        cy.get('button[name="createUserButton"]').click();
+        cy.get('button[type=submit]').click();
         cy.get('table').should('contain', 'newuser');
         // 2 checkmarks for admin and 6 button icons
         cy.get('table')

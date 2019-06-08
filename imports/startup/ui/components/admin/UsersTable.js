@@ -69,7 +69,7 @@ const UsersTable = (props) => {
   const handleDelete = (userId, deleteUser, refetch) => {
     deleteUser({ variables: { userId } }).then(() => {
       refetch();
-      toast.success('Delete successful!', {
+      toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });

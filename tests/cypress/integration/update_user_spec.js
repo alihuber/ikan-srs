@@ -27,12 +27,12 @@ describe('update-user', () => {
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=editUser_ryfEzeGqzRvW7FbL5').click();
 
-        cy.get(':nth-child(1) > .col-xs-12 > .MuiFormControl-root-123 > .MuiInputBase-root-140 > .MuiInputBase-input-150')
+        cy.get('#uniforms-0001-0001')
           .clear()
           .type('newuser');
         cy.get('input[name=password]').type('newpassword');
         cy.get('input[name=admin]').click();
-        cy.get('button[name="updateUserButton"]').click();
+        cy.get('button[type=submit]').click();
 
         cy.get('table').should('not.contain', 'testuser');
         cy.get('table').should('contain', 'newuser');

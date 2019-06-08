@@ -72,12 +72,12 @@ export default {
       }
       logger.log({ level: 'info', message: `updating user with _id ${userId}, setting admin to ${admin}` });
       Meteor.users.update({ _id: userId }, { $set: { username, admin } });
-      if (password.length >= 8) {
+      if (password && password.length >= 8) {
         logger.log({ level: 'info', message: `setting new password for user with _id ${userId}` });
         Accounts.setPassword(userId, password);
       }
       if (admin !== adminBefore) {
-        logger.log({ level: 'info', message: `forcing user with _id ${userId} to logout since he became admin` });
+        logger.log({ level: 'info', message: `forcing user with _id ${userId} to logout since his admin status changed` });
         Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
       }
       logger.log({ level: 'info', message: `updated user with _id ${userId}` });

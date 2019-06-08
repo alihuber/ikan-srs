@@ -2,139 +2,79 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { toast } from 'react-toastify';
-import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import { Form, Field, withFormik } from 'formik';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { TextField, Checkbox } from 'formik-material-ui';
-import { Grid, Row, Col } from 'react-flexbox-grid';
-import * as Yup from 'yup';
+import AutoForm from 'uniforms-material/AutoForm';
+import SimpleSchema from 'simpl-schema';
 
 const styles = theme => ({
-  button: {
-    margin: theme.spacing.unit,
-  },
-  buttonContainer: {
-    textAlign: 'left',
-  },
   boxContainer: {
-    margin: theme.spacing.unit,
-  },
-  control: {
-    padding: theme.spacing.unit * 2,
-    width: '100%',
-    minWidth: 600,
-  },
-  dialog: {
-    minWidth: 600,
+    margin: theme.spacing.unit * 3,
   },
 });
 
+const editUserSchema = new SimpleSchema({
+  username: {
+    type: String,
+    min: 3,
+  },
+  password: {
+    type: String,
+    min: 8,
+    optional: true,
+  },
+  admin: {
+    type: Boolean,
+    optional: true,
+  },
+});
+
+const handleSubmit = (values, userId, updateUser, refetch, onClose) => {
+  const { username, password, admin } = values;
+  updateUser({ variables: { userId, username, password, admin } })
+    .then(() => {
+      refetch();
+      toast.success('Update successful!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error('Update error!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    })
+    .finally(() => {
+      onClose();
+    });
+};
+
 const EditUserDialog = (props) => {
-  const { onClose, open, classes, isSubmitting, handleSubmit, values } = props;
-  const { admin } = values;
+  const { userId, username, admin, onClose, open, classes, updateUser, refetch } = props;
+  const editUserForm = ({ model }) => (
+    <AutoForm schema={editUserSchema} onSubmit={doc => handleSubmit(doc, userId, updateUser, refetch, onClose)} model={model} />
+  );
+  editUserForm.propTypes = {
+    model: PropTypes.object.isRequired,
+  };
+  const model = { username, admin };
   return (
-    <Grid fluid>
-      <Dialog onClose={onClose} open={open}>
-        <DialogTitle id="simple-dialog-title">Edit user</DialogTitle>
-        <Form>
-          <Row center="xs">
-            <Col xs={12} sm={12} md={12} lg={12}>
-              <Field
-                type="username" name="username" placeholder="Username" component={TextField}
-                className={classes.control}
-              />
-            </Col>
-          </Row>
-          <Row center="xs">
-            <Col xs={12} sm={12} md={12} lg={12}>
-              <Field
-                type="password" name="password" placeholder="Password" component={TextField}
-                className={classes.control}
-              />
-            </Col>
-          </Row>
-          <div className={classes.boxContainer}>
-            <FormControlLabel
-              control={(
-                <Field
-                  type="checkbox" value={admin} checked={admin} name="admin"
-                  label="Admin" component={Checkbox}
-                />
-              )}
-              label="Admin"
-            />
-          </div>
-          <div className={classes.buttonContainer}>
-            <Button
-              name="updateUserButton"
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting}
-              onClick={handleSubmit}
-              className={classes.button}
-            >
-              Update
-            </Button>
-          </div>
-        </Form>
-      </Dialog>
-    </Grid>
+    <Dialog onClose={onClose} open={open}>
+      <DialogTitle id="simple-dialog-title">Edit user</DialogTitle>
+      <div className={classes.boxContainer}>{editUserForm({ model })}</div>
+    </Dialog>
   );
 };
 
-const updateUserForm = withFormik({
-  mapPropsToValues({ userId, username, password, admin, routeProps, updateUser, refetch, onClose }) {
-    return {
-      userId: userId || '',
-      username: username || '',
-      password: password || '',
-      admin: admin || false,
-      routeProps,
-      updateUser,
-      refetch,
-      onClose,
-    };
-  },
-  validationSchema: Yup.object().shape({
-    username: Yup.string()
-      .min(3)
-      .required(),
-    password: Yup.string().min(8),
-    admin: Yup.bool(),
-  }),
-  handleSubmit(values, { setSubmitting, resetForm }) {
-    const { userId, updateUser, username, password, admin, refetch, onClose } = values;
-    updateUser({ variables: { userId, username, password, admin } })
-      .then(() => {
-        refetch();
-        resetForm();
-        toast.success('Update successful!', {
-          position: toast.POSITION.BOTTOM_CENTER,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error('Update error!', {
-          position: toast.POSITION.BOTTOM_CENTER,
-        });
-      })
-      .finally(() => {
-        setSubmitting(false);
-        onClose();
-      });
-  },
-})(EditUserDialog);
-
 EditUserDialog.propTypes = {
   classes: PropTypes.object.isRequired,
-  values: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  isSubmitting: PropTypes.bool.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  admin: PropTypes.bool,
+  username: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+  updateUser: PropTypes.func.isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(updateUserForm);
+export default withStyles(styles)(EditUserDialog);
