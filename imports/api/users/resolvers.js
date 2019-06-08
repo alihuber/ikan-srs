@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+import first from 'lodash/first';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -19,7 +20,7 @@ export default {
     currentUser(_, __, context) {
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got currentUser request for _id ${reqUser && reqUser._id}` });
-      const user = reqUser && Meteor.users.findOne({ username: reqUser.username });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
       if (user) {
         logger.log({ level: 'info', message: `got currentUser with _id ${reqUser && reqUser._id}` });
         return user;
@@ -29,8 +30,9 @@ export default {
       }
     },
     users(_, __, context) {
-      const user = context.user;
-      logger.log({ level: 'info', message: `got users request for _id ${user && user._id}` });
+      const reqUser = context.user;
+      logger.log({ level: 'info', message: `got users request for _id ${reqUser && reqUser._id}` });
+      const user = reqUser && first(Meteor.users.find({ _id: reqUser._id }, { fields: { admin: 1, username: 1 } }).fetch());
       if (!user.admin) {
         logger.log({ level: 'warn', message: `users requester with _id ${user._id} is no admin` });
         return [];
@@ -42,7 +44,8 @@ export default {
   Mutation: {
     createUser(_, args, context) {
       const { username, admin, password } = args;
-      const user = context.user;
+      const reqUser = context.user;
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
       logger.log({ level: 'info', message: `got createUser request from _id ${user && user._id}` });
       if (!user.admin) {
         logger.log({ level: 'warn', message: `create user requester with _id ${user._id} is no admin` });
@@ -64,7 +67,8 @@ export default {
     updateUser(_, args, context) {
       const { userId, username, admin, password } = args;
       const adminBefore = Meteor.users.findOne(userId).admin;
-      const user = context.user;
+      const reqUser = context.user;
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
       logger.log({ level: 'info', message: `got updateUser request from _id ${user && user._id}` });
       if (!user.admin) {
         logger.log({ level: 'warn', message: `update user requester with ${user._id} is no admin` });
@@ -85,8 +89,9 @@ export default {
     },
     deleteUser(_, args, context) {
       const { userId } = args;
-      const user = context.user;
-      logger.log({ level: 'info', message: `got deleteUser request from _id ${user && user._id}` });
+      const reqUser = context.user;
+      logger.log({ level: 'info', message: `got deleteUser request from _id ${reqUser && reqUser._id}` });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
       if (!user.admin) {
         logger.log({ level: 'warn', message: `delete user requester with _id ${user._id} is no admin` });
         throw new Error('not authorized');

@@ -34,20 +34,19 @@ if (Meteor.isServer) {
   describe('Users query', () => {
     it('fetches list of users if admin queries the database', async () => {
       resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
-      assert.equal(res.data.users.length, 0);
-      Accounts.createUser({
-        username: 'admin',
-        admin: true,
-        password: 'adminadmin',
-      });
+      assert.equal(res.data.users.length, 1);
       Accounts.createUser({
         username: 'testuser',
-        admin: false,
         password: 'example123',
       });
       const res2 = await query({ query: USERS_QUERY });
@@ -56,18 +55,16 @@ if (Meteor.isServer) {
 
     it('fetches no users if normal user queries the database', async () => {
       resetDatabase();
-      const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'testuser' } }),
-      });
       Accounts.createUser({
         username: 'admin',
-        admin: true,
         password: 'adminadmin',
       });
-      Accounts.createUser({
+      const userId = Accounts.createUser({
         username: 'testuser',
-        admin: false,
         password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser' } }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
@@ -76,32 +73,46 @@ if (Meteor.isServer) {
   });
 
   describe('Current user query', () => {
-    it('fetches information about the current user if user', async () => {
+    it('returns no information about the current user if no user', async () => {
       resetDatabase();
+      Accounts.createUser({
+        username: 'foouser',
+        password: 'example123',
+      });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'foouser' } }),
+        context: () => ({ user: { _id: '1', username: 'foouser' } }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: CURRENT_USER_QUERY });
       assert.equal(res.data.currentUser.username, null);
-      assert.equal(res.data.currentUser._id, null);
       assert.equal(res.data.currentUser.admin, null);
-      Accounts.createUser({
+    });
+
+    it('fetches information about the current user if user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
         username: 'foouser',
-        admin: false,
         password: 'example123',
       });
-      const res2 = await query({ query: CURRENT_USER_QUERY });
-      assert.equal(res2.data.currentUser.username, 'foouser');
-      assert.equal(res2.data.currentUser.admin, null);
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'foouser' } }),
+      });
+      const { query } = createTestClient(server);
+      const res = await query({ query: CURRENT_USER_QUERY });
+      assert.equal(res.data.currentUser.username, 'foouser');
+      assert.equal(res.data.currentUser.admin, null);
     });
   });
 
   describe('Create user mutation', () => {
     it('throws error if non-admin calls mutation', async () => {
       resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'noadmin',
+        password: 'example123',
+      });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'noadmin', admin: null } }),
+        context: () => ({ user: { _id: userId, username: 'noadmin', admin: null } }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -127,8 +138,13 @@ if (Meteor.isServer) {
 
     it('creates an admin user', async () => {
       resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -140,13 +156,18 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 1);
+      assert.equal(res2.data.users.length, 2);
     });
 
     it('creates an non-admin user', async () => {
       resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -158,20 +179,19 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 1);
+      assert.equal(res2.data.users.length, 2);
     });
   });
 
   describe('Update user mutation', () => {
     it('throws error if non-admin calls mutation', async () => {
       resetDatabase();
-      const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'noadmin', admin: null } }),
-      });
       const id = Accounts.createUser({
         username: 'testuser',
-        admin: false,
         password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: id, username: 'noadmin', admin: null } }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -189,9 +209,9 @@ if (Meteor.isServer) {
       });
       const id = Accounts.createUser({
         username: 'testuser',
-        admin: true,
         password: 'example123',
       });
+      Meteor.users.update({ _id: id }, { $set: { admin: true } });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: UPDATE_USER_MUTATION,
@@ -202,51 +222,54 @@ if (Meteor.isServer) {
 
     it('updates an user', async () => {
       resetDatabase();
-      const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
       });
-      const id = Accounts.createUser({
+      const otherUserId = Accounts.createUser({
         username: 'testuser',
-        password: 'example123',
+        password: 'abc123',
       });
-      Meteor.users.update({ _id: id }, { $set: { admin: true } });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+      });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: UPDATE_USER_MUTATION,
-        variables: { userId: id, username: 'newuser', password: 'newpassword', admin: false },
+        variables: { userId: otherUserId, username: 'newuser', password: 'newpassword', admin: false },
       });
       assert.equal(res.data.updateUser.username, 'newuser');
       assert.equal(res.data.updateUser.admin, false);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 1);
-      assert.equal(res2.data.users[0].username, 'newuser');
-      assert.equal(res2.data.users[0].admin, false);
+      assert.equal(res2.data.users.length, 2);
+      assert.equal(res2.data.users[1].username, 'newuser');
+      assert.equal(res2.data.users[1].admin, false);
     });
   });
 
   describe('Delete user mutation', () => {
     it('throws error if non-admin calls mutation', async () => {
       resetDatabase();
-      const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'noadmin', admin: null } }),
-      });
-      const id = Accounts.createUser({
+      const userId = Accounts.createUser({
         username: 'testuser',
-        admin: false,
-        password: 'example123',
+        password: 'abc123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: null } }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: DELETE_USER_MUTATION,
-        variables: { userId: id },
+        variables: { userId: '1' },
       });
       assert.equal(res.errors[0].message, 'not authorized');
       assert.equal(res.errors[0].path[0], 'deleteUser');
     });
 
-    it('returns false if called with non-existent userId', async () => {
+    it('returns null if called with non-existent userId', async () => {
       resetDatabase();
       const { server } = constructTestServer({
         context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
@@ -256,13 +279,18 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: 'abc123' },
       });
-      assert.equal(res.data.deleteUser, false);
+      assert.equal(res.data.deleteUser, null);
     });
 
     it('deletes an user', async () => {
       resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
       });
       const id = Accounts.createUser({
         username: 'testuser',
@@ -278,7 +306,7 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 0);
+      assert.equal(res2.data.users.length, 1);
     });
   });
 }
