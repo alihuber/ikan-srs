@@ -1,15 +1,13 @@
+/* eslint-disable react/no-unused-state */
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-import React, { setGlobal } from 'reactn';
+import React from 'react';
 import { render } from 'react-dom';
-import Root from '../ui/components/Root';
 import 'react-toastify/dist/ReactToastify.min.css';
-
-setGlobal({
-  loadig: false,
-});
+import LoadingContext from '../ui/contexts/LoadingContext';
+import Root from '../ui/components/Root';
 
 const client = new ApolloClient({
   uri: '/graphql',
@@ -20,11 +18,31 @@ const client = new ApolloClient({
   })),
 });
 
-const ApolloApp = () => (
-  <ApolloProvider client={client}>
-    <Root />
-  </ApolloProvider>
-);
+class ApolloApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.setLoading = (value) => {
+      this.setState({
+        loading: value,
+      });
+    };
+
+    this.state = {
+      loading: false,
+      setLoading: this.setLoading,
+    };
+  }
+
+  render() {
+    return (
+      <ApolloProvider client={client}>
+        <LoadingContext.Provider value={this.state}>
+          <Root />
+        </LoadingContext.Provider>
+      </ApolloProvider>
+    );
+  }
+}
 
 Meteor.startup(() => {
   render(<ApolloApp />, document.getElementById('render-target'));

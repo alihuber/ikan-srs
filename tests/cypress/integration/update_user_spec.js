@@ -47,7 +47,7 @@ describe('update-user', () => {
           cy.url().should('eq', 'http://localhost:3000/');
 
           cy.window().then(() => {
-            cy.get('a[name="loginButton"]').click();
+            cy.get('button[name="loginButton"]').click();
             cy.url().should('eq', 'http://localhost:3000/login');
             cy.get('input[name=username]').type('newuser');
             cy.get('input[name=password]').type('newpassword');

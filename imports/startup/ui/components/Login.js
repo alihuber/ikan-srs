@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { setGlobal } from 'reactn';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Form, Field, withFormik } from 'formik';
@@ -10,6 +10,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import * as Yup from 'yup';
+import LoadingContext from '../contexts/LoadingContext';
 
 const styles = theme => ({
   button: {
@@ -33,7 +34,10 @@ const styles = theme => ({
 });
 
 const Login = ({ classes, isSubmitting, handleSubmit }) => {
-  setGlobal({ loading: false });
+  const { loading, setLoading } = useContext(LoadingContext);
+  if (loading) {
+    setLoading(false);
+  }
   return (
     <Grid fluid>
       <Row center="xs">
@@ -72,7 +76,7 @@ const Login = ({ classes, isSubmitting, handleSubmit }) => {
 };
 
 const handleHome = (history) => {
-  setGlobal({ loading: true });
+  // TODO: setLoading(true);
   history.push('/');
 };
 
