@@ -1,15 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import CurrentUserContext from '../../contexts/CurrentUserContext';
-import LoadingContext from '../../contexts/LoadingContext';
-
 import UsersTable from './UsersTable';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 const Users = () => {
-  const { loading, setLoading } = useContext(LoadingContext);
-  if (loading) {
-    setLoading(false);
-  }
   return (
     <>
       <Typography variant="h3" gutterBottom>

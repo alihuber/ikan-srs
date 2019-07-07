@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-material/AutoForm';
 import TextField from 'uniforms-material/TextField';
@@ -11,11 +11,10 @@ import { Grid, Row, Col } from 'react-flexbox-grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import SimpleSchema from 'simpl-schema';
-import LoadingContext from '../contexts/LoadingContext';
 
 const styles = theme => ({
   button: {
-    margin: theme.spacing.unit,
+    marginTop: 2 * theme.spacing.unit,
   },
   buttonContainer: {
     textAlign: 'left',
@@ -45,12 +44,11 @@ const loginSchema = new SimpleSchema({
   },
 });
 
-const handleHome = (history, setLoading) => {
-  setLoading(true);
+const handleHome = (history) => {
   history.push('/');
 };
 
-const handleSubmit = (values, history, setLoading) => {
+const handleSubmit = (values, history) => {
   if (values.username && values.password) {
     Meteor.loginWithPassword(values.username, values.password, (err) => {
       if (err) {
@@ -62,23 +60,19 @@ const handleSubmit = (values, history, setLoading) => {
         toast.success('Login successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
-        handleHome(history, setLoading);
+        handleHome(history);
       }
     });
   }
 };
 
 const Login = ({ classes, routeProps }) => {
-  const { loading, setLoading } = useContext(LoadingContext);
-  if (loading) {
-    setLoading(false);
-  }
   return (
     <Grid fluid>
       <Row center="xs">
         <Col xs={12} sm={12} md={6} lg={6}>
           <Paper className={classes.paper}>
-            <AutoForm schema={loginSchema} onSubmit={doc => handleSubmit(doc, routeProps.history, setLoading)}>
+            <AutoForm schema={loginSchema} onSubmit={doc => handleSubmit(doc, routeProps.history)}>
               <Typography variant="h3" gutterBottom>
                 Login
               </Typography>

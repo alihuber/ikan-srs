@@ -1,11 +1,14 @@
 import gql from 'graphql-tag';
 
 export const USERS_QUERY = gql`
-  query {
-    users {
-      _id
-      admin
-      username
+  query getUsers($pageNum: Int) {
+    users(pageNum: $pageNum) {
+      usersCount
+      usersList {
+        _id
+        admin
+        username
+      }
     }
   }
 `;

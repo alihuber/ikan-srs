@@ -31,10 +31,10 @@ describe('create-user', () => {
         cy.get('input[name=admin]').click();
         cy.get('button[type=submit]').click();
         cy.get('table').should('contain', 'newuser');
-        // 2 checkmarks for admin and 6 button icons
+        // 2 checkmarks for admin and 6 button icons + 4 pagination icons
         cy.get('table')
           .find('svg')
-          .should('have.length', 8);
+          .should('have.length', 12);
       });
     });
   });

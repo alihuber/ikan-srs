@@ -28,13 +28,14 @@ const addUserSchema = new SimpleSchema({
   },
 });
 
-const handleSubmit = (values, createUser, refetch, onClose) => {
+const handleSubmit = (values, createUser, refetch, onClose, setPageNum) => {
   const admin = values.admin || false;
   const { username, password } = values;
   if (username && password) {
     createUser({ variables: { username, password, admin } })
       .then(() => {
         refetch();
+        setPageNum(0);
         toast.success('Creation successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
@@ -52,12 +53,12 @@ const handleSubmit = (values, createUser, refetch, onClose) => {
 };
 
 const AddUserDialog = (props) => {
-  const { onClose, open, classes, createUser, refetch } = props;
+  const { onClose, open, classes, createUser, refetch, setPageNum } = props;
   return (
     <Dialog onClose={onClose} open={open}>
       <DialogTitle id="simple-dialog-title">Add user</DialogTitle>
       <div className={classes.boxContainer}>
-        <AutoForm schema={addUserSchema} onSubmit={doc => handleSubmit(doc, createUser, refetch, onClose)} />
+        <AutoForm schema={addUserSchema} onSubmit={doc => handleSubmit(doc, createUser, refetch, onClose, setPageNum)} />
       </div>
     </Dialog>
   );
@@ -69,6 +70,7 @@ AddUserDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   createUser: PropTypes.func.isRequired,
   refetch: PropTypes.func.isRequired,
+  setPageNum: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AddUserDialog);

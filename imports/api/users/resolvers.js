@@ -29,16 +29,23 @@ export default {
         return {};
       }
     },
-    users(_, __, context) {
+    users(_, { pageNum = 1 }, context) {
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got users request for _id ${reqUser && reqUser._id}` });
       const user = reqUser && first(Meteor.users.find({ _id: reqUser._id }, { fields: { admin: 1, username: 1 } }).fetch());
       if (!user.admin) {
         logger.log({ level: 'warn', message: `users requester with _id ${user._id} is no admin` });
-        return [];
+        return { usersCount: 0, usersList: [] };
       }
       logger.log({ level: 'info', message: `returning users for _id ${user._id}` });
-      return Meteor.users.find({}, { fields: { emails: 1, admin: 1, username: 1 } }).fetch();
+      // 5 == page size, not configurable for now
+      const skip = 5 * (pageNum - 1);
+      const usersCount = Meteor.users.find({}).count();
+      const foundUsers = Meteor.users.find({}, { fields: { emails: 1, admin: 1, username: 1 }, skip, limit: 5 }).fetch();
+      return {
+        usersCount,
+        usersList: foundUsers,
+      };
     },
   },
   Mutation: {

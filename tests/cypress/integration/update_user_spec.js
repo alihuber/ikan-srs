@@ -36,10 +36,10 @@ describe('update-user', () => {
 
         cy.get('table').should('not.contain', 'testuser');
         cy.get('table').should('contain', 'newuser');
-        // 2 checkmarks for admin and 4 button icons
+        // 2 checkmarks for admin and 4 button icons + 4 pagination icons
         cy.get('table')
           .find('svg')
-          .should('have.length', 6);
+          .should('have.length', 10);
 
         // login with updated user
         cy.get('button[name="logoutButton"]').click();

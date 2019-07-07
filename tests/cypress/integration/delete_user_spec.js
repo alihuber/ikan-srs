@@ -27,9 +27,10 @@ describe('delete-user', () => {
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=deleteUser_ryfEzeGqzRvW7FbL5').click();
         cy.get('table').should('not.contain', 'testuser');
+        // 3 icons per row + 4 pagination icons
         cy.get('table')
           .find('svg')
-          .should('have.length', 3);
+          .should('have.length', 7);
       });
     });
   });

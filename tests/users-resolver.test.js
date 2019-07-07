@@ -44,13 +44,15 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
-      assert.equal(res.data.users.length, 1);
+      assert.equal(res.data.users.usersList.length, 1);
+      assert.equal(res.data.users.usersCount, 1);
       Accounts.createUser({
         username: 'testuser',
         password: 'example123',
       });
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 2);
+      assert.equal(res2.data.users.usersList.length, 2);
+      assert.equal(res2.data.users.usersCount, 2);
     });
 
     it('fetches no users if normal user queries the database', async () => {
@@ -68,7 +70,7 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
-      assert.equal(res.data.users.length, 0);
+      assert.equal(res.data.users.usersList.length, 0);
     });
   });
 
@@ -156,7 +158,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 2);
+      assert.equal(res2.data.users.usersList.length, 2);
+      assert.equal(res2.data.users.usersCount, 2);
     });
 
     it('creates an non-admin user', async () => {
@@ -179,7 +182,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 2);
+      assert.equal(res2.data.users.usersList.length, 2);
+      assert.equal(res2.data.users.usersCount, 2);
     });
   });
 
@@ -244,9 +248,10 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 2);
-      assert.equal(res2.data.users[1].username, 'newuser');
-      assert.equal(res2.data.users[1].admin, false);
+      assert.equal(res2.data.users.usersList.length, 2);
+      assert.equal(res2.data.users.usersCount, 2);
+      assert.equal(res2.data.users.usersList[1].username, 'newuser');
+      assert.equal(res2.data.users.usersList[1].admin, false);
     });
   });
 
@@ -306,7 +311,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.length, 1);
+      assert.equal(res2.data.users.usersList.length, 1);
+      assert.equal(res2.data.users.usersCount, 1);
     });
   });
 }

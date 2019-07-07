@@ -1,10 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
 import Navbar from './Navbar.js';
-import Loading from './Loading.js';
-import LoadingContext from '../contexts/LoadingContext.js';
 
 const styles = theme => ({
   root: {
@@ -16,16 +14,12 @@ const styles = theme => ({
 });
 
 const Layout = ({ history, children, classes }) => {
-  const { loading } = useContext(LoadingContext);
   return (
     <div>
       <Navbar history={history} />
       <div className={classes.root}>
         <CssBaseline />
-        <div className={classes.content}>
-          {children}
-          {loading ? <Loading /> : null}
-        </div>
+        <div className={classes.content}>{children}</div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { withStyles } from '@material-ui/core/styles';
@@ -8,7 +8,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CurrentUserContext from '../contexts/CurrentUserContext';
-import LoadingContext from '../contexts/LoadingContext';
 
 const styles = {
   root: {
@@ -24,8 +23,7 @@ const styles = {
   },
 };
 
-const handleLogout = (history, setLoading) => {
-  setLoading(true);
+const handleLogout = (history) => {
   Meteor.logout(() => {
     toast.success('Logout successful!', {
       position: toast.POSITION.BOTTOM_CENTER,
@@ -34,36 +32,32 @@ const handleLogout = (history, setLoading) => {
   });
 };
 
-const handleHome = (history, setLoading) => {
-  setLoading(true);
+const handleHome = (history) => {
   history.push('/');
 };
 
-const handleUsers = (history, setLoading) => {
-  setLoading(true);
+const handleUsers = (history) => {
   history.push('/users');
 };
 
-const handleLogin = (history, setLoading) => {
-  setLoading(true);
+const handleLogin = (history) => {
   history.push('/login');
 };
 
 const Navbar = (props) => {
   const { classes, history } = props;
-  const { setLoading } = useContext(LoadingContext);
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.flex} onClick={() => handleHome(history, setLoading)}>
+          <Typography variant="h6" color="inherit" className={classes.flex} onClick={() => handleHome(history)}>
             Home
           </Typography>
           <CurrentUserContext.Consumer>
             {currentUser => (
               <React.Fragment>
                 {!currentUser || !currentUser._id ? (
-                  <Button name="loginButton" color="inherit" onClick={() => handleLogin(history, setLoading)}>
+                  <Button name="loginButton" color="inherit" onClick={() => handleLogin(history)}>
                     Login
                   </Button>
                 ) : null}
@@ -74,12 +68,12 @@ const Navbar = (props) => {
                   </Typography>
                 ) : null}
                 {currentUser && currentUser.admin ? (
-                  <Button name="usersButton" color="inherit" onClick={() => handleUsers(history, setLoading)}>
+                  <Button name="usersButton" color="inherit" onClick={() => handleUsers(history)}>
                     Users
                   </Button>
                 ) : null}
                 {currentUser && currentUser._id ? (
-                  <Button name="logoutButton" color="inherit" onClick={() => handleLogout(history, setLoading)}>
+                  <Button name="logoutButton" color="inherit" onClick={() => handleLogout(history)}>
                     Logout
                   </Button>
                 ) : null}

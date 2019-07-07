@@ -1,14 +1,13 @@
-/* eslint-disable react/no-unused-state */
-import React, { useContext } from 'react';
+import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { ToastContainer } from 'react-toastify';
 import { Query } from 'react-apollo';
 
 import { CURRENT_USER_QUERY } from '../../../api/users/constants';
-import Layout from './Layout.js';
-import Routing from './Routing.js';
+import Layout from './Layout';
+import Loading from './Loading';
+import Routing from './Routing';
 import CurrentUserContext from '../contexts/CurrentUserContext';
-import LoadingContext from '../contexts/LoadingContext';
 
 const theme = createMuiTheme({
   palette: {
@@ -32,11 +31,13 @@ const theme = createMuiTheme({
 
 const Root = () => {
   const layout = Layout;
-  const { setLoading } = useContext(LoadingContext);
   return (
     <MuiThemeProvider theme={theme}>
       <Query query={CURRENT_USER_QUERY}>
-        {({ data }) => {
+        {({ data, loading }) => {
+          if (loading) {
+            return <Loading />;
+          }
           if (data) {
             const { currentUser } = data;
             return (
@@ -45,7 +46,6 @@ const Root = () => {
               </CurrentUserContext.Provider>
             );
           } else {
-            setLoading(true);
             return null;
           }
         }}

@@ -5,20 +5,19 @@ import { toast } from 'react-toastify';
 import { Query, Mutation } from 'react-apollo';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
+import TableFooter from '@material-ui/core/TableFooter';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import CheckIcon from '@material-ui/icons/Check';
-import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
+import TablePagination from '@material-ui/core/TablePagination';
 import AddIcon from '@material-ui/icons/Add';
+import Button from '@material-ui/core/Button';
 
+import UsersTableBody from './UsersTableBody';
+import TablePaginationActions from './TablePaginationActions';
+import Loading from '../Loading';
 import AddUserDialog from './AddUserDialog';
-import EditUserDialog from './EditUserDialog';
-import { USERS_QUERY, DELETE_USER_MUTATION, UPDATE_USER_MUTATION, CREATE_USER_MUTATION } from '../../../../api/users/constants';
+import { USERS_QUERY, CREATE_USER_MUTATION } from '../../../../api/users/constants';
 
 const styles = theme => ({
   root: {
@@ -42,9 +41,12 @@ const styles = theme => ({
   },
 });
 
+const TablePaginationActionsWrapped = withStyles(styles, { withTheme: true })(TablePaginationActions);
+
 const UsersTable = (props) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState({});
+  const [pageNum, setPageNum] = useState(0);
 
   const handleAddClickOpen = () => {
     setAddDialogOpen(true);
@@ -69,18 +71,35 @@ const UsersTable = (props) => {
   const handleDelete = (userId, deleteUser, refetch) => {
     deleteUser({ variables: { userId } }).then(() => {
       refetch();
+      setPageNum(0);
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
   };
 
+  const handleChangePage = (_, page, fetchMore) => {
+    fetchMore({
+      variables: {
+        pageNum: page + 1,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return fetchMoreResult;
+      },
+    });
+    setPageNum(page);
+  };
+
   return (
     <>
-      <Query query={USERS_QUERY}>
-        {({ data, refetch }) => {
+      <Query query={USERS_QUERY} notifyOnNetworkStatusChange>
+        {({ data, loading, refetch, fetchMore }) => {
+          if (loading) {
+            return <Loading />;
+          }
           if (data) {
-            const { users } = data;
+            const { usersList, usersCount } = data.users;
             return (
               <>
                 <Button
@@ -103,76 +122,46 @@ const UsersTable = (props) => {
                       <TableCell>&nbsp;</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {users
-                      && users.map((user) => {
-                        const editOpen = editDialogOpen[user._id] || false;
-                        return (
-                          <TableRow className={props.classes.row} key={user._id}>
-                            <TableCell component="th" scope="row">
-                              {user._id}
-                            </TableCell>
-                            <TableCell>{user.username}</TableCell>
-                            <TableCell>{user.admin ? <CheckIcon /> : null}</TableCell>
-                            <TableCell>
-                              <Button
-                                name={'editUser_' + user._id}
-                                size="small"
-                                variant="contained"
-                                color="secondary"
-                                className={props.classes.button}
-                                onClick={() => handleEditClickOpen(user._id)}
-                              >
-                                Edit
-                                <EditIcon className={classNames(props.classes.rightIcon, props.classes.iconSmall)} />
-                              </Button>
-                              <Mutation mutation={DELETE_USER_MUTATION}>
-                                {(deleteUser) => {
-                                  return (
-                                    <Button
-                                      name={'deleteUser_' + user._id}
-                                      size="small"
-                                      variant="contained"
-                                      color="secondary"
-                                      className={props.classes.button}
-                                      onClick={() => handleDelete(user._id, deleteUser, refetch)}
-                                    >
-                                      Delete
-                                      <DeleteIcon className={classNames(props.classes.rightIcon, props.classes.iconSmall)} />
-                                    </Button>
-                                  );
-                                }}
-                              </Mutation>
-                              <Mutation mutation={UPDATE_USER_MUTATION}>
-                                {(updateUser) => {
-                                  return (
-                                    <EditUserDialog
-                                      open={editOpen}
-                                      onClose={() => handleEditClose(user._id)}
-                                      updateUser={updateUser}
-                                      refetch={refetch}
-                                      userId={user._id}
-                                      username={user.username}
-                                      admin={user.admin}
-                                    />
-                                  );
-                                }}
-                              </Mutation>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
+                  <UsersTableBody
+                    classes={props.classes}
+                    usersList={usersList}
+                    editDialogOpen={editDialogOpen}
+                    handleDelete={handleDelete}
+                    handleEditClickOpen={handleEditClickOpen}
+                    handleEditClose={handleEditClose}
+                    refetch={refetch}
+                  />
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        rowsPerPageOptions={[5]}
+                        rowsPerPage={5}
+                        colSpan={3}
+                        count={usersCount}
+                        page={pageNum}
+                        onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
+                        ActionsComponent={TablePaginationActionsWrapped}
+                      />
+                    </TableRow>
+                  </TableFooter>
                 </Table>
                 <Mutation mutation={CREATE_USER_MUTATION}>
                   {(createUser) => {
-                    return <AddUserDialog open={addDialogOpen} onClose={handleAddClose} createUser={createUser} refetch={refetch} />;
+                    return (
+                      <AddUserDialog
+                        open={addDialogOpen}
+                        onClose={handleAddClose}
+                        createUser={createUser}
+                        refetch={refetch}
+                        setPageNum={setPageNum}
+                      />
+                    );
                   }}
                 </Mutation>
               </>
             );
           } else {
-            return <CircularProgress />;
+            return <Loading />;
           }
         }}
       </Query>

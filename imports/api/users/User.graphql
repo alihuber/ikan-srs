@@ -5,9 +5,14 @@ type User {
   admin: Boolean
 }
 
+type UserConnection {
+  usersCount: Int!
+  usersList: [User]!
+}
+
 type Query {
   currentUser: User
-  users: [User]
+  users(pageNum: Int): UserConnection!
 }
 
 type Mutation {
