@@ -80,7 +80,7 @@ const UsersTableBody = ({ classes, usersList, editDialogOpen, handleEditClickOpe
 UsersTableBody.propTypes = {
   classes: PropTypes.object.isRequired,
   usersList: PropTypes.array.isRequired,
-  editDialogOpen: PropTypes.func.isRequired,
+  editDialogOpen: PropTypes.object.isRequired,
   handleEditClickOpen: PropTypes.func.isRequired,
   handleEditClose: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
