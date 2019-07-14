@@ -3,7 +3,7 @@
     "node": true,
     "browser": true
   },
-  "plugins": ["react", "meteor"],
+  "plugins": ["react", "meteor", "react-hooks"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 8,
@@ -88,7 +88,9 @@
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/alt-text": 0,
     "guard-for-in": 0,
-    "no-restricted-syntax": 0
+    "no-restricted-syntax": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "globals": {
     "describe": false,
