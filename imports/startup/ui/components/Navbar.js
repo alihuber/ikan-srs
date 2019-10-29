@@ -29,34 +29,20 @@ const Navbar = (props) => {
   const { history } = props;
   return (
     <div>
-      <h6 onClick={() => handleHome(history)}>
-        Home
-      </h6>
+      <h6 onClick={() => handleHome(history)}>Home</h6>
       <CurrentUserContext.Consumer>
-        {currentUser => (
-          <React.Fragment>
-            {!currentUser || !currentUser._id ? (
-              <h6 onClick={() => handleLogin(history)}>
-                Login
-              </h6>
-            ) : null}
+        {(currentUser) => (
+          <>
+            {!currentUser || !currentUser._id ? <h6 onClick={() => handleLogin(history)}>Login</h6> : null}
             {currentUser && currentUser.username ? (
               <h6>
                 Logged in as:&nbsp;
                 {currentUser.username}
               </h6>
             ) : null}
-            {currentUser && currentUser.admin ? (
-              <h6 onClick={() => handleUsers(history)}>
-                Users
-              </h6>
-            ) : null}
-            {currentUser && currentUser._id ? (
-              <h6 onClick={() => handleLogout(history)}>
-                Logout
-              </h6>
-            ) : null}
-          </React.Fragment>
+            {currentUser && currentUser.admin ? <h6 onClick={() => handleUsers(history)}>Users</h6> : null}
+            {currentUser && currentUser._id ? <h6 onClick={() => handleLogout(history)}>Logout</h6> : null}
+          </>
         )}
       </CurrentUserContext.Consumer>
     </div>

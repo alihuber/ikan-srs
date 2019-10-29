@@ -6,7 +6,7 @@ const Layout = ({ history, children }) => {
   return (
     <div>
       <Navbar history={history} />
-      <div>{children}</div>
+      <div className="react-transition fade-in">{children}</div>
     </div>
   );
 };

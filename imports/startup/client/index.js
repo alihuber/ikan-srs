@@ -8,10 +8,11 @@ import { render } from 'react-dom';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Root from '../ui/components/Root';
 import 'uniforms-bridge-simple-schema-2';
+import './react-transitions.css';
 
 const client = new ApolloClient({
   uri: '/graphql',
-  request: operation => operation.setContext(() => ({
+  request: (operation) => operation.setContext(() => ({
     headers: {
       authorization: Accounts._storedLoginToken(),
     },
