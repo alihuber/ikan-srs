@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms/AutoForm';
 import TextField from 'uniforms-unstyled/TextField';
@@ -44,27 +44,24 @@ const handleSubmit = (values, history) => {
 };
 
 const Login = ({ routeProps }) => {
+  const animClass = useContext(AnimContext);
   return (
-    <AnimContext.Consumer>
-      {(animClass) => (
-        <div className={animClass}>
-          <Grid fluid>
-            <Row center="xs">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <AutoForm schema={loginSchema} onSubmit={(doc) => handleSubmit(doc, routeProps.history)}>
-                  <h3>Login</h3>
-                  <TextField name="username" />
-                  <ErrorField name="username" />
-                  <TextField type="password" name="password" />
-                  <ErrorField name="password" />
-                  <SubmitField type="submit" variant="contained" color="primary" onClick={handleSubmit} />
-                </AutoForm>
-              </Col>
-            </Row>
-          </Grid>
-        </div>
-      )}
-    </AnimContext.Consumer>
+    <div className={animClass}>
+      <Grid fluid>
+        <Row center="xs">
+          <Col xs={12} sm={12} md={6} lg={6}>
+            <AutoForm schema={loginSchema} onSubmit={(doc) => handleSubmit(doc, routeProps.history)}>
+              <h3>Login</h3>
+              <TextField name="username" />
+              <ErrorField name="username" />
+              <TextField type="password" name="password" />
+              <ErrorField name="password" />
+              <SubmitField type="submit" variant="contained" color="primary" onClick={handleSubmit} />
+            </AutoForm>
+          </Col>
+        </Row>
+      </Grid>
+    </div>
   );
 };
 
