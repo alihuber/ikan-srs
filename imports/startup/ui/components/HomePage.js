@@ -1,11 +1,10 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 
 const HomePage = () => {
   return (
-    <Typography variant="h3" gutterBottom>
+    <h3>
       Hello World
-    </Typography>
+    </h3>
   );
 };
 

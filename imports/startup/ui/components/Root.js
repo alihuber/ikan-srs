@@ -1,5 +1,4 @@
 import React from 'react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { ToastContainer } from 'react-toastify';
 import { Query } from 'react-apollo';
 
@@ -9,30 +8,10 @@ import Loading from './Loading';
 import Routing from './Routing';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: '#80d6ff',
-      main: '#42a5f5',
-      dark: '#007c2',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#bfffff',
-      main: '#80deea',
-      dark: '#4bacb8',
-      contrastText: '#000',
-    },
-    typography: {
-      usenextvariants: true,
-    },
-  },
-});
-
 const Root = () => {
   const layout = Layout;
   return (
-    <MuiThemeProvider theme={theme}>
+    <>
       <Query query={CURRENT_USER_QUERY}>
         {({ data, loading }) => {
           if (loading) {
@@ -51,7 +30,7 @@ const Root = () => {
         }}
       </Query>
       <ToastContainer autoClose={3000} />
-    </MuiThemeProvider>
+    </>
   );
 };
 

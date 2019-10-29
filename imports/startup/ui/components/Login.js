@@ -1,37 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import AutoForm from 'uniforms-material/AutoForm';
-import TextField from 'uniforms-material/TextField';
-import ErrorField from 'uniforms-material/ErrorField';
-import SubmitField from 'uniforms-material/SubmitField';
+import AutoForm from 'uniforms/AutoForm';
+import TextField from 'uniforms-unstyled/TextField';
+import ErrorField from 'uniforms-unstyled/ErrorField';
+import SubmitField from 'uniforms-unstyled/SubmitField';
 import { toast } from 'react-toastify';
-import { withStyles } from '@material-ui/core/styles';
 import { Grid, Row, Col } from 'react-flexbox-grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import SimpleSchema from 'simpl-schema';
-
-const styles = theme => ({
-  button: {
-    marginTop: 2 * theme.spacing.unit,
-  },
-  buttonContainer: {
-    textAlign: 'left',
-  },
-  root: {
-    flexGrow: 1,
-  },
-  control: {
-    padding: theme.spacing.unit * 2,
-    width: '100%',
-  },
-  paper: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-  },
-});
 
 const loginSchema = new SimpleSchema({
   username: {
@@ -66,30 +42,25 @@ const handleSubmit = (values, history) => {
   }
 };
 
-const Login = ({ classes, routeProps }) => {
+const Login = ({ routeProps }) => {
   return (
     <Grid fluid>
       <Row center="xs">
         <Col xs={12} sm={12} md={6} lg={6}>
-          <Paper className={classes.paper}>
-            <AutoForm schema={loginSchema} onSubmit={doc => handleSubmit(doc, routeProps.history)}>
-              <Typography variant="h3" gutterBottom>
-                Login
-              </Typography>
-              <TextField name="username" />
-              <ErrorField name="username" />
-              <TextField type="password" name="password" />
-              <ErrorField name="password" />
-              <div className={classes.buttonContainer}>
-                <SubmitField
-                  type="submit" variant="contained" color="primary" onClick={handleSubmit}
-                  className={classes.button}
-                >
-                  Login
-                </SubmitField>
-              </div>
-            </AutoForm>
-          </Paper>
+          <AutoForm schema={loginSchema} onSubmit={doc => handleSubmit(doc, routeProps.history)}>
+            <h3>
+              Login
+            </h3>
+            <TextField name="username" />
+            <ErrorField name="username" />
+            <TextField type="password" name="password" />
+            <ErrorField name="password" />
+            <div>
+              <SubmitField
+                type="submit" variant="contained" color="primary" onClick={handleSubmit} inputRef={ref => { }}
+              />
+            </div>
+          </AutoForm>
         </Col>
       </Row>
     </Grid>
@@ -97,8 +68,7 @@ const Login = ({ classes, routeProps }) => {
 };
 
 Login.propTypes = {
-  classes: PropTypes.object.isRequired,
   routeProps: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login);
+export default Login;
