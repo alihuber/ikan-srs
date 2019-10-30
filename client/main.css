@@ -1,35 +1,28 @@
-.switch-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.switch-wrapper > div {
-  position: absolute;
-  width: 100%;
+body {
+  background: #fafafa !important;
 }
 
 /* Absolute Center Spinner */
 .loading {
   position: fixed;
   height: 2em;
-  width: 2.5em;
+  width: 3em;
   overflow: show;
   margin: auto;
-  top: 76px;
   left: 0;
   bottom: 0;
   right: 0;
+  top: 0;
+  background: transparent;
 }
 
 .loading:before {
   content: '';
   display: block;
   position: fixed;
-  top: 76px;
   left: 0;
   width: 100%;
   height: 100%;
-  /* background-color: rgba(0,0,0,0.3); */
-  background: #fafafa;
+  background: transparent;
   color: #666666;
 }

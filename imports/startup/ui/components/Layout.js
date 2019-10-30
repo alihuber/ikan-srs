@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Container } from 'semantic-ui-react';
 import Navbar from './Navbar.js';
 
-const Layout = ({ history, children }) => {
+const Layout = ({ children }) => {
   return (
     <div>
-      <Navbar history={history} />
-      <div className="react-transition fade-in">{children}</div>
+      <Navbar />
+      <Container style={{ paddingTop: '7em' }}>{children}</Container>
     </div>
   );
 };
 
 Layout.propTypes = {
   children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  history: PropTypes.object.isRequired,
 };
 
 export default Layout;

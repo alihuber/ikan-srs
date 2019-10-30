@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Container, Menu } from 'semantic-ui-react';
+
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
 const handleLogout = (history) => {
@@ -26,28 +28,35 @@ const handleLogin = (history) => {
 };
 
 const Navbar = (props) => {
-  const { history } = props;
+  const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
   return (
-    <div>
-      <h6 onClick={() => handleHome(history)}>Home</h6>
-      <>
-        {!currentUser || !currentUser._id ? <h6 onClick={() => handleLogin(history)}>Login</h6> : null}
+    <Menu fixed="top" inverted>
+      <Container>
+        <Menu.Item as="a" onClick={() => handleHome(history)}>
+          Home
+        </Menu.Item>
+
+        {!currentUser || !currentUser._id ? (
+          <Menu.Item position="right" as="a" header onClick={() => handleLogin(history)}>
+            Login
+          </Menu.Item>
+        ) : null}
         {currentUser && currentUser.username ? (
-          <h6>
+          <Menu.Item position="right" as="a">
             Logged in as:&nbsp;
             {currentUser.username}
-          </h6>
+          </Menu.Item>
         ) : null}
-        {currentUser && currentUser.admin ? <h6 onClick={() => handleUsers(history)}>Users</h6> : null}
-        {currentUser && currentUser._id ? <h6 onClick={() => handleLogout(history)}>Logout</h6> : null}
-      </>
-    </div>
+        {currentUser && currentUser.admin ? <Menu.Item onClick={() => handleUsers(history)}>Users</Menu.Item> : null}
+        {currentUser && currentUser._id ? (
+          <Menu.Item position="right" as="a" onClick={() => handleLogout(history)}>
+            Logout
+          </Menu.Item>
+        ) : null}
+      </Container>
+    </Menu>
   );
-};
-
-Navbar.propTypes = {
-  history: PropTypes.object.isRequired,
 };
 
 export default Navbar;

@@ -1,13 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import AutoForm from 'uniforms/AutoForm';
-import TextField from 'uniforms-unstyled/TextField';
-import ErrorField from 'uniforms-unstyled/ErrorField';
-import SubmitField from 'uniforms-unstyled/SubmitField';
+import { useHistory } from 'react-router-dom';
+import { AutoFields, AutoForm, ErrorsField, SubmitField } from 'uniforms-semantic';
+import { Grid, Header, Segment } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
-import { Grid, Row, Col } from 'react-flexbox-grid';
 import SimpleSchema from 'simpl-schema';
+import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import AnimContext from '../contexts/AnimContext';
 
 const loginSchema = new SimpleSchema({
@@ -18,8 +16,13 @@ const loginSchema = new SimpleSchema({
   password: {
     type: String,
     min: 8,
+    uniforms: {
+      type: 'password',
+    },
   },
 });
+
+const bridge = new SimpleSchema2Bridge(loginSchema);
 
 const handleHome = (history) => {
   history.push('/');
@@ -43,30 +46,28 @@ const handleSubmit = (values, history) => {
   }
 };
 
-const Login = ({ routeProps }) => {
+const Login = () => {
   const animClass = useContext(AnimContext);
+  const history = useHistory();
   return (
     <div className={animClass}>
-      <Grid fluid>
-        <Row center="xs">
-          <Col xs={12} sm={12} md={6} lg={6}>
-            <AutoForm schema={loginSchema} onSubmit={(doc) => handleSubmit(doc, routeProps.history)}>
-              <h3>Login</h3>
-              <TextField name="username" />
-              <ErrorField name="username" />
-              <TextField type="password" name="password" />
-              <ErrorField name="password" />
-              <SubmitField type="submit" variant="contained" color="primary" onClick={handleSubmit} />
+      <Grid textAlign="center" style={{ height: '50vh' }} verticalAlign="middle">
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Header as="h2" color="teal" textAlign="center">
+            Log in
+          </Header>
+          <Segment>
+            <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, history)}>
+              <AutoFields />
+              <ErrorsField />
+              <br />
+              <SubmitField />
             </AutoForm>
-          </Col>
-        </Row>
+          </Segment>
+        </Grid.Column>
       </Grid>
     </div>
   );
-};
-
-Login.propTypes = {
-  routeProps: PropTypes.object.isRequired,
 };
 
 export default Login;
