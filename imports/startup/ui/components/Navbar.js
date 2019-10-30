@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import CurrentUserContext from '../contexts/CurrentUserContext';
@@ -27,24 +27,21 @@ const handleLogin = (history) => {
 
 const Navbar = (props) => {
   const { history } = props;
+  const currentUser = useContext(CurrentUserContext);
   return (
     <div>
       <h6 onClick={() => handleHome(history)}>Home</h6>
-      <CurrentUserContext.Consumer>
-        {(currentUser) => (
-          <>
-            {!currentUser || !currentUser._id ? <h6 onClick={() => handleLogin(history)}>Login</h6> : null}
-            {currentUser && currentUser.username ? (
-              <h6>
-                Logged in as:&nbsp;
-                {currentUser.username}
-              </h6>
-            ) : null}
-            {currentUser && currentUser.admin ? <h6 onClick={() => handleUsers(history)}>Users</h6> : null}
-            {currentUser && currentUser._id ? <h6 onClick={() => handleLogout(history)}>Logout</h6> : null}
-          </>
-        )}
-      </CurrentUserContext.Consumer>
+      <>
+        {!currentUser || !currentUser._id ? <h6 onClick={() => handleLogin(history)}>Login</h6> : null}
+        {currentUser && currentUser.username ? (
+          <h6>
+            Logged in as:&nbsp;
+            {currentUser.username}
+          </h6>
+        ) : null}
+        {currentUser && currentUser.admin ? <h6 onClick={() => handleUsers(history)}>Users</h6> : null}
+        {currentUser && currentUser._id ? <h6 onClick={() => handleLogout(history)}>Logout</h6> : null}
+      </>
     </div>
   );
 };
