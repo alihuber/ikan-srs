@@ -27,7 +27,7 @@ const handleLogin = (history) => {
   history.push('/login');
 };
 
-const Navbar = (props) => {
+const Navbar = () => {
   const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
   return (
@@ -36,6 +36,11 @@ const Navbar = (props) => {
         <Menu.Item as="a" onClick={() => handleHome(history)}>
           Home
         </Menu.Item>
+        {currentUser && currentUser.admin ? (
+          <Menu.Item as="a" onClick={() => handleUsers(history)}>
+            Users
+          </Menu.Item>
+        ) : null}
 
         {!currentUser || !currentUser._id ? (
           <Menu.Item position="right" as="a" header onClick={() => handleLogin(history)}>
@@ -48,7 +53,6 @@ const Navbar = (props) => {
             {currentUser.username}
           </Menu.Item>
         ) : null}
-        {currentUser && currentUser.admin ? <Menu.Item onClick={() => handleUsers(history)}>Users</Menu.Item> : null}
         {currentUser && currentUser._id ? (
           <Menu.Item position="right" as="a" onClick={() => handleLogout(history)}>
             Logout

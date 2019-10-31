@@ -1,0 +1,80 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Mutation } from 'react-apollo';
+import { Modal } from 'semantic-ui-react';
+import { toast } from 'react-toastify';
+import SimpleSchema from 'simpl-schema';
+import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
+import { AutoForm } from 'uniforms-semantic';
+import { UPDATE_USER_MUTATION } from '../../../../api/users/constants';
+
+const editUserSchema = new SimpleSchema({
+  username: {
+    type: String,
+    min: 3,
+  },
+  password: {
+    type: String,
+    min: 8,
+    uniforms: {
+      type: 'password',
+    },
+  },
+  admin: {
+    type: Boolean,
+    optional: true,
+  },
+});
+
+const bridge = new SimpleSchema2Bridge(editUserSchema);
+
+const handleSubmit = (values, userId, updateUser, refetch, setPageNum) => {
+  const { username, password, admin } = values;
+  const update = {
+    userId,
+    username,
+    password,
+    admin: admin || false,
+  };
+  updateUser({ variables: update })
+    .then(() => {
+      refetch();
+      toast.success('Update successful!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error('Update error!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    })
+    .finally(() => {
+      setPageNum(0);
+    });
+};
+
+const EditUserModal = ({ userId, username, admin, refetch, setPageNum }) => {
+  const model = { username, admin };
+  return (
+    <Mutation mutation={UPDATE_USER_MUTATION}>
+      {(updateUser) => {
+        return (
+          <Modal.Content>
+            <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch, setPageNum)} model={model} />
+          </Modal.Content>
+        );
+      }}
+    </Mutation>
+  );
+};
+
+EditUserModal.propTypes = {
+  refetch: PropTypes.func.isRequired,
+  setPageNum: PropTypes.func.isRequired,
+  admin: PropTypes.bool,
+  username: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+};
+
+export default EditUserModal;

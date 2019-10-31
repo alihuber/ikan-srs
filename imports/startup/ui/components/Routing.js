@@ -5,15 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import HomePage from './HomePage.js';
 import Login from './Login.js';
 import NotFoundPage from './NotFoundPage';
-
-export const appRoutes = () => {
-  const routes = [];
-  routes.push({ path: '/', component: HomePage });
-  routes.push({ component: NotFoundPage });
-  routes.push({ path: '/login', component: Login });
-  // routes.push({ path: '/users', component: Users });
-  return routes;
-};
+import Users from './admin/Users';
 
 const Routing = ({ LayoutComponent }) => {
   const LoadingLayout = LayoutComponent;
@@ -27,6 +19,9 @@ const Routing = ({ LayoutComponent }) => {
             </Route>
             <Route exact path="/login">
               <Login />
+            </Route>
+            <Route exact path="/users">
+              <Users />
             </Route>
             <Route exact>
               <NotFoundPage />
