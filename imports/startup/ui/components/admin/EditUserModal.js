@@ -19,6 +19,7 @@ const editUserSchema = new SimpleSchema({
     uniforms: {
       type: 'password',
     },
+    optional: true,
   },
   admin: {
     type: Boolean,

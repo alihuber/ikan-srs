@@ -206,7 +206,7 @@ if (Meteor.isServer) {
       assert.equal(res.errors[0].path[0], 'updateUser');
     });
 
-    it('throws error if param is missing', async () => {
+    it('throws error if username param is missing', async () => {
       resetDatabase();
       const { server } = constructTestServer({
         context: () => ({ user: { _id: 1, username: 'admin', admin: true } }),
@@ -224,7 +224,29 @@ if (Meteor.isServer) {
       assert.equal(res.errors[0].message, 'Variable "$username" of required type "String!" was not provided.');
     });
 
-    it('updates an user', async () => {
+    it('throws no error if password param is missing', async () => {
+      resetDatabase();
+      const adminId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      const id = Accounts.createUser({
+        username: 'testuser',
+        password: 'example123',
+      });
+      Meteor.users.update({ _id: adminId }, { $set: { admin: true } });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: adminId, username: 'admin', admin: true } }),
+      });
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: UPDATE_USER_MUTATION,
+        variables: { userId: id, username: 'changed', admin: false },
+      });
+      assert.equal(res.errors, null);
+    });
+
+    it('updates an user and resets the password', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'admin',

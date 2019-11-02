@@ -75,7 +75,7 @@ export default {
       return newUser;
     },
     updateUser(_, args, context) {
-      Match.test(args, { userId: String, username: String, admin: Boolean, password: String });
+      Match.test(args, { userId: String, username: String, admin: Boolean, password: Match.Maybe(String) });
       const { userId, username, admin, password } = args;
       const adminBefore = Meteor.users.findOne(userId).admin;
       const reqUser = context.user;

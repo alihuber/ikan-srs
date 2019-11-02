@@ -44,7 +44,7 @@
     "apollo-server-testing": "^2.9.7",
     "babel-eslint": "^10.0.3",
     "babel-plugin-istanbul": "^5.2.0",
-    "cypress": "^3.5.0",
+    "cypress": "^3.6.0",
     "eslint": "^6.6.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.18.2",
