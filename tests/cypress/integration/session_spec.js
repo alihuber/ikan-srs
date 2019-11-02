@@ -14,7 +14,7 @@ describe('login-logout-user', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('testuser');
     cy.get('input[name=password]').type('testuser');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 

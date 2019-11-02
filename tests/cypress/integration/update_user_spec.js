@@ -14,12 +14,12 @@ describe('update-user', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button[name=usersButton]').click();
+      cy.get('a[itemName=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
@@ -31,27 +31,27 @@ describe('update-user', () => {
           .clear()
           .type('newuser');
         cy.get('input[name=password]').type('newpassword');
-        cy.get('input[name=admin]').click();
-        cy.get('button[type=submit]').click();
+        cy.get('div.checkbox').click();
+        cy.get('input[type=submit]').click();
 
         cy.get('table').should('not.contain', 'testuser');
         cy.get('table').should('contain', 'newuser');
-        // 2 checkmarks for admin and 4 button icons + 4 pagination icons
+        // header tr, footer tr and 2 users
         cy.get('table')
-          .find('svg')
-          .should('have.length', 10);
+          .find('tr')
+          .should('have.length', 4);
 
         // login with updated user
-        cy.get('button[name="logoutButton"]').click();
+        cy.get('a[itemName="logoutButton"]').click();
         cy.window().then(() => {
           cy.url().should('eq', 'http://localhost:3000/');
 
           cy.window().then(() => {
-            cy.get('button[name="loginButton"]').click();
+            cy.get('a[itemName="loginButton"]').click();
             cy.url().should('eq', 'http://localhost:3000/login');
             cy.get('input[name=username]').type('newuser');
             cy.get('input[name=password]').type('newpassword');
-            cy.get('button[type=submit]').click();
+            cy.get('input[type=submit]').click();
 
             cy.url().should('eq', 'http://localhost:3000/');
 

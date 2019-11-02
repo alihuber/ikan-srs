@@ -33,17 +33,20 @@ const Navbar = () => {
   return (
     <Menu fixed="top" inverted>
       <Container>
-        <Menu.Item as="a" onClick={() => handleHome(history)}>
+        <Menu.Item as="a" onClick={() => handleHome(history)} itemName="homeButton">
           Home
         </Menu.Item>
         {currentUser && currentUser.admin ? (
-          <Menu.Item as="a" onClick={() => handleUsers(history)}>
+          <Menu.Item as="a" onClick={() => handleUsers(history)} itemName="usersButton">
             Users
           </Menu.Item>
         ) : null}
 
         {!currentUser || !currentUser._id ? (
-          <Menu.Item position="right" as="a" header onClick={() => handleLogin(history)}>
+          <Menu.Item
+            position="right" as="a" header onClick={() => handleLogin(history)}
+            itemName="loginButton"
+          >
             Login
           </Menu.Item>
         ) : null}
@@ -54,7 +57,7 @@ const Navbar = () => {
           </Menu.Item>
         ) : null}
         {currentUser && currentUser._id ? (
-          <Menu.Item position="right" as="a" onClick={() => handleLogout(history)}>
+          <Menu.Item position="right" as="a" onClick={() => handleLogout(history)} itemName="logoutButton">
             Logout
           </Menu.Item>
         ) : null}

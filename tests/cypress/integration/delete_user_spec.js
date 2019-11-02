@@ -14,12 +14,12 @@ describe('delete-user', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button[name=usersButton]').click();
+      cy.get('a[itemName=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
@@ -27,10 +27,10 @@ describe('delete-user', () => {
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=deleteUser_ryfEzeGqzRvW7FbL5').click();
         cy.get('table').should('not.contain', 'testuser');
-        // 3 icons per row + 4 pagination icons
+        // header tr, footer tr and 1 users
         cy.get('table')
-          .find('svg')
-          .should('have.length', 7);
+          .find('tr')
+          .should('have.length', 3);
       });
     });
   });

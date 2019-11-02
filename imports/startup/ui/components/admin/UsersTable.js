@@ -81,7 +81,7 @@ const UsersTable = () => {
                             <Table.Cell collapsing textAlign="right">
                               <Modal
                                 trigger={(
-                                  <Button compact size="mini" primary name="editUserButton">
+                                  <Button compact size="mini" primary name={'editUser_' + user._id}>
                                     Edit
                                   </Button>
                                 )}

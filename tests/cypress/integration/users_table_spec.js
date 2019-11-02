@@ -14,12 +14,12 @@ describe('display-users-table', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('testuser');
     cy.get('input[name=password]').type('testuser');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button').should('not.contain', 'Users');
+      cy.get('a').should('not.contain', 'Users');
     });
   });
 
@@ -27,14 +27,14 @@ describe('display-users-table', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('testuser');
     cy.get('input[name=password]').type('testuser');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
     cy.visit('http://localhost:3000/users');
 
     cy.window().then(() => {
       cy.get('button').should('not.contain', 'Users');
-      cy.get('h3').should('contain', 'Users');
+      cy.get('h2').should('contain', 'Users');
       cy.get('table').should('not.exist');
     });
   });
@@ -43,12 +43,12 @@ describe('display-users-table', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button').should('contain', 'Users');
+      cy.get('a').should('contain', 'Users');
     });
   });
 
@@ -56,16 +56,16 @@ describe('display-users-table', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button[name=usersButton]').click();
+      cy.get('a[itemName=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
-        cy.get('h3').should('contain', 'Users');
+        cy.get('h2').should('contain', 'Users');
         cy.get('table').should('contain', 'admin');
         cy.get('table').should('contain', 'testuser');
       });

@@ -14,12 +14,12 @@ describe('create-user', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
-    cy.get('button[type=submit]').click();
+    cy.get('input[type=submit]').click();
 
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('button[name=usersButton]').click();
+      cy.get('a[itemName=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
@@ -28,13 +28,13 @@ describe('create-user', () => {
         cy.get('button[name="addUserButton"]').click();
         cy.get('#uniforms-0001-0001').type('newuser');
         cy.get('input[name=password]').type('newpassword');
-        cy.get('input[name=admin]').click();
-        cy.get('button[type=submit]').click();
+        cy.get('div.checkbox').click();
+        cy.get('input[type=submit]').click();
         cy.get('table').should('contain', 'newuser');
-        // 2 checkmarks for admin and 6 button icons + 4 pagination icons
+        // header tr, footer tr and 3 users
         cy.get('table')
-          .find('svg')
-          .should('have.length', 12);
+          .find('tr')
+          .should('have.length', 5);
       });
     });
   });
