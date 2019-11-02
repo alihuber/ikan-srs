@@ -1,0 +1,77 @@
+db.getCollection('users').insert(
+  {
+    "_id": "X6WN4nBjFLxctLCFz",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Vaughn",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "SBa9xuWdNc7Y7gQ6r",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Foreman",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "Zxsfg7YK2MTph4ZnW",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Daugherty",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "ryfEzeGqzRvW7FbL6",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Norma",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "KoSjqWfG29Mjzpmvf",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Goff",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "fosTmpWSf4RFmrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Carlene",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);

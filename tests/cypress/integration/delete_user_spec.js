@@ -10,7 +10,7 @@ describe('delete-user', () => {
     cy.visit('http://localhost:3000/');
   });
 
-  it('should update an user', () => {
+  it('should delete an user', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('admin');
     cy.get('input[name=password]').type('adminadmin');
