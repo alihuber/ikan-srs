@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import first from 'lodash/first';
 
@@ -30,6 +31,7 @@ export default {
       }
     },
     users(_, { pageNum = 1 }, context) {
+      check(pageNum, Number);
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got users request for _id ${reqUser && reqUser._id}` });
       const user = reqUser && first(Meteor.users.find({ _id: reqUser._id }, { fields: { admin: 1, username: 1 } }).fetch());
@@ -50,6 +52,7 @@ export default {
   },
   Mutation: {
     createUser(_, args, context) {
+      Match.test(args, { username: String, admin: Boolean, password: String });
       const { username, admin, password } = args;
       const reqUser = context.user;
       const user = reqUser && Meteor.users.findOne(reqUser._id);
@@ -72,6 +75,7 @@ export default {
       return newUser;
     },
     updateUser(_, args, context) {
+      Match.test(args, { userId: String, username: String, admin: Boolean, password: String });
       const { userId, username, admin, password } = args;
       const adminBefore = Meteor.users.findOne(userId).admin;
       const reqUser = context.user;
@@ -95,6 +99,7 @@ export default {
       return Meteor.users.findOne({ _id: userId }, { fields: { admin: 1, username: 1 } });
     },
     deleteUser(_, args, context) {
+      Match.test(args, { userId: String });
       const { userId } = args;
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got deleteUser request from _id ${reqUser && reqUser._id}` });
