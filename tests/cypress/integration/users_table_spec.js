@@ -61,7 +61,7 @@ describe('display-users-table', () => {
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('a[itemName=usersButton]').click();
+      cy.get('a[itemname=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');

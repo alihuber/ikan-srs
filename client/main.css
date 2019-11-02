@@ -26,3 +26,7 @@ body {
   background: transparent;
   color: #666666;
 }
+
+.indicatorTop {
+  padding-top: 28vh;
+}

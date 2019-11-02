@@ -16,7 +16,7 @@ describe('update-user', () => {
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('a[itemName=usersButton]').click();
+      cy.get('a[itemname=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
@@ -37,12 +37,12 @@ describe('update-user', () => {
           .should('have.length', 4);
 
         // login with updated username
-        cy.get('a[itemName="logoutButton"]').click();
+        cy.get('a[itemname="logoutButton"]').click();
         cy.window().then(() => {
           cy.url().should('eq', 'http://localhost:3000/');
 
           cy.window().then(() => {
-            cy.get('a[itemName="loginButton"]').click();
+            cy.get('a[itemname="loginButton"]').click();
             cy.url().should('eq', 'http://localhost:3000/login');
             cy.get('input[name=username]').type('newuser');
             cy.get('input[name=password]').type('testuser');
@@ -70,7 +70,7 @@ describe('update-user', () => {
     cy.url().should('eq', 'http://localhost:3000/');
 
     cy.window().then(() => {
-      cy.get('a[itemName=usersButton]').click();
+      cy.get('a[itemname=usersButton]').click();
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
@@ -93,12 +93,12 @@ describe('update-user', () => {
           .should('have.length', 4);
 
         // login with updated user
-        cy.get('a[itemName="logoutButton"]').click();
+        cy.get('a[itemname="logoutButton"]').click();
         cy.window().then(() => {
           cy.url().should('eq', 'http://localhost:3000/');
 
           cy.window().then(() => {
-            cy.get('a[itemName="loginButton"]').click();
+            cy.get('a[itemname="loginButton"]').click();
             cy.url().should('eq', 'http://localhost:3000/login');
             cy.get('input[name=username]').type('newuser');
             cy.get('input[name=password]').type('newpassword');

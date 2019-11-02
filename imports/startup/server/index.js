@@ -47,5 +47,8 @@ Accounts.onLogin((loginObj) => {
 });
 
 Accounts.onLogout((logoutObj) => {
-  logger.info({ level: 'info', message: `successful logout for user ${logoutObj.user.username} with _id ${logoutObj.user._id}` });
+  logger.info({
+    level: 'info',
+    message: `successful logout for user ${logoutObj.user && logoutObj.user.username} with _id ${logoutObj.user && logoutObj.user._id}`,
+  });
 });

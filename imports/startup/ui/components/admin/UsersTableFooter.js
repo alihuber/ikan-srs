@@ -23,18 +23,18 @@ const UsersTableFooter = ({ rowsPerPage, count, page, onChangePage }) => {
       <Table.Row>
         <Table.HeaderCell colSpan="4">
           <Menu floated="right" pagination>
-            <Menu.Item disabled={page === 0} as="a" onClick={(evt) => handleBackButtonClick(evt)} itemName="prevButton">
+            <Menu.Item disabled={page === 0} as="a" onClick={(evt) => handleBackButtonClick(evt)} itemname="prevButton">
               prev
             </Menu.Item>
             {[...Array(numPages).keys()].map((i) => (
               <Menu.Item
                 key={i} as="a" disabled={page === i} onClick={(evt) => handleNumButtonClick(evt, i)}
-                itemName={'pageButton_' + i}
+                itemname={'pageButton_' + i}
               >
                 {i + 1}
               </Menu.Item>
             ))}
-            <Menu.Item as="a" disabled={isLastPage} onClick={(evt) => handleNextButtonClick(evt)} itemName="nextButton">
+            <Menu.Item as="a" disabled={isLastPage} onClick={(evt) => handleNextButtonClick(evt)} itemname="nextButton">
               next
             </Menu.Item>
           </Menu>
