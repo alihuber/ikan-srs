@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { Modal } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
@@ -56,17 +56,12 @@ const handleSubmit = (values, userId, updateUser, refetch, setPageNum) => {
 };
 
 const EditUserModal = ({ userId, username, admin, refetch, setPageNum }) => {
+  const [updateUser, _] = useMutation(UPDATE_USER_MUTATION);
   const model = { username, admin };
   return (
-    <Mutation mutation={UPDATE_USER_MUTATION}>
-      {(updateUser) => {
-        return (
-          <Modal.Content>
-            <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch, setPageNum)} model={model} />
-          </Modal.Content>
-        );
-      }}
-    </Mutation>
+    <Modal.Content>
+      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch, setPageNum)} model={model} />
+    </Modal.Content>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { Modal } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
@@ -52,17 +52,14 @@ const handleSubmit = (values, createUser, refetch, setPageNum) => {
   }
 };
 
-const AddUserModal = ({ refetch, setPageNum }) => (
-  <Mutation mutation={CREATE_USER_MUTATION}>
-    {(createUser) => {
-      return (
-        <Modal.Content>
-          <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createUser, refetch, setPageNum)} />
-        </Modal.Content>
-      );
-    }}
-  </Mutation>
-);
+const AddUserModal = ({ refetch, setPageNum }) => {
+  const [createUser, _] = useMutation(CREATE_USER_MUTATION);
+  return (
+    <Modal.Content>
+      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createUser, refetch, setPageNum)} />
+    </Modal.Content>
+  );
+};
 
 AddUserModal.propTypes = {
   refetch: PropTypes.func.isRequired,

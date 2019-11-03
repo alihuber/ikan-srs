@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
-import { Mutation } from 'react-apollo';
 import { Table, Button, Modal } from 'semantic-ui-react';
 import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
@@ -14,9 +13,10 @@ const UsersTable = () => {
   const { data, loading, refetch, fetchMore } = useQuery(USERS_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
+  const [deleteUser, _] = useMutation(DELETE_USER_MUTATION);
 
-  const handleDelete = (userId, deleteUser, reFetch) => {
-    deleteUser({ variables: { userId } }).then(() => {
+  const handleDelete = (userId, deleteUserFunc, reFetch) => {
+    deleteUserFunc({ variables: { userId } }).then(() => {
       reFetch();
       setPageNum(0);
       toast.success('Deletion successful!', {
@@ -89,21 +89,15 @@ const UsersTable = () => {
                           setPageNum={setPageNum}
                         />
                       </Modal>
-                      <Mutation mutation={DELETE_USER_MUTATION}>
-                        {(deleteUser) => {
-                          return (
-                            <Button
-                              name={'deleteUser_' + user._id}
-                              compact
-                              size="mini"
-                              secondary
-                              onClick={() => handleDelete(user._id, deleteUser, refetch)}
-                            >
-                              Delete
-                            </Button>
-                          );
-                        }}
-                      </Mutation>
+                      <Button
+                        name={'deleteUser_' + user._id}
+                        compact
+                        size="mini"
+                        secondary
+                        onClick={() => handleDelete(user._id, deleteUser, refetch)}
+                      >
+                        Delete
+                      </Button>
                     </Table.Cell>
                   </Table.Row>
                 );

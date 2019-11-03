@@ -23,7 +23,7 @@ describe('display-users-table', () => {
     });
   });
 
-  it('should display nothing for normal user visiting the url', () => {
+  it('should redirect to home when normal user visiting the url', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('testuser');
     cy.get('input[name=password]').type('testuser');
@@ -34,8 +34,9 @@ describe('display-users-table', () => {
 
     cy.window().then(() => {
       cy.get('button').should('not.contain', 'Users');
-      cy.get('h2').should('contain', 'Users');
+      cy.get('h2').should('not.contain', 'Users');
       cy.get('table').should('not.exist');
+      cy.url().should('eq', 'http://localhost:3000/');
     });
   });
 
