@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
-import { Table, Button, Modal } from 'semantic-ui-react';
+import { Table, Button, Modal, Icon } from 'semantic-ui-react';
 import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
 import EditUserModal from './EditUserModal';
@@ -71,7 +71,7 @@ const UsersTable = () => {
                     <Table.Cell>{user._id}</Table.Cell>
                     <Table.Cell collapsing>{user.username}</Table.Cell>
                     <Table.Cell collapsing textAlign="center">
-                      {user.admin ? 'yes' : null}
+                      {user.admin ? <i className="fas fa-check" /> : null}
                     </Table.Cell>
                     <Table.Cell collapsing textAlign="right">
                       <Modal
