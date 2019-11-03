@@ -10,6 +10,7 @@ import Root from '../ui/components/Root';
 import 'semantic-ui-css/semantic.min.css';
 import 'uniforms-bridge-simple-schema-2';
 import './react-transitions.css';
+import './service-worker.js';
 
 const client = new ApolloClient({
   uri: '/graphql',

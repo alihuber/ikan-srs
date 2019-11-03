@@ -3,6 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { WebApp } from 'meteor/webapp';
 import { getUser } from 'meteor/apollo';
 import merge from 'lodash/merge';
+import './appcache';
 import UserSchema from '../../api/users/User.graphql';
 import UserResolver from '../../api/users/resolvers';
 
