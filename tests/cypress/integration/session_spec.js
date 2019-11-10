@@ -23,6 +23,7 @@ describe('login-logout-user', () => {
       const user = win.Meteor.user();
       expect(user).to.exist;
       expect(user.username).to.equal('testuser');
+      cy.contains('Menu').click();
       cy.contains('Logout').click();
 
       cy.window().then((win2) => {

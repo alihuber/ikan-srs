@@ -27,6 +27,10 @@ const handleLogin = (history) => {
   history.push('/login');
 };
 
+const handleSettings = (history) => {
+  history.push('/settings');
+};
+
 const Navbar = () => {
   const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
@@ -51,25 +55,20 @@ const Navbar = () => {
           </Menu.Item>
         ) : null}
         {currentUser && currentUser._id && !currentUser.admin ? (
-          <Dropdown item simple text="Dropdown" position="right">
-            <Dropdown.Menu>
-              <Dropdown.Item>List Item</Dropdown.Item>
-              <Dropdown.Item>List Item</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Header>Header Item</Dropdown.Header>
-              <Dropdown.Item>
-                <i className="fa fa-dropdown" />
-                <span className="text">Submenu</span>
-                <Dropdown.Menu>
-                  <Dropdown.Item>List Item</Dropdown.Item>
-                  <Dropdown.Item>List Item</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown.Item>
-              <Dropdown.Item>List Item</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          <Menu.Menu position="right">
+            <Dropdown item text="Menu">
+              <Dropdown.Menu>
+                <Dropdown.Item as="a" onClick={() => handleSettings(history)}>
+                  Settings
+                </Dropdown.Item>
+                <Dropdown.Item as="a" onClick={() => handleLogout(history)}>
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </Menu.Menu>
         ) : null}
-        {currentUser && currentUser._id ? (
+        {currentUser && currentUser._id && currentUser.admin ? (
           <Menu.Item position="right" as="a" onClick={() => handleLogout(history)} itemname="logoutButton">
             Logout
           </Menu.Item>

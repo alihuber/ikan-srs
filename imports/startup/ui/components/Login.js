@@ -52,8 +52,9 @@ const Login = () => {
   return (
     <div className={animClass}>
       <Container text style={{ paddingTop: '4em' }}>
-        <Grid textAlign="center" style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
-          <Grid.Column style={{ maxWidth: 450 }}>
+        <Grid style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
+          <Grid.Column width={2} only="computer"></Grid.Column>
+          <Grid.Column computer={12} mobile={16} tablet={16}>
             <Header size="large" color="teal" textAlign="center">
               Log in
             </Header>
@@ -66,6 +67,7 @@ const Login = () => {
               </AutoForm>
             </Segment>
           </Grid.Column>
+          <Grid.Column width={2} only="computer"></Grid.Column>
         </Grid>
       </Container>
     </div>
