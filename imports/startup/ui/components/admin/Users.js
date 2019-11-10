@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Header } from 'semantic-ui-react';
+import { Container, Grid, Header, Segment } from 'semantic-ui-react';
 import UsersTable from './UsersTable';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import AnimContext from '../../contexts/AnimContext';
@@ -14,10 +14,16 @@ const Users = () => {
   }
   return (
     <div className={animClass}>
-      <Header as="h2" color="teal" textAlign="center">
-        Users
-      </Header>
-      {currentUser && currentUser.admin ? <UsersTable /> : null}
+      <Container text style={{ paddingTop: '4em' }}>
+        <Grid textAlign="center" style={{ height: '50vh', marginTop: '0' }}>
+          <Grid.Column style={{ textAlign: 'inherit' }}>
+            <Header size="large" color="teal" textAlign="center">
+              Users
+            </Header>
+            {currentUser && currentUser.admin ? <UsersTable /> : null}
+          </Grid.Column>
+        </Grid>
+      </Container>
     </div>
   );
 };

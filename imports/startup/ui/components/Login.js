@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AutoFields, AutoForm, ErrorsField, SubmitField } from 'uniforms-semantic';
-import { Grid, Header, Segment } from 'semantic-ui-react';
+import { Container, Grid, Header, Segment } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
@@ -51,21 +51,23 @@ const Login = () => {
   const history = useHistory();
   return (
     <div className={animClass}>
-      <Grid textAlign="center" style={{ height: '50vh' }} verticalAlign="middle">
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" color="teal" textAlign="center">
-            Log in
-          </Header>
-          <Segment>
-            <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, history)}>
-              <AutoFields />
-              <ErrorsField />
-              <br />
-              <SubmitField />
-            </AutoForm>
-          </Segment>
-        </Grid.Column>
-      </Grid>
+      <Container text style={{ paddingTop: '4em' }}>
+        <Grid textAlign="center" style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
+          <Grid.Column style={{ maxWidth: 450 }}>
+            <Header size="large" color="teal" textAlign="center">
+              Log in
+            </Header>
+            <Segment>
+              <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, history)}>
+                <AutoFields />
+                <ErrorsField />
+                <br />
+                <SubmitField />
+              </AutoForm>
+            </Segment>
+          </Grid.Column>
+        </Grid>
+      </Container>
     </div>
   );
 };

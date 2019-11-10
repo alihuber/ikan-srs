@@ -1,0 +1,17 @@
+type Setting {
+  _id: String
+  userId: String
+}
+
+input SettingInput {
+  _id: String
+  userId: String
+}
+
+extend type Query {
+  settings: Setting
+}
+
+extend type Mutation {
+  updateSetting(setting: SettingInput!): Setting
+}

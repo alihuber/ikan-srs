@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Container, Menu } from 'semantic-ui-react';
+import { Container, Menu, Dropdown } from 'semantic-ui-react';
 
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
@@ -50,11 +50,24 @@ const Navbar = () => {
             Login
           </Menu.Item>
         ) : null}
-        {currentUser && currentUser.username ? (
-          <Menu.Item position="right" as="a">
-            Logged in as:&nbsp;
-            {currentUser.username}
-          </Menu.Item>
+        {currentUser && currentUser._id && !currentUser.admin ? (
+          <Dropdown item simple text="Dropdown" position="right">
+            <Dropdown.Menu>
+              <Dropdown.Item>List Item</Dropdown.Item>
+              <Dropdown.Item>List Item</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Header>Header Item</Dropdown.Header>
+              <Dropdown.Item>
+                <i className="fa fa-dropdown" />
+                <span className="text">Submenu</span>
+                <Dropdown.Menu>
+                  <Dropdown.Item>List Item</Dropdown.Item>
+                  <Dropdown.Item>List Item</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown.Item>
+              <Dropdown.Item>List Item</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         ) : null}
         {currentUser && currentUser._id ? (
           <Menu.Item position="right" as="a" onClick={() => handleLogout(history)} itemname="logoutButton">

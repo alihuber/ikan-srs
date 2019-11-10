@@ -6,6 +6,8 @@ import merge from 'lodash/merge';
 import './appcache';
 import UserSchema from '../../api/users/User.graphql';
 import UserResolver from '../../api/users/resolvers';
+import SettingsSchema from '../../api/settings/Setting.graphql';
+import SettingsResolver from '../../api/settings/resolvers';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -20,9 +22,9 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const typeDefs = [UserSchema];
+const typeDefs = [UserSchema, SettingsSchema];
 
-const resolvers = merge(UserResolver);
+const resolvers = merge(UserResolver, SettingsResolver);
 
 const server = new ApolloServer({
   typeDefs,
