@@ -34,7 +34,7 @@ describe('display-users-table', () => {
 
     cy.window().then(() => {
       cy.get('button').should('not.contain', 'Users');
-      cy.get('h2').should('not.contain', 'Users');
+      cy.get('div.header').should('not.contain', 'Users');
       cy.get('table').should('not.exist');
       cy.url().should('eq', 'http://localhost:3000/');
     });
@@ -66,7 +66,7 @@ describe('display-users-table', () => {
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
-        cy.get('h2').should('contain', 'Users');
+        cy.get('div.header').should('contain', 'Users');
         cy.get('table').should('contain', 'admin');
         cy.get('table').should('contain', 'testuser');
       });

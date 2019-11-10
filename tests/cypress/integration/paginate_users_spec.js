@@ -23,7 +23,7 @@ describe('paginate-users-table-less-than-5-users', () => {
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
-        cy.get('h2').should('contain', 'Users');
+        cy.get('div.header').should('contain', 'Users');
         cy.get('a[itemname="prevButton"]').should('have.class', 'disabled');
         cy.get('a[itemname="nextButton"]').should('have.class', 'disabled');
         cy.get('a[itemname="pageButton_0"]').should('have.class', 'disabled');
@@ -56,7 +56,7 @@ describe('paginate-users-table-more-than-5-users', () => {
 
       cy.window().then(() => {
         cy.url().should('eq', 'http://localhost:3000/users');
-        cy.get('h2').should('contain', 'Users');
+        cy.get('div.header').should('contain', 'Users');
         cy.get('a[itemname="prevButton"]').should('have.class', 'disabled');
         cy.get('a[itemname="nextButton"]').should('not.have.class', 'disabled');
         cy.get('a[itemname="pageButton_0"]').should('have.class', 'disabled');
