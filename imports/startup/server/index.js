@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { ApolloServer } from 'apollo-server-express';
 import { WebApp } from 'meteor/webapp';
@@ -46,12 +47,26 @@ WebApp.connectHandlers.use('/graphql', (req, res) => {
 });
 
 Accounts.onLogin((loginObj) => {
-  logger.info({ level: 'info', message: `successful login for user ${loginObj.user.username} with _id ${loginObj.user._id}` });
+  logger.log({ level: 'info', message: `successful login for user ${loginObj.user.username} with _id ${loginObj.user._id}` });
 });
 
 Accounts.onLogout((logoutObj) => {
-  logger.info({
+  logger.log({
     level: 'info',
     message: `successful logout for user ${logoutObj.user && logoutObj.user.username} with _id ${logoutObj.user && logoutObj.user._id}`,
   });
+});
+
+Meteor.startup(() => {
+  // seed admin user if not present
+  const user = Meteor.users.findOne({ username: 'admin' });
+  if (!user) {
+    logger.log({ level: 'info', message: 'admin user not found, seeding admin user...' });
+    Meteor.users.insert({ username: 'admin', admin: true });
+    const newUser = Meteor.users.findOne({ username: 'admin' });
+    const pw = process.env.ADMIN || 'adminadmin';
+    Accounts.setPassword(newUser._id, pw);
+  }
+
+  logger.log({ level: 'info', message: `server started... registered users: ${Meteor.users.find({}).fetch().length}` });
 });
