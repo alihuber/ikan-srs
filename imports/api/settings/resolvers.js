@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
+import { Match } from 'meteor/check';
 import { Settings } from './constants';
 
 const { createLogger, transports, format } = require('winston');

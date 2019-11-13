@@ -1,0 +1,50 @@
+scalar Date
+
+enum CardState {
+  NEW
+  LEARNING
+  RELEARNING
+  GRADUATED
+}
+
+input CardInput {
+  front: String
+  back: String
+  state: CardState
+  easeFactor: Float
+  currentInterval: Int
+  dueDate: Date
+}
+
+type Card {
+  front: String
+  back: String
+  state: CardState
+  easeFactor: Float
+  currentInterval: Int
+  dueDate: Date
+}
+
+type Deck {
+  _id: String
+  name: String
+  createdAt: Date
+  userId: String
+  cards: [Card]
+}
+
+input DeckInput {
+  _id: String
+  name: String
+  createdAt: Date
+  userId: String
+  cards: [CardInput]
+}
+
+extend type Query {
+  decks: [Deck]
+}
+
+extend type Mutation {
+  createDeck(name: String!): Deck
+}

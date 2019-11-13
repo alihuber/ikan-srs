@@ -3,6 +3,7 @@ import assert from 'assert';
 
 import './users-resolver.test';
 import './settings-resolver.test';
+import './decks-resolver.test';
 
 describe('base_app', function () {
   it('package.json has correct name', async function () {
