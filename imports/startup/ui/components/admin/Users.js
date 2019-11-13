@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Container, Grid, Header, Segment } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import UsersTable from './UsersTable';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import AnimContext from '../../contexts/AnimContext';

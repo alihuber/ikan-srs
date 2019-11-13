@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import { CURRENT_USER_QUERY } from '../../../api/users/constants';
 import Layout from './Layout';
@@ -8,6 +8,8 @@ import Loading from './Loading';
 import Routing from './Routing';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import AnimContext from '../contexts/AnimContext';
+
+toast.configure();
 
 const Root = () => {
   const layout = Layout;
@@ -22,7 +24,6 @@ const Root = () => {
       {loading || !currentUser ? (
         <>
           <Loading />
-          <ToastContainer autoClose={3000} />
         </>
       ) : null}
       {currentUser ? (
@@ -32,7 +33,6 @@ const Root = () => {
               <Routing LayoutComponent={layout} />
             </CurrentUserContext.Provider>
           </AnimContext.Provider>
-          <ToastContainer autoClose={3000} />
         </>
       ) : null}
     </>
