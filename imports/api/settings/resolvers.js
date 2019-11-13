@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 import { Settings } from './constants';
 
 const { createLogger, transports, format } = require('winston');
@@ -35,5 +36,22 @@ export default {
       }
     },
   },
-  // TODO: mutation
+  Mutation: {
+    updateSetting(_, args, context) {
+      Match.test(args, { setting: Object });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got updateSettings request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `update settings requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const learningSettings = args.setting.learningSettings;
+      const lapseSettings = args.setting.lapseSettings;
+      // TODO: default values???
+      Settings.update({ userId: user._id }, { $set: { learningSettings, lapseSettings } });
+      logger.log({ level: 'info', message: `updated settings for user with _id ${user._id}` });
+      return Settings.findOne({ userId: user._id });
+    },
+  },
 };

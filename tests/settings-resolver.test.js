@@ -65,7 +65,7 @@ if (Meteor.isServer) {
   });
 
   describe('Update settings mutation', () => {
-    it('creates settings if no data found for user', async () => {
+    it('updates settings for user', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'testuser',
@@ -75,14 +75,43 @@ if (Meteor.isServer) {
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
       });
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
 
       const setting = {
-        /* TODO: */
+        lapseSettings: {
+          newInterval: 1,
+          minimumIntervalInDays: 2,
+          leechThreshold: 10,
+          leechAction: 'TAG',
+        },
+        learningSettings: {
+          stepsInMinutes: [2, 20],
+          newCardsOrder: 'RANDOM',
+          newCardsPerDay: 30,
+          graduatingIntervalInDays: 2,
+          easyIntervalInDays: 8,
+          startingEase: 1.9,
+        },
       };
 
       const { mutate } = createTestClient(server);
       const res = await mutate({ mutation: UPDATE_SETTINGS_MUTATION, variables: { setting } });
       assert.notEqual(res.data.updateSetting, null);
+
+      assert.equal(res.data.updateSetting.lapseSettings.newInterval, 1);
+      assert.equal(res.data.updateSetting.lapseSettings.minimumIntervalInDays, 2);
+      assert.equal(res.data.updateSetting.lapseSettings.leechThreshold, 10);
+      assert.equal(res.data.updateSetting.lapseSettings.leechAction, 'TAG');
+
+      assert.deepEqual(res.data.updateSetting.learningSettings.stepsInMinutes, [2, 20]);
+      assert.equal(res.data.updateSetting.learningSettings.newCardsOrder, 'RANDOM');
+      assert.equal(res.data.updateSetting.learningSettings.newCardsPerDay, 30);
+      assert.equal(res.data.updateSetting.learningSettings.graduatingIntervalInDays, 2);
+      assert.equal(res.data.updateSetting.learningSettings.easyIntervalInDays, 8);
+      assert.equal(res.data.updateSetting.learningSettings.startingEase, 1.9);
     });
   });
 }

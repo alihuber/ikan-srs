@@ -50,8 +50,8 @@ type Setting {
 input SettingInput {
   _id: String
   userId: String
-  lapseSettingsInput: LapseSettingsInput
-  learningSettingsInput: LearningSettingsInput
+  lapseSettings: LapseSettingsInput
+  learningSettings: LearningSettingsInput
 }
 
 extend type Query {
