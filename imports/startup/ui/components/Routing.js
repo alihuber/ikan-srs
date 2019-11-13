@@ -7,6 +7,7 @@ import Login from './Login.js';
 import NotFoundPage from './NotFoundPage';
 import Users from './admin/Users';
 import Settings from './Settings';
+import Decks from './Decks';
 
 const Routing = ({ LayoutComponent }) => {
   const LoadingLayout = LayoutComponent;
@@ -26,6 +27,9 @@ const Routing = ({ LayoutComponent }) => {
             </Route>
             <Route exact path="/settings">
               <Settings />
+            </Route>
+            <Route exact path="/decks">
+              <Decks />
             </Route>
             <Route exact>
               <NotFoundPage />

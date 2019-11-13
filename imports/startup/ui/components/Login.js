@@ -24,8 +24,12 @@ const loginSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(loginSchema);
 
-const handleHome = (history) => {
-  history.push('/');
+const handleLogin = (history) => {
+  history.push('/login');
+};
+
+const handleDecks = (history) => {
+  history.push('/decks');
 };
 
 const handleSubmit = (values, history) => {
@@ -36,11 +40,12 @@ const handleSubmit = (values, history) => {
         toast.error('Login error!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
+        handleLogin(history);
       } else {
         toast.success('Login successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
-        handleHome(history);
+        handleDecks(history);
       }
     });
   }

@@ -31,6 +31,10 @@ type Deck {
   createdAt: Date
   userId: String
   cards: [Card]
+  newCards: Int
+  learningCars: Int
+  relearingCards: Int
+  graduatedCards: Int
 }
 
 input DeckInput {
