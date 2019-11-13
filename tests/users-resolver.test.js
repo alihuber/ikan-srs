@@ -13,6 +13,7 @@ import {
   DELETE_USER_MUTATION,
 } from '../imports/api/users/constants';
 import UserResolver from '../imports/api/users/resolvers';
+import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 
 const { createTestClient } = require('apollo-server-testing');
 
@@ -185,6 +186,37 @@ if (Meteor.isServer) {
       assert.equal(res2.data.users.usersList.length, 2);
       assert.equal(res2.data.users.usersCount, 2);
     });
+
+    it('creates default settings for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+      });
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: CREATE_USER_MUTATION,
+        variables: { username: 'newuser', password: 'newpassword', admin: false },
+      });
+      assert.equal(res.data.createUser.username, 'newuser');
+      assert.equal(res.data.createUser.admin, null);
+      const newUserId = res.data.createUser._id;
+
+      const { query } = createTestClient(server);
+      const res2 = await query({ query: USERS_QUERY });
+      assert.equal(res2.data.users.usersList.length, 2);
+      assert.equal(res2.data.users.usersCount, 2);
+      const settings = Settings.findOne({ userId: newUserId });
+      assert.equal(settings.lapseSettings.newInterval, 0);
+      assert.equal(settings.lapseSettings.leechAction, 'SUSPEND');
+      assert.equal(settings.learningSettings.startingEase, 2.5);
+      assert.equal(settings.learningSettings.newCardsOrder, 'ADDED');
+      assert.deepEqual(settings.learningSettings.stepsInMinutes, [1, 10]);
+    });
   });
 
   describe('Update user mutation', () => {
@@ -335,6 +367,41 @@ if (Meteor.isServer) {
       const res2 = await query({ query: USERS_QUERY });
       assert.equal(res2.data.users.usersList.length, 1);
       assert.equal(res2.data.users.usersCount, 1);
+    });
+
+    it('deletes settings for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+      });
+      const id = Accounts.createUser({
+        username: 'testuser',
+        admin: true,
+        password: 'example123',
+      });
+      Settings.insert({
+        userId: id,
+        ...DEFAULT_SETTINGS,
+      });
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: DELETE_USER_MUTATION,
+        variables: { userId: id },
+      });
+      assert.equal(res.data.deleteUser, true);
+
+      const { query } = createTestClient(server);
+      const res2 = await query({ query: USERS_QUERY });
+      assert.equal(res2.data.users.usersList.length, 1);
+      assert.equal(res2.data.users.usersCount, 1);
+
+      const settings = Settings.findOne({ userId: id });
+      assert.equal(settings, null);
     });
   });
 }

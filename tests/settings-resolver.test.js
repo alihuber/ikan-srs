@@ -6,7 +6,7 @@ import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
-import { Settings, SETTINGS_QUERY, UPDATE_SETTINGS_MUTATION } from '../imports/api/settings/constants';
+import { Settings, SETTINGS_QUERY, UPDATE_SETTINGS_MUTATION, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import SettingResolver from '../imports/api/settings/resolvers';
 
 const { createTestClient } = require('apollo-server-testing');
@@ -34,14 +34,12 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
-      assert.equal(res.data.settings.folders, null);
-      assert.equal(res.data.settings.interval, null);
+      assert.equal(res.data.settings.learningSettings, null);
+      assert.equal(res.data.settings.lapseSettings, null);
     });
 
     it('returns settings if data found for user', async () => {
       resetDatabase();
-      const folderName = 'foonews';
-      const url = 'http://mynews.rss';
       const userId = Accounts.createUser({
         username: 'testuser',
         admin: false,
@@ -52,14 +50,17 @@ if (Meteor.isServer) {
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
       });
       Settings.insert({
-        /* TODO: */
+        userId,
+        ...DEFAULT_SETTINGS,
       });
 
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
-      assert.equal(res.data.settings.folders[0].folderName, folderName);
-      assert.equal(res.data.settings.folders[0].subscriptions[0].url, url);
-      assert.equal(res.data.settings.interval, '60');
+      assert.equal(res.data.settings.lapseSettings.newInterval, 0);
+      assert.equal(res.data.settings.lapseSettings.leechAction, 'SUSPEND');
+      assert.equal(res.data.settings.learningSettings.startingEase, 2.5);
+      assert.equal(res.data.settings.learningSettings.newCardsOrder, 'ADDED');
+      assert.deepEqual(res.data.settings.learningSettings.stepsInMinutes, [1, 10]);
     });
   });
 

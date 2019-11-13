@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import first from 'lodash/first';
+import { Settings, DEFAULT_SETTINGS } from '../settings/constants';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -72,6 +73,7 @@ export default {
       }
       const newUser = Meteor.users.findOne({ _id: userId }, { fields: { admin: 1, username: 1 } });
       logger.log({ level: 'info', message: `created user ${JSON.stringify(newUser)}` });
+      Settings.insert({ userId, ...DEFAULT_SETTINGS });
       return newUser;
     },
     updateUser(_, args, context) {
@@ -115,6 +117,7 @@ export default {
           Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
           Meteor.users.remove({ _id: userId });
           logger.log({ level: 'info', message: `deleted user with _id ${userId}` });
+          Settings.remove({ userId });
           return true;
         } catch (err) {
           logger.log({ level: 'err', message: `deleting user with _id ${userId} failed: ${JSON.stringify(err)}` });

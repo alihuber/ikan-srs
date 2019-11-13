@@ -1,11 +1,57 @@
+enum LeechAction {
+  SUSPEND
+  TAG
+}
+
+enum NewCardsOrder {
+  ADDED
+  RANDOM
+}
+
+type LapseSettings {
+  newInterval: Int
+  minimumIntervalInDays: Int
+  leechThreshold: Int
+  leechAction: LeechAction
+}
+
+input LapseSettingsInput {
+  newInterval: Int
+  minimumIntervalInDays: Int
+  leechThreshold: Int
+  leechAction: LeechAction
+}
+
+input LearningSettingsInput {
+  stepsInMinutes: [Int]
+  newCardsOrder: NewCardsOrder
+  newCardsPerDay: Int
+  graduatingIntervalInDays: Int
+  easyIntervalInDays: Int
+  startingEase: Float
+}
+
+type LearningSettings {
+  stepsInMinutes: [Int]
+  newCardsOrder: NewCardsOrder
+  newCardsPerDay: Int
+  graduatingIntervalInDays: Int
+  easyIntervalInDays: Int
+  startingEase: Float
+}
+
 type Setting {
   _id: String
   userId: String
+  lapseSettings: LapseSettings
+  learningSettings: LearningSettings
 }
 
 input SettingInput {
   _id: String
   userId: String
+  lapseSettingsInput: LapseSettingsInput
+  learningSettingsInput: LearningSettingsInput
 }
 
 extend type Query {
