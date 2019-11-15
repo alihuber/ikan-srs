@@ -4,6 +4,7 @@ import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
+import moment from 'moment';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
@@ -50,14 +51,67 @@ if (Meteor.isServer) {
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
       });
-      Decks.insert({ userId, name: 'deck1', createdAt: new Date(), intervalModifier: 100 });
-      Decks.insert({ userId, name: 'deck2', createdAt: new Date(), intervalModifier: 100 });
+      Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+      Decks.insert({
+        userId,
+        name: 'deck2',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
       // sorted by createdAt, newest first
       assert.equal(res.data.decks[0].name, 'deck2');
       assert.equal(res.data.decks[1].name, 'deck1');
+    });
+
+    it('updates decks if new cards for today were altered', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+      Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: { date: new Date(), numCards: 10 },
+      });
+      Decks.insert({
+        userId,
+        name: 'deck2',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: {
+          date: moment().subtract(2, 'days'),
+          numCards: 19,
+        },
+      });
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECKS_QUERY });
+      // sorted by createdAt, newest first
+      assert.equal(res.data.decks[0].name, 'deck2');
+      assert.equal(res.data.decks[1].name, 'deck1');
+      assert.equal(res.data.decks[0].newCardsToday.numCards, 0);
+      assert.equal(res.data.decks[1].newCardsToday.numCards, 10);
     });
   });
 
@@ -81,6 +135,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.createDeck.name, 'deck1');
       assert.equal(res.data.createDeck.userId, userId);
       assert.equal(res.data.createDeck.cards, 0);
+      assert.equal(res.data.createDeck.newCardsToday.numCards, 0);
     });
   });
 
@@ -101,6 +156,10 @@ if (Meteor.isServer) {
         name: 'deck1',
         intervalModifier: 100,
         createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
       });
 
       const { mutate } = createTestClient(server);
@@ -134,6 +193,10 @@ if (Meteor.isServer) {
         name: 'deck1',
         intervalModifier: 100,
         createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
       });
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),

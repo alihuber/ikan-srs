@@ -7,6 +7,11 @@ enum CardState {
   GRADUATED
 }
 
+type NewCardsToday {
+  date: Date
+  numCards: Int
+}
+
 type Card {
   front: String
   back: String
@@ -15,6 +20,7 @@ type Card {
   currentInterval: Int
   dueDate: Date
   currentStep: Int
+  createdAt: Date
 }
 
 type Deck {
@@ -28,10 +34,12 @@ type Deck {
   learningCars: Int
   relearningCards: Int
   graduatedCards: Int
+  newCardsToday: NewCardsToday
 }
 
 extend type Query {
   decks: [Deck]
+  nextCardForLearning(deckId: String!): Card
 }
 
 extend type Mutation {

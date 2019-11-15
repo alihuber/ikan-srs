@@ -17,6 +17,25 @@ export const DECKS_QUERY = gql`
       learningCars
       relearningCards
       graduatedCards
+      newCardsToday {
+        date
+        numCards
+      }
+    }
+  }
+`;
+
+export const NEXT_CARD_FOR_LEARNING_QUERY = gql`
+  query nextCardForLearning($deckId: String!) {
+    nextCardForLearning(deckId: $deckId) {
+      front
+      back
+      state
+      easeFactor
+      currentInterval
+      dueDate
+      currentStep
+      createdAt
     }
   }
 `;
@@ -33,6 +52,10 @@ export const CREATE_DECK_MUTATION = gql`
       learningCars
       relearningCards
       graduatedCards
+      newCardsToday {
+        date
+        numCards
+      }
     }
   }
 `;
@@ -55,6 +78,10 @@ export const ADD_CARD_MUTATION = gql`
       learningCars
       relearningCards
       graduatedCards
+      newCardsToday {
+        date
+        numCards
+      }
     }
   }
 `;

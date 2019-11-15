@@ -425,11 +425,17 @@ if (Meteor.isServer) {
         name: 'deck1',
         intervalModifier: 100,
         createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
       });
       Cards.insert({
         deckId,
         front: 'blaa',
         back: 'blarg',
+        createdAt: new Date(),
+        state: 'NEW',
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
