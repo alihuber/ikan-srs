@@ -79,7 +79,7 @@ if (Meteor.isServer) {
 
       assert.equal(res.data.createDeck.name, 'deck1');
       assert.equal(res.data.createDeck.userId, userId);
-      assert.deepEqual(res.data.createDeck.cards, []);
+      assert.equal(res.data.createDeck.cards, 0);
     });
   });
 

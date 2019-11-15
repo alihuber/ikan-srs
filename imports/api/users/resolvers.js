@@ -2,8 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import first from 'lodash/first';
+import objMap from 'lodash/map';
 import { Settings, DEFAULT_SETTINGS } from '../settings/constants';
-import { Decks } from '../decks/constants';
+import { Decks, Cards } from '../decks/constants';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -116,13 +117,16 @@ export default {
         logger.log({ level: 'info', message: `deleting user with _id ${userId}` });
         try {
           Meteor.users.update({ _id: userId }, { $set: { 'services.resume.loginTokens': [] } });
+          Settings.remove({ userId });
+          const foundDecks = Decks.find({ userId }).fetch();
+          const deckIds = objMap(foundDecks, '_id');
+          Cards.remove({ deckId: { $in: deckIds } });
+          Decks.remove({ userId });
           Meteor.users.remove({ _id: userId });
           logger.log({ level: 'info', message: `deleted user with _id ${userId}` });
-          Settings.remove({ userId });
-          Decks.remove({ userId });
           return true;
         } catch (err) {
-          logger.log({ level: 'err', message: `deleting user with _id ${userId} failed: ${JSON.stringify(err)}` });
+          logger.log({ level: 'error', message: `deleting user with _id ${userId} failed: ${JSON.stringify(err)}` });
           return false;
         }
       } else {

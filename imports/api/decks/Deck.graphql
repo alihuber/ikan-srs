@@ -7,22 +7,14 @@ enum CardState {
   GRADUATED
 }
 
-input CardInput {
-  front: String
-  back: String
-  state: CardState
-  easeFactor: Float
-  currentInterval: Int
-  dueDate: Date
-}
-
 type Card {
   front: String
   back: String
   state: CardState
-  easeFactor: Float
+  easeFactor: Int
   currentInterval: Int
   dueDate: Date
+  currentStep: Int
 }
 
 type Deck {
@@ -30,19 +22,12 @@ type Deck {
   name: String
   createdAt: Date
   userId: String
-  cards: [Card]
+  intervalModifier: Int
+  cards: Int
   newCards: Int
   learningCars: Int
-  relearingCards: Int
+  relearningCards: Int
   graduatedCards: Int
-}
-
-input DeckInput {
-  _id: String
-  name: String
-  createdAt: Date
-  userId: String
-  cards: [CardInput]
 }
 
 extend type Query {
@@ -52,4 +37,5 @@ extend type Query {
 extend type Mutation {
   createDeck(name: String!): Deck
   deleteDeck(deckId: String!): Boolean
+  addCard(deckId: String!, front: String!, back: String!): Deck
 }

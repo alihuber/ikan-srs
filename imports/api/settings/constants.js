@@ -5,19 +5,20 @@ export const Settings = new Mongo.Collection('settings');
 
 export const DEFAULT_SETTINGS = {
   lapseSettings: {
-    newInterval: 0,
-    minimumIntervalInDays: 1,
+    stepsInMinutes: 20,
+    newInterval: 70,
+    minimumIntervalInDays: 2,
     leechThreshold: 8,
-    leechAction: 'SUSPEND', // suspend / tag
+    leechAction: 'TAG', // suspend / tag
   },
 
   learningSettings: {
-    stepsInMinutes: [1, 10],
+    stepsInMinutes: [15, 1440, 8640],
     newCardsOrder: 'ADDED', // added / random
-    newCardsPerDay: 20,
-    graduatingIntervalInDays: 1,
-    easyIntervalInDays: 4,
-    startingEase: 2.5,
+    newCardsPerDay: 1000,
+    graduatingIntervalInDays: 15,
+    easyIntervalInDays: 60,
+    startingEase: 250,
   },
 };
 
@@ -27,6 +28,7 @@ export const SETTINGS_QUERY = gql`
       _id
       userId
       lapseSettings {
+        stepsInMinutes
         newInterval
         minimumIntervalInDays
         leechThreshold

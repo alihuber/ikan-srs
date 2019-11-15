@@ -9,6 +9,7 @@ import CurrentUserContext from '../contexts/CurrentUserContext';
 import { DECKS_QUERY, DELETE_DECK_MUTATION } from '../../../api/decks/constants';
 import LoadingIndicator from './LoadingIndicator';
 import AddDeckModal from './AddDeckModal';
+import AddCardModal from './AddCardModal';
 
 const Decks = () => {
   const animClass = useContext(AnimContext);
@@ -29,7 +30,7 @@ const Decks = () => {
     });
   };
 
-  if (currentUser && !currentUser._id) {
+  if (currentUser && (!currentUser._id || currentUser.admin)) {
     history.push('/');
     return null;
   } else {
@@ -46,17 +47,28 @@ const Decks = () => {
                   Decks
                 </Header>
                 <Modal
-                  trigger={
+                  trigger={(
                     <Button name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  }
+                  )}
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
+                {data.decks.length !== 0 ? (
+                  <Modal
+                    trigger={(
+                      <Button name="addDeckButton" size="small" secondary floated="right">
+                        Add Card
+                      </Button>
+                    )}
+                  >
+                    <AddCardModal decks={data.decks} refetch={refetch} />
+                  </Modal>
+                ) : null}
                 <Divider />
                 <Card.Group>
-                  {data.decks.map(deck => (
+                  {data.decks.map((deck) => (
                     <Card key={deck._id}>
                       <Card.Content>
                         <Button floated="right" onClick={() => handleDelete(deck._id, deleteDeck, refetch)}>
@@ -64,30 +76,36 @@ const Decks = () => {
                         </Button>
                         <Card.Header>{deck.name}</Card.Header>
                         <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
+                        <Card.Meta>
+Interval modifier:
+{' '}
+{deck.intervalModifier}
+%
+</Card.Meta>
                         <Card.Description>
                           <Label>
                             Cards
-                            <Label.Detail>{deck.cards.length}</Label.Detail>
+                            <Label.Detail>{deck.cards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="green">
                             New Cards
-                            <Label.Detail>{deck.newCards || 0}</Label.Detail>
+                            <Label.Detail>{deck.newCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="teal">
                             Learning Cards
-                            <Label.Detail>{deck.learningCars || 0}</Label.Detail>
+                            <Label.Detail>{deck.learningCars}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="blue">
-                            Relearing Cards
-                            <Label.Detail>{deck.relearingCards || 0}</Label.Detail>
+                            Relearning Cards
+                            <Label.Detail>{deck.relearningCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="brown">
                             Graduated Cards
-                            <Label.Detail>{deck.graduated || 0}</Label.Detail>
+                            <Label.Detail>{deck.graduatedCards}</Label.Detail>
                           </Label>
                         </Card.Description>
                       </Card.Content>

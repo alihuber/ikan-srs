@@ -14,7 +14,7 @@ import {
 } from '../imports/api/users/constants';
 import UserResolver from '../imports/api/users/resolvers';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
-import { Decks } from '../imports/api/decks/constants';
+import { Decks, Cards } from '../imports/api/decks/constants';
 
 const { createTestClient } = require('apollo-server-testing');
 
@@ -212,11 +212,11 @@ if (Meteor.isServer) {
       assert.equal(res2.data.users.usersList.length, 2);
       assert.equal(res2.data.users.usersCount, 2);
       const settings = Settings.findOne({ userId: newUserId });
-      assert.equal(settings.lapseSettings.newInterval, 0);
-      assert.equal(settings.lapseSettings.leechAction, 'SUSPEND');
-      assert.equal(settings.learningSettings.startingEase, 2.5);
+      assert.equal(settings.lapseSettings.newInterval, 70);
+      assert.equal(settings.lapseSettings.leechAction, 'TAG');
+      assert.equal(settings.learningSettings.startingEase, 250);
       assert.equal(settings.learningSettings.newCardsOrder, 'ADDED');
-      assert.deepEqual(settings.learningSettings.stepsInMinutes, [1, 10]);
+      assert.deepEqual(settings.learningSettings.stepsInMinutes, [15, 1440, 8640]);
     });
   });
 
@@ -405,7 +405,7 @@ if (Meteor.isServer) {
       assert.equal(settings, null);
     });
 
-    it('deletes decks for user', async () => {
+    it('deletes decks and cards for user', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'admin',
@@ -420,11 +420,16 @@ if (Meteor.isServer) {
         admin: false,
         password: 'example123',
       });
-      Decks.insert({
+      const deckId = Decks.insert({
         userId: id,
         name: 'deck1',
         cards: [],
         createdAt: new Date(),
+      });
+      Cards.insert({
+        deckId,
+        front: 'blaa',
+        back: 'blarg',
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -434,7 +439,9 @@ if (Meteor.isServer) {
       assert.equal(res.data.deleteUser, true);
 
       const deck = Decks.findOne({ userId: id });
+      const card = Cards.findOne();
       assert.equal(deck, null);
+      assert.equal(card, null);
     });
   });
 }

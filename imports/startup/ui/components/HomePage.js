@@ -9,7 +9,7 @@ const HomePage = () => {
   const currentUser = useContext(CurrentUserContext);
   const history = useHistory();
 
-  if (currentUser && currentUser._id) {
+  if (currentUser && currentUser._id && !currentUser.admin) {
     history.push('/decks');
     return null;
   } else {
@@ -59,10 +59,8 @@ const HomePage = () => {
             </Grid>
 
             <Divider inverted section />
-            <List
-              horizontal inverted divided link
-              size="small"
-            >
+            <List horizontal inverted divided link
+size="small">
               <List.Item as="a" href="#">
                 Site Map
               </List.Item>
