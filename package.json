@@ -55,7 +55,8 @@
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^2.2.0",
     "npm-check-updates": "^3.2.1",
-    "start-server-and-test": "^1.10.6"
+    "start-server-and-test": "^1.10.6",
+    "timekeeper": "^2.2.0"
   },
   "babel": {
     "env": {

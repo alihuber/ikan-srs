@@ -8,15 +8,7 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import {
-  Decks,
-  Cards,
-  DECKS_QUERY,
-  CREATE_DECK_MUTATION,
-  DELETE_DECK_MUTATION,
-  ADD_CARD_MUTATION,
-  NEXT_CARD_FOR_LEARNING_QUERY,
-} from '../imports/api/decks/constants';
+import { Decks, Cards, ADD_CARD_MUTATION, NEXT_CARD_FOR_LEARNING_QUERY } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
 
@@ -178,6 +170,7 @@ if (Meteor.isServer) {
         back: 'blarg',
         createdAt: new Date(),
         state: 'LEARNING',
+        currentStep: 0,
         dueDate: moment()
           .subtract(1, 'minute')
           .toDate(),
@@ -186,28 +179,7 @@ if (Meteor.isServer) {
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'blaa');
+      assert.equal(res.data.nextCardForLearning.currentStep, 0);
     });
-
-    // TODO:
-    // it('returns decks if data found for user', async () => {
-    //   resetDatabase();
-    //   const userId = Accounts.createUser({
-    //     username: 'testuser',
-    //     admin: false,
-    //     password: 'example123',
-    //   });
-
-    //   const { server } = constructTestServer({
-    //     context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
-    //   });
-    //   Decks.insert({ userId, name: 'deck1', createdAt: new Date(), intervalModifier: 100, newCardsToday: 0 });
-    //   Decks.insert({ userId, name: 'deck2', createdAt: new Date(), intervalModifier: 100, newCardsToday: 0 });
-
-    //   const { query } = createTestClient(server);
-    //   const res = await query({ query: DECKS_QUERY });
-    //   // sorted by createdAt, newest first
-    //   assert.equal(res.data.decks[0].name, 'deck2');
-    //   assert.equal(res.data.decks[1].name, 'deck1');
-    // });
   });
 }

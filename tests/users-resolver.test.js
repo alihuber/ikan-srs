@@ -436,6 +436,7 @@ if (Meteor.isServer) {
         back: 'blarg',
         createdAt: new Date(),
         state: 'NEW',
+        currentStep: 0,
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({

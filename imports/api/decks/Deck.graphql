@@ -46,4 +46,5 @@ extend type Mutation {
   createDeck(name: String!): Deck
   deleteDeck(deckId: String!): Boolean
   addCard(deckId: String!, front: String!, back: String!): Deck
+  answerCard(cardId: String!, answer: String!): Card
 }

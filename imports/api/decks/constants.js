@@ -40,6 +40,21 @@ export const NEXT_CARD_FOR_LEARNING_QUERY = gql`
   }
 `;
 
+export const ANSWER_CARD_MUTATION = gql`
+  mutation answerCard($cardId: String!, $answer: String!) {
+    answerCard(cardId: $cardId, answer: $answer) {
+      front
+      back
+      state
+      easeFactor
+      currentInterval
+      dueDate
+      currentStep
+      createdAt
+    }
+  }
+`;
+
 export const CREATE_DECK_MUTATION = gql`
   mutation createDeck($name: String!) {
     createDeck(name: $name) {

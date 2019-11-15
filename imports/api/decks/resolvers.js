@@ -34,6 +34,105 @@ const collectCardStats = (deck) => {
   return deck;
 };
 
+//         new learning relearning graduated
+// easy    X   X        X          X
+// good    X   X        X          X
+// hard                            X
+// again   X   X        X          X
+const updateCard = (settings, card, answer) => {
+  if (answer === 'again') {
+    // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
+    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+      const stepsInMinutes = settings.learningSettings.stepsInMinutes;
+      const stateBefore = card.state;
+      const newState = stateBefore === 'NEW' ? 'LEARNING' : stateBefore;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            state: newState,
+            currentStep: 0,
+            dueDate: moment()
+              .add(stepsInMinutes[0], 'minutes')
+              .toDate(),
+          },
+        }
+      );
+    }
+    if (card.state === 'GRADUATED') {
+      // TODO:
+      // newInterval = currentInterval * easeFactor * intervalModifier
+      // new easeFactor -0.20
+      // The easeFactor can not get lower than 1.3
+    }
+  }
+  if (answer === 'hard' && card.state === 'GRADUATED') {
+    // TODO:
+    // newInterval = currentInterval * 1.2 * intervalModifier (1.2 is fixed)
+    // newEaseFactor = -0.15
+    // The easeFactor can not get lower than 1.3
+  }
+  if (answer === 'good') {
+    // Good: Will move the card to the next step. If the step was the last step,
+    //       the card graduates and its currentInterval is set to one day (graduating inverval setting)
+    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+      const stepsInMinutes = settings.learningSettings.stepsInMinutes;
+      const graduatingIntervalInDays = settings.learningSettings.graduatingIntervalInDays;
+      if (card.currentStep === stepsInMinutes.length - 1) {
+        Cards.update(
+          { _id: card._id },
+          {
+            $set: {
+              state: 'GRADUATED',
+              currentStep: 0,
+              currentInterval: graduatingIntervalInDays,
+              dueDate: moment()
+                .add(graduatingIntervalInDays, 'days')
+                .toDate(),
+            },
+          }
+        );
+      } else {
+        const stepBefore = card.currentStep;
+        const nextStep = stepBefore + 1;
+        const stateBefore = card.state;
+        const newState = stateBefore === 'NEW' ? 'LEARNING' : stateBefore;
+        Cards.update(
+          { _id: card._id },
+          {
+            $set: {
+              state: newState,
+              currentStep: nextStep,
+              dueDate: moment()
+                .add(stepsInMinutes[nextStep], 'minutes')
+                .toDate(),
+            },
+          }
+        );
+      }
+    }
+    if (card.state === 'GRADUATED') {
+      // newInterval = currentInterval * easeFactor * intervalModifier
+      // easeFactor unchanged
+    }
+  }
+  if (answer === 'easy') {
+    // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
+    const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
+    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+      Cards.update(
+        { _id: card._id },
+        { $set: { state: 'GRADUATED', currentInterval: easyIntervalInDays, dueDate: moment().add(easyIntervalInDays, 'days') } }
+      );
+    }
+    if (card.state === 'GRADUATED') {
+      // TODO:
+      // newInterval = currentInterval * easeFactor * intervalModifier * easyBonus
+      // new easeFactor = +0.15
+    }
+  }
+};
+
 export default {
   Query: {
     decks(obj, args, context) {
@@ -174,9 +273,44 @@ export default {
       const settings = Settings.findOne({ userId: user._id });
       const easeFactor = settings.startingEase;
       const dueDate = new Date();
-      const id = Cards.insert({ deckId, front, back, state: 'NEW', easeFactor, currentInterval: 0, dueDate, createdAt: new Date() });
+      const id = Cards.insert({
+        deckId,
+        front,
+        back,
+        state: 'NEW',
+        easeFactor,
+        currentInterval: 0,
+        currentStep: 0,
+        dueDate,
+        createdAt: new Date(),
+      });
       logger.log({ level: 'info', message: `added card with ${id} to deck ${deckId} for user with _id ${user._id}` });
       return collectCardStats(Decks.findOne(deckId));
+    },
+    answerCard(_, args, context) {
+      Match.test(args, { cardId: String, answer: String });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got add card request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `add card requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const { cardId, answer } = args;
+      const foundCard = Cards.findOne({ _id: cardId });
+      if (!foundCard) {
+        logger.log({ level: 'warn', message: `answer card deck with ${cardId} not found` });
+        throw new Error('not authorized');
+      }
+      const foundDeck = Decks.findOne({ _id: foundCard.deckId, userId: foundUser._id });
+      if (!foundDeck) {
+        logger.log({ level: 'warn', message: `answer card for deck with ${cardId} not found` });
+        throw new Error('not authorized');
+      }
+      const settings = Settings.findOne({ userId: user._id });
+      updateCard(settings, foundCard, answer);
+      logger.log({ level: 'info', message: `answered card with ${cardId} for user with _id ${user._id}` });
+      return Cards.findOne({ _id: cardId });
     },
   },
 };

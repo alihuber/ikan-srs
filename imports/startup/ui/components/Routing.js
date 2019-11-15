@@ -8,6 +8,7 @@ import NotFoundPage from './NotFoundPage';
 import Users from './admin/Users';
 import Settings from './Settings';
 import Decks from './Decks';
+import Learn from './Learn';
 
 const Routing = ({ LayoutComponent }) => {
   const LoadingLayout = LayoutComponent;
@@ -30,6 +31,9 @@ const Routing = ({ LayoutComponent }) => {
             </Route>
             <Route exact path="/decks">
               <Decks />
+            </Route>
+            <Route exact path="/learn/:deckId">
+              <Learn />
             </Route>
             <Route exact>
               <NotFoundPage />
