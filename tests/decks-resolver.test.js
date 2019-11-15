@@ -7,7 +7,7 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, DECKS_QUERY, CREATE_DECK_MUTATION } from '../imports/api/decks/constants';
+import { Decks, DECKS_QUERY, CREATE_DECK_MUTATION, DELETE_DECK_MUTATION } from '../imports/api/decks/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
 
 const { createTestClient } = require('apollo-server-testing');
@@ -80,6 +80,37 @@ if (Meteor.isServer) {
       assert.equal(res.data.createDeck.name, 'deck1');
       assert.equal(res.data.createDeck.userId, userId);
       assert.deepEqual(res.data.createDeck.cards, []);
+    });
+  });
+
+  describe('Delete deck mutation', () => {
+    it('deletes deck for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const id = Decks.insert({
+        userId,
+        name: 'deck1',
+        cards: [],
+        createdAt: new Date(),
+      });
+
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: DELETE_DECK_MUTATION,
+        variables: { deckId: id },
+      });
+
+      assert.equal(res.data.deleteDeck, true);
+      const deck = Decks.findOne({ userId: id });
+      assert.equal(deck, null);
     });
   });
 }

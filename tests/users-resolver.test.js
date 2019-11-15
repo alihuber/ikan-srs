@@ -14,6 +14,7 @@ import {
 } from '../imports/api/users/constants';
 import UserResolver from '../imports/api/users/resolvers';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
+import { Decks } from '../imports/api/decks/constants';
 
 const { createTestClient } = require('apollo-server-testing');
 
@@ -402,6 +403,38 @@ if (Meteor.isServer) {
 
       const settings = Settings.findOne({ userId: id });
       assert.equal(settings, null);
+    });
+
+    it('deletes decks for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'admin',
+        password: 'adminadmin',
+      });
+      Meteor.users.update({ _id: userId }, { $set: { admin: true } });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+      });
+      const id = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      Decks.insert({
+        userId: id,
+        name: 'deck1',
+        cards: [],
+        createdAt: new Date(),
+      });
+      const { mutate } = createTestClient(server);
+      const res = await mutate({
+        mutation: DELETE_USER_MUTATION,
+        variables: { userId: id },
+      });
+      assert.equal(res.data.deleteUser, true);
+
+      const deck = Decks.findOne({ userId: id });
+      assert.equal(deck, null);
     });
   });
 }

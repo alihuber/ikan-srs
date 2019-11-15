@@ -40,3 +40,9 @@ export const CREATE_DECK_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_DECK_MUTATION = gql`
+  mutation deleteDeck($deckId: String!) {
+    deleteDeck(deckId: $deckId)
+  }
+`;

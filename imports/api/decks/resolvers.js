@@ -50,5 +50,30 @@ export default {
       logger.log({ level: 'info', message: `created deck  for user with _id ${user._id}` });
       return Decks.findOne(newId);
     },
+    deleteDeck(_, args, context) {
+      Match.test(args, { deckId: String });
+      const { deckId } = args;
+      const reqUser = context.user;
+      logger.log({ level: 'info', message: `got deleteDeck request from _id ${reqUser && reqUser._id}` });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
+      if (!user) {
+        logger.log({ level: 'warn', message: `delete user requester with _id ${user._id} is not found` });
+        throw new Error('not authorized');
+      }
+      const deckToDelete = Decks.findOne({ _id: deckId, userId: user._id });
+      if (deckToDelete) {
+        logger.log({ level: 'info', message: `deleting deck with _id ${deckId}` });
+        try {
+          Decks.remove({ _id: deckId });
+          return true;
+        } catch (err) {
+          logger.log({ level: 'err', message: `deleting deck with _id ${deckId} failed: ${JSON.stringify(err)}` });
+          return false;
+        }
+      } else {
+        logger.log({ level: 'info', message: `could not delete deck with _id ${deckId}` });
+        return false;
+      }
+    },
   },
 };

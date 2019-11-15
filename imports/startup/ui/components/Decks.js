@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Divider, Label, Card, Container, Grid, Header, Modal, Button } from 'semantic-ui-react';
+import { toast } from 'react-toastify';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
-import { DECKS_QUERY } from '../../../api/decks/constants';
+import { DECKS_QUERY, DELETE_DECK_MUTATION } from '../../../api/decks/constants';
 import LoadingIndicator from './LoadingIndicator';
 import AddDeckModal from './AddDeckModal';
 
@@ -16,6 +17,17 @@ const Decks = () => {
   const { data, loading, refetch } = useQuery(DECKS_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
+  // eslint-disable-next-line no-unused-vars
+  const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
+
+  const handleDelete = (deckId, deleteDeckFunc, reFetch) => {
+    deleteDeckFunc({ variables: { deckId } }).then(() => {
+      reFetch();
+      toast.success('Deletion successful!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    });
+  };
 
   if (currentUser && !currentUser._id) {
     history.push('/');
@@ -34,20 +46,22 @@ const Decks = () => {
                   Decks
                 </Header>
                 <Modal
-                  trigger={(
+                  trigger={
                     <Button name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  )}
+                  }
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 <Divider />
                 <Card.Group>
-                  {data.decks.map((deck) => (
+                  {data.decks.map(deck => (
                     <Card key={deck._id}>
                       <Card.Content>
-                        <Button floated="right">Remove</Button>
+                        <Button floated="right" onClick={() => handleDelete(deck._id, deleteDeck, refetch)}>
+                          Remove
+                        </Button>
                         <Card.Header>{deck.name}</Card.Header>
                         <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
                         <Card.Description>

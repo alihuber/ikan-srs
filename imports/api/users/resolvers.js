@@ -3,6 +3,7 @@ import { check, Match } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import first from 'lodash/first';
 import { Settings, DEFAULT_SETTINGS } from '../settings/constants';
+import { Decks } from '../decks/constants';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -118,6 +119,7 @@ export default {
           Meteor.users.remove({ _id: userId });
           logger.log({ level: 'info', message: `deleted user with _id ${userId}` });
           Settings.remove({ userId });
+          Decks.remove({ userId });
           return true;
         } catch (err) {
           logger.log({ level: 'err', message: `deleting user with _id ${userId} failed: ${JSON.stringify(err)}` });

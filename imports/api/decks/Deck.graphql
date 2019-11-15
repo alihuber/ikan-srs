@@ -51,4 +51,5 @@ extend type Query {
 
 extend type Mutation {
   createDeck(name: String!): Deck
+  deleteDeck(deckId: String!): Boolean
 }
