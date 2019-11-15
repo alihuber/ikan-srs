@@ -7,7 +7,8 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, DECKS_QUERY, CREATE_DECK_MUTATION, DELETE_DECK_MUTATION } from '../imports/api/decks/constants';
+import { Decks, Cards, DECKS_QUERY, CREATE_DECK_MUTATION, DELETE_DECK_MUTATION, ADD_CARD_MUTATION } from '../imports/api/decks/constants';
+import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
 
 const { createTestClient } = require('apollo-server-testing');
@@ -49,8 +50,8 @@ if (Meteor.isServer) {
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
       });
-      Decks.insert({ userId, name: 'deck1', cards: [], createdAt: new Date() });
-      Decks.insert({ userId, name: 'deck2', cards: [], createdAt: new Date() });
+      Decks.insert({ userId, name: 'deck1', createdAt: new Date(), intervalModifier: 100 });
+      Decks.insert({ userId, name: 'deck2', createdAt: new Date(), intervalModifier: 100 });
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
@@ -98,7 +99,7 @@ if (Meteor.isServer) {
       const id = Decks.insert({
         userId,
         name: 'deck1',
-        cards: [],
+        intervalModifier: 100,
         createdAt: new Date(),
       });
 
@@ -111,6 +112,49 @@ if (Meteor.isServer) {
       assert.equal(res.data.deleteDeck, true);
       const deck = Decks.findOne({ userId: id });
       assert.equal(deck, null);
+    });
+  });
+
+  describe('Add card mutation', () => {
+    it('creates card in deck', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 100,
+        createdAt: new Date(),
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const { mutate } = createTestClient(server);
+      const res = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res.data.addCard, null);
+      assert.equal(res.errors, null);
+
+      assert.equal(res.data.addCard.name, 'deck1');
+      assert.equal(res.data.addCard.userId, userId);
+      assert.equal(res.data.addCard.cards, 1);
+
+      const card = Cards.findOne();
+      assert.equal(card.deckId, deckId);
+      assert.equal(card.front, 'foo');
+      assert.equal(card.back, 'bar');
+      assert.equal(card.state, 'NEW');
+      assert.equal(card.easeFactor, DEFAULT_SETTINGS.easeFactor);
+      assert.equal(card.currentInterval, 0);
     });
   });
 }

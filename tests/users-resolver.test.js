@@ -423,7 +423,7 @@ if (Meteor.isServer) {
       const deckId = Decks.insert({
         userId: id,
         name: 'deck1',
-        cards: [],
+        intervalModifier: 100,
         createdAt: new Date(),
       });
       Cards.insert({
