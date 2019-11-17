@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
-import { Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
+import { Icon, Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
 import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
 import EditUserModal from './EditUserModal';
@@ -55,22 +55,22 @@ const UsersTable = () => {
     );
     const tableBody = (
       <Table.Body>
-        {usersList &&
-          usersList.map(user => {
+        {usersList
+          && usersList.map((user) => {
             return (
               <Table.Row key={user._id}>
                 <Table.Cell>{user._id}</Table.Cell>
                 <Table.Cell collapsing>{user.username}</Table.Cell>
                 <Table.Cell collapsing textAlign="center">
-                  {user.admin ? <i className="fas fa-check" /> : null}
+                  {user.admin ? <Icon name="check" /> : null}
                 </Table.Cell>
                 <Table.Cell collapsing textAlign="right">
                   <Modal
-                    trigger={
+                    trigger={(
                       <Button compact size="mini" primary name={'editUser_' + user._id}>
                         Edit
                       </Button>
-                    }
+                    )}
                   >
                     <EditUserModal
                       userId={user._id}
@@ -99,11 +99,11 @@ const UsersTable = () => {
     return (
       <>
         <Modal
-          trigger={
+          trigger={(
             <Button name="addUserButton" size="small" primary>
               Add User
             </Button>
-          }
+          )}
         >
           <AddUserModal refetch={refetch} setPageNum={setPageNum} />
         </Modal>
