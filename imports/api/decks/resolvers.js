@@ -64,6 +64,9 @@ const updateCard = (settings, card, answer) => {
       // newInterval = currentInterval * easeFactor * intervalModifier
       // new easeFactor -0.20
       // The easeFactor can not get lower than 1.3
+      // Again = goes to "relearning" state  and the easeFactor is reduced.
+      //         If it is marked correct the next time, its new interval is multiplied with "new interval" setting,
+      //         if not: lapse card
     }
   }
   if (answer === 'hard' && card.state === 'GRADUATED') {
@@ -73,9 +76,9 @@ const updateCard = (settings, card, answer) => {
     // The easeFactor can not get lower than 1.3
   }
   if (answer === 'good') {
-    // Good: Will move the card to the next step. If the step was the last step,
-    //       the card graduates and its currentInterval is set to one day (graduating inverval setting)
     if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+      // Good: Will move the card to the next step. If the step was the last step,
+      //       the card graduates and its currentInterval is set to graduating inverval setting
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
       const graduatingIntervalInDays = settings.learningSettings.graduatingIntervalInDays;
       if (card.currentStep === stepsInMinutes.length - 1) {
@@ -117,9 +120,9 @@ const updateCard = (settings, card, answer) => {
     }
   }
   if (answer === 'easy') {
-    // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
     const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
     if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+      // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
       Cards.update(
         { _id: card._id },
         { $set: { state: 'GRADUATED', currentInterval: easyIntervalInDays, dueDate: moment().add(easyIntervalInDays, 'days') } }

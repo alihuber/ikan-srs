@@ -146,6 +146,12 @@ if (Meteor.isServer) {
           .toDate()
           .getTime()
       );
+      assert.notEqual(
+        moment(now)
+          .toDate()
+          .getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
       timekeeper.reset();
     });
 
@@ -206,6 +212,12 @@ if (Meteor.isServer) {
           .add(graduatingIntervalInDays, 'days')
           .toDate()
           .getTime()
+      );
+      assert.notEqual(
+        moment(now)
+          .toDate()
+          .getTime(),
+        res.data.answerCard.dueDate.getTime()
       );
       timekeeper.reset();
     });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
-import { Table, Button, Modal } from 'semantic-ui-react';
+import { Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
 import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
 import EditUserModal from './EditUserModal';
@@ -43,6 +43,59 @@ const UsersTable = () => {
   }
   if (data) {
     const { usersList, usersCount } = data.users;
+    const tableHeader = (
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>ID</Table.HeaderCell>
+          <Table.HeaderCell>Username</Table.HeaderCell>
+          <Table.HeaderCell>Admin</Table.HeaderCell>
+          <Table.HeaderCell colSpan="2"></Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+    );
+    const tableBody = (
+      <Table.Body>
+        {usersList &&
+          usersList.map(user => {
+            return (
+              <Table.Row key={user._id}>
+                <Table.Cell>{user._id}</Table.Cell>
+                <Table.Cell collapsing>{user.username}</Table.Cell>
+                <Table.Cell collapsing textAlign="center">
+                  {user.admin ? <i className="fas fa-check" /> : null}
+                </Table.Cell>
+                <Table.Cell collapsing textAlign="right">
+                  <Modal
+                    trigger={
+                      <Button compact size="mini" primary name={'editUser_' + user._id}>
+                        Edit
+                      </Button>
+                    }
+                  >
+                    <EditUserModal
+                      userId={user._id}
+                      username={user.username}
+                      admin={user.admin}
+                      refetch={refetch}
+                      setPageNum={setPageNum}
+                    />
+                  </Modal>
+                  <Button
+                    name={'deleteUser_' + user._id}
+                    compact
+                    size="mini"
+                    secondary
+                    onClick={() => handleDelete(user._id, deleteUser, refetch)}
+                  >
+                    Delete
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            );
+          })}
+      </Table.Body>
+    );
+
     return (
       <>
         <Modal
@@ -54,62 +107,30 @@ const UsersTable = () => {
         >
           <AddUserModal refetch={refetch} setPageNum={setPageNum} />
         </Modal>
-        <Table celled striped compact>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>ID</Table.HeaderCell>
-              <Table.HeaderCell>Username</Table.HeaderCell>
-              <Table.HeaderCell>Admin</Table.HeaderCell>
-              <Table.HeaderCell colSpan="2"></Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {usersList &&
-              usersList.map(user => {
-                return (
-                  <Table.Row key={user._id}>
-                    <Table.Cell>{user._id}</Table.Cell>
-                    <Table.Cell collapsing>{user.username}</Table.Cell>
-                    <Table.Cell collapsing textAlign="center">
-                      {user.admin ? <i className="fas fa-check" /> : null}
-                    </Table.Cell>
-                    <Table.Cell collapsing textAlign="right">
-                      <Modal
-                        trigger={
-                          <Button compact size="mini" primary name={'editUser_' + user._id}>
-                            Edit
-                          </Button>
-                        }
-                      >
-                        <EditUserModal
-                          userId={user._id}
-                          username={user.username}
-                          admin={user.admin}
-                          refetch={refetch}
-                          setPageNum={setPageNum}
-                        />
-                      </Modal>
-                      <Button
-                        name={'deleteUser_' + user._id}
-                        compact
-                        size="mini"
-                        secondary
-                        onClick={() => handleDelete(user._id, deleteUser, refetch)}
-                      >
-                        Delete
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                );
-              })}
-          </Table.Body>
-          <UsersTableFooter
-            count={usersCount}
-            page={pageNum}
-            rowsPerPage={5}
-            onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
-          />
-        </Table>
+        <Divider />
+        <Responsive minWidth={768}>
+          <Table celled striped compact>
+            {tableHeader}
+            {tableBody}
+            <UsersTableFooter
+              count={usersCount}
+              page={pageNum}
+              rowsPerPage={5}
+              onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
+            />
+          </Table>
+        </Responsive>
+        <Responsive maxWidth={768}>
+          <Table celled striped compact>
+            {tableBody}
+            <UsersTableFooter
+              count={usersCount}
+              page={pageNum}
+              rowsPerPage={5}
+              onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
+            />
+          </Table>
+        </Responsive>
       </>
     );
   } else {

@@ -45,34 +45,34 @@ const Decks = () => {
       return (
         <div className={animClass}>
           <Container text style={{ paddingTop: '4em' }}>
-            <Grid style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
+            <Grid verticalAlign="middle">
               <Grid.Column>
                 <Header size="large" color="teal" textAlign="center">
                   Decks
                 </Header>
                 <Modal
-                  trigger={
+                  trigger={(
                     <Button name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  }
+                  )}
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 {data.decks.length !== 0 ? (
                   <Modal
-                    trigger={
+                    trigger={(
                       <Button name="addDeckButton" size="small" secondary floated="right">
                         Add Card
                       </Button>
-                    }
+                    )}
                   >
                     <AddCardModal decks={data.decks} refetch={refetch} />
                   </Modal>
                 ) : null}
                 <Divider />
                 <Card.Group>
-                  {data.decks.map(deck => (
+                  {data.decks.map((deck) => (
                     <Card key={deck._id}>
                       <Card.Content>
                         <Button floated="right" onClick={() => handleDelete(deck._id, deleteDeck, refetch)}>
@@ -80,7 +80,12 @@ const Decks = () => {
                         </Button>
                         <Card.Header>{deck.name}</Card.Header>
                         <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
-                        <Card.Meta>Interval modifier: {deck.intervalModifier}%</Card.Meta>
+                        <Card.Meta>
+Interval modifier:
+{' '}
+{deck.intervalModifier}
+%
+</Card.Meta>
                         <Card.Description>
                           <Label>
                             Cards

@@ -9,7 +9,7 @@ enum NewCardsOrder {
 }
 
 type LapseSettings {
-  stepsInMinutes: Int
+  stepsInMinutes: [Int]
   newInterval: Int
   minimumIntervalInDays: Int
   leechThreshold: Int
@@ -17,7 +17,7 @@ type LapseSettings {
 }
 
 input LapseSettingsInput {
-  stepsInMinutes: Int
+  stepsInMinutes: [Int]
   newInterval: Int
   minimumIntervalInDays: Int
   leechThreshold: Int

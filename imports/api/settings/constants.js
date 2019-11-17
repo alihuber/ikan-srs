@@ -5,7 +5,7 @@ export const Settings = new Mongo.Collection('settings');
 
 export const DEFAULT_SETTINGS = {
   lapseSettings: {
-    stepsInMinutes: 20,
+    stepsInMinutes: [20],
     newInterval: 70,
     minimumIntervalInDays: 2,
     leechThreshold: 8,

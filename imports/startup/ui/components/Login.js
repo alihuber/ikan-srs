@@ -24,17 +24,17 @@ const loginSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(loginSchema);
 
-const handleLogin = (history) => {
+const handleLogin = history => {
   history.push('/login');
 };
 
-const handleDecks = (history) => {
+const handleDecks = history => {
   history.push('/decks');
 };
 
 const handleSubmit = (values, history) => {
   if (values.username && values.password) {
-    Meteor.loginWithPassword(values.username, values.password, (err) => {
+    Meteor.loginWithPassword(values.username, values.password, err => {
       if (err) {
         console.log(err);
         toast.error('Login error!', {
@@ -57,14 +57,14 @@ const Login = () => {
   return (
     <div className={animClass}>
       <Container text style={{ paddingTop: '4em' }}>
-        <Grid style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
+        <Grid verticalAlign="middle">
           <Grid.Column width={2} only="computer"></Grid.Column>
           <Grid.Column computer={12} mobile={16} tablet={16}>
             <Header size="large" color="teal" textAlign="center">
               Log in
             </Header>
             <Segment>
-              <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, history)}>
+              <AutoForm schema={bridge} onSubmit={doc => handleSubmit(doc, history)}>
                 <AutoFields />
                 <ErrorsField />
                 <br />

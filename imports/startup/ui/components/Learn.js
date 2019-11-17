@@ -25,7 +25,7 @@ const Learn = () => {
     </Button>
   );
 
-  const rateAnswer = (cardState) => {
+  const rateAnswer = cardState => {
     if (cardState === 'NEW') {
       return (
         <>
@@ -72,7 +72,7 @@ const Learn = () => {
       return (
         <div className={animClass}>
           <Container text style={{ paddingTop: '4em' }}>
-            <Grid style={{ height: '50vh', marginTop: '0' }} verticalAlign="middle">
+            <Grid verticalAlign="middle">
               <Grid.Column>
                 <Header size="large" color="teal" textAlign="center">
                   Learn

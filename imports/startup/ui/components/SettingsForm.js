@@ -9,6 +9,11 @@ import { UPDATE_SETTINGS_MUTATION } from '../../../api/settings/constants';
 
 const lapseSettingsSchema = new SimpleSchema({
   stepsInMinutes: {
+    type: Array,
+    minCount: 1,
+    maxCount: 5,
+  },
+  'stepsInMinutes.$': {
     type: SimpleSchema.Integer,
     min: 1,
   },
@@ -24,6 +29,7 @@ const lapseSettingsSchema = new SimpleSchema({
 const learningSettingsSchema = new SimpleSchema({
   stepsInMinutes: {
     type: Array,
+    minCount: 1,
     maxCount: 5,
   },
   'stepsInMinutes.$': {

@@ -10,7 +10,7 @@ New, Learing, Relearning, Graduated
 
 ### Lapse settings
 
-- stepsInMinutes: Int (Default: 10, better: 20)
+- stepsInMinutes: [Int] (Default: 10, better: 20)
 - newInterval: Int (Default: 0%, better: 70%)
 - minimumIntervalInDays: Int (Default: 1 day, better: 2 days)
 - leechThreshold: Int (Default: 8 lapses)
