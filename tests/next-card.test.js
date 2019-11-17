@@ -54,6 +54,42 @@ if (Meteor.isServer) {
       assert.equal(res.data.nextCardForLearning, null);
     });
 
+    it.only('returns no card if no due cards found for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+
+      Cards.insert({
+        deckId,
+        front: 'blaa',
+        back: 'blarg',
+        createdAt: new Date(),
+        state: 'LEARNING',
+        currentStep: 0,
+        dueDate: moment()
+          .add(1, 'day')
+          .toDate(),
+      });
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      assert.equal(res.data.nextCardForLearning, null);
+    });
+
     it('returns new cards in order if setting is ADDED', async () => {
       resetDatabase();
       const userId = Accounts.createUser({

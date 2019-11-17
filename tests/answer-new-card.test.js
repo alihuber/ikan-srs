@@ -9,7 +9,7 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, Cards, ADD_CARD_MUTATION, ANSWER_CARD_MUTATION } from '../imports/api/decks/constants';
+import { Decks, Cards, ANSWER_CARD_MUTATION } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
 
@@ -30,7 +30,7 @@ if (Meteor.isServer) {
     return { server };
   };
 
-  describe('Answer learning/new/relearning card', () => {
+  describe('Answer new card', () => {
     it('again: it sets dueDate to first step', async () => {
       // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
       resetDatabase();
@@ -87,6 +87,8 @@ if (Meteor.isServer) {
           .toDate()
           .getTime()
       );
+      const deck = Decks.findOne(deckId);
+      assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
 
@@ -122,7 +124,7 @@ if (Meteor.isServer) {
         front: 'blaa',
         back: 'blarg',
         createdAt: now,
-        state: 'LEARNING',
+        state: 'NEW',
         currentStep: 1,
         dueDate: now,
       });
@@ -152,6 +154,8 @@ if (Meteor.isServer) {
           .getTime(),
         res.data.answerCard.dueDate.getTime()
       );
+      const deck = Decks.findOne(deckId);
+      assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
 
@@ -188,7 +192,7 @@ if (Meteor.isServer) {
         front: 'blaa',
         back: 'blarg',
         createdAt: now,
-        state: 'RELEARNING',
+        state: 'NEW',
         currentStep: 2,
         dueDate: now,
       });
@@ -219,8 +223,76 @@ if (Meteor.isServer) {
           .getTime(),
         res.data.answerCard.dueDate.getTime()
       );
+      const deck = Decks.findOne(deckId);
+      assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
-    // TODO:
+    it('easy: it will graduate card', async () => {
+      // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 100,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+
+      const settingsId = Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+      const now = new Date();
+      timekeeper.freeze(now);
+      const cardId = Cards.insert({
+        deckId,
+        front: 'blaa',
+        back: 'blarg',
+        createdAt: now,
+        state: 'NEW',
+        currentStep: 1,
+        dueDate: now,
+      });
+
+      const { mutate } = createTestClient(server);
+
+      const res = await mutate({
+        mutation: ANSWER_CARD_MUTATION,
+        variables: { cardId, answer: 'easy' },
+      });
+      const settings = Settings.findOne(settingsId);
+      const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
+
+      assert.notEqual(res.data.answerCard, null);
+      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.state, 'GRADUATED');
+      assert.equal(res.data.answerCard.currentInterval, easyIntervalInDays);
+      assert.equal(
+        res.data.answerCard.dueDate.getTime(),
+        moment(now)
+          .add(easyIntervalInDays, 'days')
+          .toDate()
+          .getTime()
+      );
+      assert.notEqual(
+        moment(now)
+          .toDate()
+          .getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
+      const deck = Decks.findOne(deckId);
+      assert.equal(deck.newCardsToday.numCards, 1);
+      timekeeper.reset();
+    });
   });
 }

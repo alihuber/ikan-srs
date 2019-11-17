@@ -19,13 +19,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = (deck) => {
+const collectCardStats = deck => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const cards = foundCards.length;
-  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
-  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
+  const newCards = foundCards.filter(c => c.state === 'NEW').length;
+  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
   deck.cards = cards;
   deck.newCards = newCards;
   deck.learningCards = learningCards;
@@ -34,12 +34,18 @@ const collectCardStats = (deck) => {
   return deck;
 };
 
+const updateDeckNewCardsToday = (state, deckId) => {
+  if (state === 'NEW') {
+    Decks.update({ _id: deckId }, { $set: { 'newCardsToday.date': new Date() }, $inc: { 'newCardsToday.numCards': 1 } });
+  }
+};
+
 //         new learning relearning graduated
 // easy    X   X        X          X
 // good    X   X        X          X
 // hard                            X
 // again   X   X        X          X
-const updateCard = (settings, card, answer) => {
+const updateCard = (settings, card, answer, deckId) => {
   if (answer === 'again') {
     // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
     if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
@@ -58,6 +64,7 @@ const updateCard = (settings, card, answer) => {
           },
         }
       );
+      updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
       // TODO:
@@ -113,6 +120,7 @@ const updateCard = (settings, card, answer) => {
           }
         );
       }
+      updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
       // newInterval = currentInterval * easeFactor * intervalModifier
@@ -125,8 +133,18 @@ const updateCard = (settings, card, answer) => {
       // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
       Cards.update(
         { _id: card._id },
-        { $set: { state: 'GRADUATED', currentInterval: easyIntervalInDays, dueDate: moment().add(easyIntervalInDays, 'days') } }
+        {
+          $set: {
+            state: 'GRADUATED',
+            currentStep: 0,
+            currentInterval: easyIntervalInDays,
+            dueDate: moment()
+              .add(easyIntervalInDays, 'days')
+              .toDate(),
+          },
+        }
       );
+      updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
       // TODO:
@@ -146,7 +164,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map((deck) => {
+        foundDecks.map(deck => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -154,7 +172,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map((deck) => {
+        const decks = updatedDecks.map(deck => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
@@ -311,7 +329,7 @@ export default {
         throw new Error('not authorized');
       }
       const settings = Settings.findOne({ userId: user._id });
-      updateCard(settings, foundCard, answer);
+      updateCard(settings, foundCard, answer, foundCard.deckId);
       logger.log({ level: 'info', message: `answered card with ${cardId} for user with _id ${user._id}` });
       return Cards.findOne({ _id: cardId });
     },
