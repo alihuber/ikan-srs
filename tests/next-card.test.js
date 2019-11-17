@@ -41,6 +41,10 @@ if (Meteor.isServer) {
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
       });
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
       const deckId = Decks.insert({
         userId,
         name: 'deck1',
@@ -52,6 +56,7 @@ if (Meteor.isServer) {
       const { query } = createTestClient(server);
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
       assert.equal(res.data.nextCardForLearning, null);
+      assert.equal(res.errors, null);
     });
 
     it.only('returns no card if no due cards found for user', async () => {
@@ -64,6 +69,10 @@ if (Meteor.isServer) {
 
       const { server } = constructTestServer({
         context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
       });
       const deckId = Decks.insert({
         userId,
@@ -87,7 +96,9 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      console.log(res);
       assert.equal(res.data.nextCardForLearning, null);
+      assert.equal(res.errors, null);
     });
 
     it('returns new cards in order if setting is ADDED', async () => {
@@ -128,6 +139,7 @@ if (Meteor.isServer) {
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'first');
+      assert.equal(res.errors, null);
     });
 
     it('returns new cards in random if setting is RANDOM', async () => {
@@ -168,6 +180,7 @@ if (Meteor.isServer) {
 
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
       assert.notEqual(res.data.nextCardForLearning, null);
+      assert.equal(res.errors, null);
     });
 
     it('returns other cards by dueDate', async () => {
@@ -216,6 +229,7 @@ if (Meteor.isServer) {
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'blaa');
       assert.equal(res.data.nextCardForLearning.currentStep, 0);
+      assert.equal(res.errors, null);
     });
   });
 }

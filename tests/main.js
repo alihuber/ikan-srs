@@ -6,6 +6,8 @@ import './settings-resolver.test';
 import './decks-resolver.test';
 import './next-card.test';
 import './answer-new-card.test';
+import './answer-learning-card.test';
+import './answer-relearning-card.test';
 
 describe('base_app', function () {
   it('package.json has correct name', async function () {

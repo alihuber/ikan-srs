@@ -19,13 +19,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = deck => {
+const collectCardStats = (deck) => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const cards = foundCards.length;
-  const newCards = foundCards.filter(c => c.state === 'NEW').length;
-  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
+  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
+  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
   deck.cards = cards;
   deck.newCards = newCards;
   deck.learningCards = learningCards;
@@ -164,7 +164,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map(deck => {
+        foundDecks.map((deck) => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -172,7 +172,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map(deck => {
+        const decks = updatedDecks.map((deck) => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
@@ -208,13 +208,17 @@ export default {
       // what is the 'new cards per day' setting?
       const newCardsPerDaySetting = settings.learningSettings.newCardsPerDay;
       const newCardsOrderSetting = settings.newCardsOrder;
+      let foundCard;
       if (foundDeck.newCardsToday.numCards < newCardsPerDaySetting) {
         // what is the 'new cards order' setting?
         if (newCardsOrderSetting === 'RANDOM') {
-          return shuffle(newCards)[0];
+          foundCard = shuffle(newCards)[0];
         } else {
-          return sortBy(newCards, 'createdAt')[0];
+          foundCard = sortBy(newCards, 'createdAt')[0];
         }
+      }
+      if (foundCard) {
+        return foundCard;
       } else {
         // all new cards shown or over quota:
         // proceed with other due cards
