@@ -31,7 +31,7 @@ if (Meteor.isServer) {
   };
 
   describe('Answer graduated card', () => {
-    it('easy: it lowers easeFactor and resets currentInterval', async () => {
+    it('easy: it increases easeFactor and resets currentInterval', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'testuser',
@@ -166,6 +166,156 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.state, 'GRADUATED');
       assert.equal(res.data.answerCard.currentInterval, 5);
       assert.equal(res.data.answerCard.easeFactor, 2.5);
+      assert.equal(
+        res.data.answerCard.dueDate.getTime(),
+        moment(now)
+          .add(newInterval, 'days')
+          .toDate()
+          .getTime()
+      );
+      assert.notEqual(
+        moment(now)
+          .toDate()
+          .getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
+      const deck = Decks.findOne(deckId);
+      assert.notEqual(deck.newCardsToday.numCards, 1);
+      timekeeper.reset();
+    });
+
+    it('hard: it resets currentInterval, lowers easeFactor', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 1,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+      const now = new Date();
+      timekeeper.freeze(now);
+      const cardId = Cards.insert({
+        deckId,
+        front: 'blaa',
+        back: 'blarg',
+        createdAt: now,
+        state: 'GRADUATED',
+        currentStep: 0,
+        dueDate: now,
+        currentInterval: 2,
+        easeFactor: 2.5,
+      });
+
+      const { mutate } = createTestClient(server);
+
+      const foundDeck = Decks.findOne({ _id: deckId });
+      const foundCard = Cards.findOne({ _id: cardId });
+      const currentInterval = foundCard.currentInterval;
+      const intervalModifier = foundDeck.intervalModifier;
+
+      const res = await mutate({
+        mutation: ANSWER_CARD_MUTATION,
+        variables: { cardId, answer: 'hard' },
+      });
+
+      const newInterval = currentInterval * 1.2 * intervalModifier;
+
+      assert.notEqual(res.data.answerCard, null);
+      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.state, 'GRADUATED');
+      assert.equal(res.data.answerCard.currentInterval, 2.4);
+      assert.equal(res.data.answerCard.easeFactor, 2.35);
+      assert.equal(
+        res.data.answerCard.dueDate.getTime(),
+        moment(now)
+          .add(newInterval, 'days')
+          .toDate()
+          .getTime()
+      );
+      assert.notEqual(
+        moment(now)
+          .toDate()
+          .getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
+      const deck = Decks.findOne(deckId);
+      assert.notEqual(deck.newCardsToday.numCards, 1);
+      timekeeper.reset();
+    });
+
+    it('hard: lowers easeFactor only if > 1.3', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 1,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+      const now = new Date();
+      timekeeper.freeze(now);
+      const cardId = Cards.insert({
+        deckId,
+        front: 'blaa',
+        back: 'blarg',
+        createdAt: now,
+        state: 'GRADUATED',
+        currentStep: 0,
+        dueDate: now,
+        currentInterval: 2,
+        easeFactor: 1.4,
+      });
+
+      const { mutate } = createTestClient(server);
+
+      const foundDeck = Decks.findOne({ _id: deckId });
+      const foundCard = Cards.findOne({ _id: cardId });
+      const currentInterval = foundCard.currentInterval;
+      const intervalModifier = foundDeck.intervalModifier;
+
+      const res = await mutate({
+        mutation: ANSWER_CARD_MUTATION,
+        variables: { cardId, answer: 'hard' },
+      });
+
+      const newInterval = currentInterval * 1.2 * intervalModifier;
+
+      assert.notEqual(res.data.answerCard, null);
+      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.state, 'GRADUATED');
+      assert.equal(res.data.answerCard.currentInterval, 2.4);
+      assert.equal(res.data.answerCard.easeFactor, 1.3);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
         moment(now)
