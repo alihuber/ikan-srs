@@ -16,8 +16,8 @@ type Card {
   front: String
   back: String
   state: CardState
-  easeFactor: Int
-  currentInterval: Int
+  easeFactor: Float
+  currentInterval: Float
   dueDate: Date
   currentStep: Int
   createdAt: Date
@@ -28,7 +28,7 @@ type Deck {
   name: String
   createdAt: Date
   userId: String
-  intervalModifier: Int
+  intervalModifier: Float
   cards: Int
   newCards: Int
   learningCars: Int

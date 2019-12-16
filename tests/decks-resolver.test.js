@@ -55,14 +55,14 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 0 },
       });
       Decks.insert({
         userId,
         name: 'deck2',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: {
           date: new Date(),
           numCards: 0,
@@ -91,14 +91,14 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 10 },
       });
       Decks.insert({
         userId,
         name: 'deck2',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: {
           date: moment().subtract(2, 'days'),
           numCards: 19,
@@ -154,7 +154,7 @@ if (Meteor.isServer) {
       const id = Decks.insert({
         userId,
         name: 'deck1',
-        intervalModifier: 100,
+        intervalModifier: 1,
         createdAt: new Date(),
         newCardsToday: {
           date: new Date(),
@@ -191,7 +191,7 @@ if (Meteor.isServer) {
       const deckId = Decks.insert({
         userId,
         name: 'deck1',
-        intervalModifier: 100,
+        intervalModifier: 1,
         createdAt: new Date(),
         newCardsToday: {
           date: new Date(),

@@ -6,7 +6,7 @@ export const Settings = new Mongo.Collection('settings');
 export const DEFAULT_SETTINGS = {
   lapseSettings: {
     stepsInMinutes: [20],
-    newInterval: 70,
+    newInterval: 0.7,
     minimumIntervalInDays: 2,
     leechThreshold: 8,
     leechAction: 'TAG', // suspend / tag
@@ -18,7 +18,7 @@ export const DEFAULT_SETTINGS = {
     newCardsPerDay: 1000,
     graduatingIntervalInDays: 15,
     easyIntervalInDays: 60,
-    startingEase: 250,
+    startingEase: 2.5,
   },
 };
 

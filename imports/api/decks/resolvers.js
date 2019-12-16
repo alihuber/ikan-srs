@@ -41,10 +41,10 @@ const updateDeckNewCardsToday = (state, deckId) => {
 };
 
 //         new learning relearning graduated
-// easy    X   X        X          X
-// good    X   X        X          X
+// easy    Y   Y        Y          Y
+// good    Y   Y        Y          X
 // hard                            X
-// again   X   X        X          X
+// again   Y   Y        Y          X
 const updateCard = (settings, card, answer, deckId) => {
   if (answer === 'again') {
     // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
@@ -147,9 +147,26 @@ const updateCard = (settings, card, answer, deckId) => {
       updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
-      // TODO:
-      // newInterval = currentInterval * easeFactor * intervalModifier * easyBonus
-      // new easeFactor = +0.15
+      // we checked that the deck belongs to user before
+      const foundDeck = Decks.findOne({ _id: deckId });
+      const currentInterval = card.currentInterval;
+      const currentEaseFactor = card.easeFactor;
+      const intervalModifier = foundDeck.intervalModifier;
+      const easyBonus = 1.3; // fixed value
+      const newInterval = currentInterval * currentEaseFactor * intervalModifier * easyBonus;
+      const newEaseFactor = currentEaseFactor + 0.15;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            currentInterval: newInterval,
+            dueDate: moment()
+              .add(newInterval, 'days')
+              .toDate(),
+            easeFactor: newEaseFactor,
+          },
+        }
+      );
     }
   }
 };
@@ -245,7 +262,7 @@ export default {
         userId: user._id,
         name: args.name,
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: {
           date: new Date(),
           numCards: 0,

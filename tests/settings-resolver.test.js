@@ -56,9 +56,9 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
-      assert.equal(res.data.settings.lapseSettings.newInterval, 70);
+      assert.equal(res.data.settings.lapseSettings.newInterval, 0.7);
       assert.equal(res.data.settings.lapseSettings.leechAction, 'TAG');
-      assert.equal(res.data.settings.learningSettings.startingEase, 250);
+      assert.equal(res.data.settings.learningSettings.startingEase, 2.5);
       assert.equal(res.data.settings.learningSettings.newCardsOrder, 'ADDED');
       assert.deepEqual(res.data.settings.learningSettings.stepsInMinutes, [15, 1440, 8640]);
     });

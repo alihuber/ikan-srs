@@ -48,7 +48,7 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 
@@ -109,7 +109,7 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 
@@ -177,7 +177,7 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 
@@ -244,7 +244,7 @@ if (Meteor.isServer) {
         userId,
         name: 'deck1',
         createdAt: new Date(),
-        intervalModifier: 100,
+        intervalModifier: 1,
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 

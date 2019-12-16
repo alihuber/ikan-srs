@@ -212,9 +212,9 @@ if (Meteor.isServer) {
       assert.equal(res2.data.users.usersList.length, 2);
       assert.equal(res2.data.users.usersCount, 2);
       const settings = Settings.findOne({ userId: newUserId });
-      assert.equal(settings.lapseSettings.newInterval, 70);
+      assert.equal(settings.lapseSettings.newInterval, 0.7);
       assert.equal(settings.lapseSettings.leechAction, 'TAG');
-      assert.equal(settings.learningSettings.startingEase, 250);
+      assert.equal(settings.learningSettings.startingEase, 2.5);
       assert.equal(settings.learningSettings.newCardsOrder, 'ADDED');
       assert.deepEqual(settings.learningSettings.stepsInMinutes, [15, 1440, 8640]);
     });
@@ -423,7 +423,7 @@ if (Meteor.isServer) {
       const deckId = Decks.insert({
         userId: id,
         name: 'deck1',
-        intervalModifier: 100,
+        intervalModifier: 1,
         createdAt: new Date(),
         newCardsToday: {
           date: new Date(),
