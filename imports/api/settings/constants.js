@@ -5,7 +5,7 @@ export const Settings = new Mongo.Collection('settings');
 
 export const DEFAULT_SETTINGS = {
   lapseSettings: {
-    stepsInMinutes: [20],
+    stepInMinutes: 20,
     newInterval: 0.7,
     minimumIntervalInDays: 2,
     leechThreshold: 8,
@@ -28,7 +28,7 @@ export const SETTINGS_QUERY = gql`
       _id
       userId
       lapseSettings {
-        stepsInMinutes
+        stepInMinutes
         newInterval
         minimumIntervalInDays
         leechThreshold
@@ -51,6 +51,7 @@ export const UPDATE_SETTINGS_MUTATION = gql`
     updateSetting(setting: $setting) {
       _id
       lapseSettings {
+        stepInMinutes
         newInterval
         minimumIntervalInDays
         leechThreshold

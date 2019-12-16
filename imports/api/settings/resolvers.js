@@ -48,7 +48,6 @@ export default {
       }
       const learningSettings = args.setting.learningSettings;
       const lapseSettings = args.setting.lapseSettings;
-      // TODO: default values???
       Settings.update({ userId: user._id }, { $set: { learningSettings, lapseSettings } });
       logger.log({ level: 'info', message: `updated settings for user with _id ${user._id}` });
       return Settings.findOne({ userId: user._id });

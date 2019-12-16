@@ -19,13 +19,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = (deck) => {
+const collectCardStats = deck => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const cards = foundCards.length;
-  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
-  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
+  const newCards = foundCards.filter(c => c.state === 'NEW').length;
+  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
   deck.cards = cards;
   deck.newCards = newCards;
   deck.learningCards = learningCards;
@@ -41,14 +41,30 @@ const updateDeckNewCardsToday = (state, deckId) => {
 };
 
 //         new learning relearning graduated
-// easy    Y   Y        Y          Y
-// good    Y   Y        Y          Y
+// easy    Y   Y        X          Y
+// good    Y   Y        X          Y
 // hard                            Y
-// again   Y   Y        Y          X
+// again   Y   Y        Y          Y
 const updateCard = (settings, card, answer, deckId) => {
   if (answer === 'again') {
-    // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
-    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+    if (card.state === 'RELEARNING') {
+      // show again in lapseSettings minutes, increase lapseCount
+      const stepInMinutes = settings.lapseSettings.stepInMinutes;
+      const lapseCountBefore = card.lapseCount;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            lapseCount: lapseCountBefore + 1,
+            dueDate: moment()
+              .add(stepInMinutes, 'minutes')
+              .toDate(),
+          },
+        }
+      );
+    }
+    if (card.state === 'NEW' || card.state === 'LEARNING') {
+      // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
       const stateBefore = card.state;
       const newState = stateBefore === 'NEW' ? 'LEARNING' : stateBefore;
@@ -67,13 +83,30 @@ const updateCard = (settings, card, answer, deckId) => {
       updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
-      // TODO:
-      // newInterval = currentInterval * easeFactor * intervalModifier
+      // goes to "relearning" state  and the easeFactor is reduced.
       // new easeFactor -0.20
       // The easeFactor can not get lower than 1.3
-      // Again = goes to "relearning" state  and the easeFactor is reduced.
-      //         If it is marked correct the next time, its new interval is multiplied with "new interval" setting,
-      //         if not: lapse card
+      // will be shown again in lapseSetting stepInMinutes
+      const stepInMinutes = settings.lapseSettings.stepInMinutes;
+      const currentEaseFactor = card.easeFactor;
+      let newEaseFactor = currentEaseFactor;
+      if (currentEaseFactor - 0.15 >= 1.3) {
+        newEaseFactor = currentEaseFactor - 0.2;
+      } else {
+        newEaseFactor = 1.3;
+      }
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            state: 'RELEARNING',
+            dueDate: moment()
+              .add(stepInMinutes, 'minutes')
+              .toDate(),
+            easeFactor: newEaseFactor,
+          },
+        }
+      );
     }
   }
   if (answer === 'hard' && card.state === 'GRADUATED') {
@@ -106,7 +139,26 @@ const updateCard = (settings, card, answer, deckId) => {
     );
   }
   if (answer === 'good') {
-    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+    if (card.state === 'RELEARNING') {
+      const currentInterval = card.currentInterval;
+      const newIntervalSetting = settings.lapseSettings.newInterval;
+      const newInterval = currentInterval * newIntervalSetting;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            state: 'GRADUATED',
+            currentStep: 0,
+            lapseCount: 0,
+            currentInterval: newInterval,
+            dueDate: moment()
+              .add(newInterval, 'days')
+              .toDate(),
+          },
+        }
+      );
+    }
+    if (card.state === 'NEW' || card.state === 'LEARNING') {
       // Good: Will move the card to the next step. If the step was the last step,
       //       the card graduates and its currentInterval is set to graduating inverval setting
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
@@ -167,7 +219,26 @@ const updateCard = (settings, card, answer, deckId) => {
   }
   if (answer === 'easy') {
     const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
-    if (card.state === 'NEW' || card.state === 'LEARNING' || card.state === 'RELEARNING') {
+    if (card.state === 'RELEARNING') {
+      const currentInterval = card.currentInterval;
+      const newIntervalSetting = settings.lapseSettings.newInterval;
+      const newInterval = currentInterval * newIntervalSetting;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            state: 'GRADUATED',
+            currentStep: 0,
+            lapseCount: 0,
+            currentInterval: newInterval,
+            dueDate: moment()
+              .add(newInterval, 'days')
+              .toDate(),
+          },
+        }
+      );
+    }
+    if (card.state === 'NEW' || card.state === 'LEARNING') {
       // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
       Cards.update(
         { _id: card._id },
@@ -219,7 +290,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map((deck) => {
+        foundDecks.map(deck => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -227,7 +298,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map((deck) => {
+        const decks = updatedDecks.map(deck => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
@@ -361,6 +432,7 @@ export default {
         easeFactor,
         currentInterval: 0,
         currentStep: 0,
+        lapseCount: 0,
         dueDate,
         createdAt: new Date(),
       });

@@ -218,6 +218,8 @@ if (Meteor.isServer) {
       assert.equal(card.state, 'NEW');
       assert.equal(card.easeFactor, DEFAULT_SETTINGS.easeFactor);
       assert.equal(card.currentInterval, 0);
+      assert.equal(card.currentStep, 0);
+      assert.equal(card.lapseCount, 0);
     });
   });
 }

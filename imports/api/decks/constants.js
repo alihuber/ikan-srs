@@ -51,6 +51,7 @@ export const ANSWER_CARD_MUTATION = gql`
       dueDate
       currentStep
       createdAt
+      lapseCount
     }
   }
 `;

@@ -8,16 +8,11 @@ import { toast } from 'react-toastify';
 import { UPDATE_SETTINGS_MUTATION } from '../../../api/settings/constants';
 
 const lapseSettingsSchema = new SimpleSchema({
-  stepsInMinutes: {
-    type: Array,
-    minCount: 1,
-    maxCount: 5,
-  },
-  'stepsInMinutes.$': {
+  stepInMinutes: {
     type: SimpleSchema.Integer,
     min: 1,
   },
-  newInterval: { type: SimpleSchema.Integer, min: 1 },
+  newInterval: { type: Number, min: 0 },
   minimumIntervalInDays: { type: SimpleSchema.Integer, min: 1 },
   leechThreshold: SimpleSchema.Integer,
   leechAction: {
@@ -43,7 +38,7 @@ const learningSettingsSchema = new SimpleSchema({
   newCardsPerDay: { type: SimpleSchema.Integer, min: 1 },
   graduatingIntervalInDays: { type: SimpleSchema.Integer, min: 1 },
   easyIntervalInDays: { type: SimpleSchema.Integer, min: 0 },
-  startingEase: { type: SimpleSchema.Integer, min: 0 },
+  startingEase: { type: Number, min: 0 },
 });
 
 const settingsSchema = new SimpleSchema({
@@ -60,7 +55,7 @@ const bridge = new SimpleSchema2Bridge(settingsSchema);
 const handleSubmit = (values, updateSetting, refetch) => {
   const { lapseSettings, learningSettings } = values;
   const newLapseSettings = {
-    stepsInMinutes: lapseSettings.stepsInMinutes,
+    stepInMinutes: lapseSettings.stepInMinutes,
     newInterval: lapseSettings.newInterval,
     minimumIntervalInDays: lapseSettings.minimumIntervalInDays,
     leechThreshold: lapseSettings.leechThreshold,

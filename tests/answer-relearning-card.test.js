@@ -30,9 +30,11 @@ if (Meteor.isServer) {
     return { server };
   };
 
+  // relearning card: was graduated, answered 'again'
+  // If it is answered correct the next time, its new interval is multiplied with "new interval" setting,
+  // if not: increase lapse counter, show again
   describe('Answer relearning card', () => {
-    it('again: it sets dueDate to first step', async () => {
-      // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
+    it('again: increase lapse counter, show again in stepInMinutes setting', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'testuser',
@@ -65,7 +67,10 @@ if (Meteor.isServer) {
         createdAt: now,
         state: 'RELEARNING',
         currentStep: 0,
+        lapseCount: 0,
         dueDate: now,
+        easeFactor: 1.5,
+        currentInterval: 10,
       });
 
       const { mutate } = createTestClient(server);
@@ -75,15 +80,16 @@ if (Meteor.isServer) {
         variables: { cardId, answer: 'again' },
       });
       const settings = Settings.findOne(settingsId);
-      const stepsInMinutes = settings.learningSettings.stepsInMinutes;
+      const stepInMinutes = settings.lapseSettings.stepInMinutes;
 
       assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.currentInterval, 10);
       assert.equal(res.data.answerCard.state, 'RELEARNING');
+      assert.equal(res.data.answerCard.lapseCount, 1);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
         moment(now)
-          .add(stepsInMinutes[0], 'minutes')
+          .add(stepInMinutes, 'minutes')
           .toDate()
           .getTime()
       );
@@ -92,8 +98,7 @@ if (Meteor.isServer) {
       timekeeper.reset();
     });
 
-    it('good and not last step: it sets dueDate to next step', async () => {
-      // Again: Will move the card to first step, show again in one minute (sets in minutes setting)
+    it('good: set new interval to oldInterval * newInterval setting, graduate card', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'testuser',
@@ -113,7 +118,7 @@ if (Meteor.isServer) {
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 
-      const settingsId = Settings.insert({
+      Settings.insert({
         userId,
         ...DEFAULT_SETTINGS,
       });
@@ -125,8 +130,11 @@ if (Meteor.isServer) {
         back: 'blarg',
         createdAt: now,
         state: 'RELEARNING',
-        currentStep: 1,
+        currentStep: 0,
+        lapseCount: 0,
         dueDate: now,
+        easeFactor: 1.5,
+        currentInterval: 10,
       });
 
       const { mutate } = createTestClient(server);
@@ -135,100 +143,24 @@ if (Meteor.isServer) {
         mutation: ANSWER_CARD_MUTATION,
         variables: { cardId, answer: 'good' },
       });
-      const settings = Settings.findOne(settingsId);
-      const stepsInMinutes = settings.learningSettings.stepsInMinutes;
 
       assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 2);
-      assert.equal(res.data.answerCard.state, 'RELEARNING');
-      assert.equal(
-        res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(stepsInMinutes[2], 'minutes')
-          .toDate()
-          .getTime()
-      );
-      assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
-        res.data.answerCard.dueDate.getTime()
-      );
-      const deck = Decks.findOne(deckId);
-      assert.notEqual(deck.newCardsToday.numCards, 1);
-      timekeeper.reset();
-    });
-
-    it('good and last step: it will graduate card', async () => {
-      // Good: Will move the card to the next step. If the step was the last step,
-      //       the card graduates and its currentInterval is set to one day (graduating inverval setting)
-      resetDatabase();
-      const userId = Accounts.createUser({
-        username: 'testuser',
-        admin: false,
-        password: 'example123',
-      });
-
-      const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
-      });
-
-      const deckId = Decks.insert({
-        userId,
-        name: 'deck1',
-        createdAt: new Date(),
-        intervalModifier: 1,
-        newCardsToday: { date: new Date(), numCards: 0 },
-      });
-
-      const settingsId = Settings.insert({
-        userId,
-        ...DEFAULT_SETTINGS,
-      });
-      const now = new Date();
-      timekeeper.freeze(now);
-      const cardId = Cards.insert({
-        deckId,
-        front: 'blaa',
-        back: 'blarg',
-        createdAt: now,
-        state: 'RELEARNING',
-        currentStep: 2,
-        dueDate: now,
-      });
-
-      const { mutate } = createTestClient(server);
-
-      const res = await mutate({
-        mutation: ANSWER_CARD_MUTATION,
-        variables: { cardId, answer: 'good' },
-      });
-      const settings = Settings.findOne(settingsId);
-      const graduatingIntervalInDays = settings.learningSettings.graduatingIntervalInDays;
-
-      assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.currentInterval, 7);
       assert.equal(res.data.answerCard.state, 'GRADUATED');
-      assert.equal(res.data.answerCard.currentInterval, graduatingIntervalInDays);
+      assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
         moment(now)
-          .add(graduatingIntervalInDays, 'days')
+          .add(7, 'days')
           .toDate()
           .getTime()
-      );
-      assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
-        res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
-    it('easy: it will graduate card', async () => {
-      // Easy: The card graduates immediately and its currentInterval will be set to easyIntervalInDays
+
+    it('easy: set new interval to oldInterval * newInterval setting, graduate card', async () => {
       resetDatabase();
       const userId = Accounts.createUser({
         username: 'testuser',
@@ -248,7 +180,7 @@ if (Meteor.isServer) {
         newCardsToday: { date: new Date(), numCards: 0 },
       });
 
-      const settingsId = Settings.insert({
+      Settings.insert({
         userId,
         ...DEFAULT_SETTINGS,
       });
@@ -260,8 +192,11 @@ if (Meteor.isServer) {
         back: 'blarg',
         createdAt: now,
         state: 'RELEARNING',
-        currentStep: 1,
+        currentStep: 0,
+        lapseCount: 0,
         dueDate: now,
+        easeFactor: 1.5,
+        currentInterval: 10,
       });
 
       const { mutate } = createTestClient(server);
@@ -270,25 +205,17 @@ if (Meteor.isServer) {
         mutation: ANSWER_CARD_MUTATION,
         variables: { cardId, answer: 'easy' },
       });
-      const settings = Settings.findOne(settingsId);
-      const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
 
       assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
+      assert.equal(res.data.answerCard.currentInterval, 7);
       assert.equal(res.data.answerCard.state, 'GRADUATED');
-      assert.equal(res.data.answerCard.currentInterval, easyIntervalInDays);
+      assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
         moment(now)
-          .add(easyIntervalInDays, 'days')
+          .add(7, 'days')
           .toDate()
           .getTime()
-      );
-      assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
-        res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);

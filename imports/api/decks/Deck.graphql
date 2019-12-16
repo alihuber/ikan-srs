@@ -20,6 +20,7 @@ type Card {
   currentInterval: Float
   dueDate: Date
   currentStep: Int
+  lapseCount: Int
   createdAt: Date
 }
 
