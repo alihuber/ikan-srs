@@ -19,13 +19,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = (deck) => {
+const collectCardStats = deck => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const cards = foundCards.length;
-  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
-  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
+  const newCards = foundCards.filter(c => c.state === 'NEW').length;
+  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
   deck.cards = cards;
   deck.newCards = newCards;
   deck.learningCards = learningCards;
@@ -42,7 +42,7 @@ const updateDeckNewCardsToday = (state, deckId) => {
 
 //         new learning relearning graduated
 // easy    Y   Y        Y          Y
-// good    Y   Y        Y          X
+// good    Y   Y        Y          Y
 // hard                            X
 // again   Y   Y        Y          X
 const updateCard = (settings, card, answer, deckId) => {
@@ -123,8 +123,23 @@ const updateCard = (settings, card, answer, deckId) => {
       updateDeckNewCardsToday(card.state, deckId);
     }
     if (card.state === 'GRADUATED') {
-      // newInterval = currentInterval * easeFactor * intervalModifier
-      // easeFactor unchanged
+      // we checked that the deck belongs to user before
+      const foundDeck = Decks.findOne({ _id: deckId });
+      const currentInterval = card.currentInterval;
+      const currentEaseFactor = card.easeFactor;
+      const intervalModifier = foundDeck.intervalModifier;
+      const newInterval = currentInterval * currentEaseFactor * intervalModifier;
+      Cards.update(
+        { _id: card._id },
+        {
+          $set: {
+            currentInterval: newInterval,
+            dueDate: moment()
+              .add(newInterval, 'days')
+              .toDate(),
+          },
+        }
+      );
     }
   }
   if (answer === 'easy') {
@@ -181,7 +196,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map((deck) => {
+        foundDecks.map(deck => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -189,7 +204,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map((deck) => {
+        const decks = updatedDecks.map(deck => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
