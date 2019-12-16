@@ -1,0 +1,20 @@
+db.getCollection('settings').insert(
+{
+    userId : "ryfEzeGqzRvW7FbL5",
+    lapseSettings: {
+      stepInMinutes: 20,
+      newInterval: 0.7,
+      minimumIntervalInDays: 2,
+      leechThreshold: 8,
+      leechAction: 'TAG',
+    },
+
+    learningSettings: {
+      stepsInMinutes: [15, 1440, 8640],
+      newCardsOrder: 'ADDED', // added / random
+      newCardsPerDay: 1000,
+      graduatingIntervalInDays: 15,
+      easyIntervalInDays: 60,
+      startingEase: 2.5,
+    },
+});
