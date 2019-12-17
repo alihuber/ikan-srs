@@ -34,7 +34,7 @@ type Deck {
   cards: [Card]
   numCards: Int
   newCards: Int
-  learningCars: Int
+  learningCards: Int
   relearningCards: Int
   graduatedCards: Int
   newCardsToday: NewCardsToday
@@ -56,4 +56,6 @@ extend type Mutation {
   deleteDeck(deckId: String!): Boolean
   addCard(deckId: String!, front: String!, back: String!): Deck
   answerCard(cardId: String!, answer: String!): Card
+  deleteCard(cardId: String!): Boolean
+  updateCard(cardId: String!, front: String!, back: String!): Card
 }

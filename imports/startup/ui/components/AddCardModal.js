@@ -11,21 +11,26 @@ import { ADD_CARD_MUTATION } from '../../../api/decks/constants';
 const addCardSchema = new SimpleSchema({
   deckId: {
     type: String,
+    optional: true,
   },
   front: {
     type: String,
-    min: 3,
+    min: 1,
   },
   back: {
     type: String,
-    min: 3,
+    min: 1,
   },
 });
 
 const bridge = new SimpleSchema2Bridge(addCardSchema);
 
-const handleSubmit = (values, addCard, refetch) => {
-  const { front, back, deckId } = values;
+const handleSubmit = (values, addCard, refetch, deck) => {
+  const { front, back } = values;
+  let { deckId } = values;
+  if (!deckId && deck) {
+    deckId = deck._id;
+  }
   if (front && back && deckId) {
     addCard({ variables: { deckId, front, back } })
       .then(() => {
@@ -34,25 +39,32 @@ const handleSubmit = (values, addCard, refetch) => {
           position: toast.POSITION.BOTTOM_CENTER,
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         toast.error('Card add error!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
       });
+  } else {
+    toast.error('Card add error!', {
+      position: toast.POSITION.BOTTOM_CENTER,
+    });
   }
 };
 
-const AddCardModal = ({ refetch, decks }) => {
+const AddCardModal = ({ refetch, decks, deck }) => {
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
-  const deckOptions = decks.map((deck) => {
-    return { label: deck.name, value: deck._id };
-  });
+  let deckOptions;
+  if (decks) {
+    deckOptions = decks.map(dk => {
+      return { label: dk.name, value: dk._id };
+    });
+  }
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch)}>
+      <AutoForm schema={bridge} onSubmit={doc => handleSubmit(doc, addCard, refetch, deck)}>
         <h4>Add card</h4>
-        <SelectField name="deckId" options={deckOptions} />
+        {deck ? null : <SelectField name="deckId" options={deckOptions} />}
         <LongTextField name="front" />
         <ErrorField name="front" errorMessage="Front is required" />
         <LongTextField name="back" />
@@ -65,7 +77,8 @@ const AddCardModal = ({ refetch, decks }) => {
 
 AddCardModal.propTypes = {
   refetch: PropTypes.func.isRequired,
-  decks: PropTypes.array.isRequired,
+  decks: PropTypes.array,
+  deck: PropTypes.object,
 };
 
 export default AddCardModal;

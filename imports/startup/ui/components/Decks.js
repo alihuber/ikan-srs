@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { Divider, Label, Card, Container, Grid, Header, Modal, Button } from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
-import { DECKS_QUERY, DELETE_DECK_MUTATION } from '../../../api/decks/constants';
+import { DECKS_QUERY } from '../../../api/decks/constants';
 import LoadingIndicator from './LoadingIndicator';
 import AddDeckModal from './AddDeckModal';
 import AddCardModal from './AddCardModal';
@@ -17,17 +17,6 @@ const Decks = () => {
   const { data, loading, refetch } = useQuery(DECKS_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
-  // eslint-disable-next-line no-unused-vars
-  const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
-
-  // const handleDelete = (deckId, deleteDeckFunc, reFetch) => {
-  //   deleteDeckFunc({ variables: { deckId } }).then(() => {
-  //     reFetch();
-  //     toast.success('Deletion successful!', {
-  //       position: toast.POSITION.BOTTOM_CENTER,
-  //     });
-  //   });
-  // };
 
   const handleLearn = (deckId, hist) => {
     hist.push(`/learn/${deckId}`);
@@ -102,7 +91,7 @@ Interval modifier:
                           <br />
                           <Label color="teal">
                             Learning Cards
-                            <Label.Detail>{deck.learningCars}</Label.Detail>
+                            <Label.Detail>{deck.learningCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="blue">

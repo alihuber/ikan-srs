@@ -476,6 +476,58 @@ export default {
       logger.log({ level: 'info', message: `added card with ${id} to deck ${deckId} for user with _id ${user._id}` });
       return collectCardStats(Decks.findOne(deckId));
     },
+    updateCard(_, args, context) {
+      Match.test(args, { cardId: String, front: String, back: String });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got update card request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `update card requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const { cardId, front, back } = args;
+      const foundCard = Cards.findOne({ _id: cardId });
+      const deckId = foundCard && foundCard.deckId;
+      const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
+      if (!foundCard || !foundDeck) {
+        logger.log({ level: 'warn', message: `update card deck with ${deckId} not found` });
+        throw new Error('not authorized');
+      }
+      Cards.update({ _id: cardId }, { $set: { front, back } });
+      logger.log({ level: 'info', message: `updated card with ${cardId} for user with _id ${user._id}` });
+      return Cards.findOne(cardId);
+    },
+    deleteCard(_, args, context) {
+      Match.test(args, { cardId: String });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got delete card request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `add card requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const { cardId } = args;
+      const foundCard = Cards.findOne(cardId);
+      if (foundCard) {
+        const deckId = foundCard.deckId;
+        const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
+        if (!foundDeck) {
+          logger.log({ level: 'warn', message: `delete card for ${deckId} not found` });
+          return false;
+        }
+        logger.log({ level: 'info', message: `deleting card with _id ${cardId}` });
+        try {
+          Cards.remove({ _id: cardId });
+          return true;
+        } catch (err) {
+          logger.log({ level: 'error', message: `deleting card with _id ${cardId} failed: ${JSON.stringify(err)}` });
+          return false;
+        }
+      } else {
+        logger.log({ level: 'info', message: `could not delete card with _id ${cardId}` });
+        return false;
+      }
+    },
     answerCard(_, args, context) {
       Match.test(args, { cardId: String, answer: String });
       const user = context.user;

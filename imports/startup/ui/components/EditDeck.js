@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Container, Grid, Header, Modal, Button } from 'semantic-ui-react';
-import { toast } from 'react-toastify';
+import { useQuery } from '@apollo/react-hooks';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
-import { DECK_QUERY, DELETE_DECK_MUTATION } from '../../../api/decks/constants';
+import { DECK_QUERY } from '../../../api/decks/constants';
 import LoadingIndicator from './LoadingIndicator';
-import AddCardModal from './AddCardModal';
 import CardsTable from './CardsTable';
 
 const EditDeck = () => {
@@ -19,18 +17,6 @@ const EditDeck = () => {
     notifyOnNetworkStatusChange: true,
     variables: { deckId },
   });
-  // eslint-disable-next-line no-unused-vars
-  const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
-
-  const handleDelete = (deckId, deleteDeckFunc, reFetch) => {
-    deleteDeckFunc({ variables: { deckId } }).then(() => {
-      reFetch();
-      toast.success('Deletion successful!', {
-        position: toast.POSITION.BOTTOM_CENTER,
-      });
-    });
-  };
-
   if (currentUser && (!currentUser._id || currentUser.admin)) {
     history.push('/');
     return null;
@@ -47,7 +33,7 @@ const EditDeck = () => {
                 <Header size="large" color="teal" textAlign="center">
                   Deck {data.deckQuery.name}
                 </Header>
-                <CardsTable deckId={deckId} />
+                <CardsTable deck={data.deckQuery} />
               </Grid.Column>
             </Grid>
           </Container>

@@ -24,7 +24,7 @@ export const DECKS_QUERY = gql`
       }
       numCards
       newCards
-      learningCars
+      learningCards
       relearningCards
       graduatedCards
       newCardsToday {
@@ -90,9 +90,31 @@ export const NEXT_CARD_FOR_LEARNING_QUERY = gql`
   }
 `;
 
+export const DELETE_CARD_MUTATION = gql`
+  mutation deleteCard($cardId: String!) {
+    deleteCard(cardId: $cardId)
+  }
+`;
+
 export const ANSWER_CARD_MUTATION = gql`
   mutation answerCard($cardId: String!, $answer: String!) {
     answerCard(cardId: $cardId, answer: $answer) {
+      front
+      back
+      state
+      easeFactor
+      currentInterval
+      dueDate
+      currentStep
+      createdAt
+      lapseCount
+    }
+  }
+`;
+
+export const UPDATE_CARD_MUTATION = gql`
+  mutation updateCard($cardId: String!, $front: String!, $back: String!) {
+    updateCard(cardId: $cardId, front: $front, back: $back) {
       front
       back
       state
@@ -125,7 +147,7 @@ export const CREATE_DECK_MUTATION = gql`
       }
       numCards
       newCards
-      learningCars
+      learningCards
       relearningCards
       graduatedCards
       newCardsToday {
@@ -161,7 +183,7 @@ export const ADD_CARD_MUTATION = gql`
       }
       numCards
       newCards
-      learningCars
+      learningCards
       relearningCards
       graduatedCards
       newCardsToday {

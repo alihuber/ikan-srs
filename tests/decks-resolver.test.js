@@ -17,6 +17,8 @@ import {
   CREATE_DECK_MUTATION,
   DELETE_DECK_MUTATION,
   ADD_CARD_MUTATION,
+  DELETE_CARD_MUTATION,
+  UPDATE_CARD_MUTATION,
 } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
@@ -325,6 +327,95 @@ if (Meteor.isServer) {
       assert.equal(card.currentInterval, 0);
       assert.equal(card.currentStep, 0);
       assert.equal(card.lapseCount, 0);
+    });
+  });
+
+  describe('Delete card mutation', () => {
+    it('deletes card from deck', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { mutate } = createTestClient(server);
+      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res1.data.addCard, null);
+      assert.equal(res1.errors, null);
+      const cardId = Cards.find({}).fetch()[0]._id;
+
+      const res = await mutate({
+        mutation: DELETE_CARD_MUTATION,
+        variables: { cardId },
+      });
+
+      assert.equal(res.data.deleteCard, true);
+      const card = Cards.findOne(cardId);
+      assert.equal(card, null);
+    });
+  });
+
+  describe('Update card mutation', () => {
+    it('updates card in deck', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const { mutate } = createTestClient(server);
+      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res1.data.addCard, null);
+      assert.equal(res1.errors, null);
+
+      const cardId = Cards.find({}).fetch()[0]._id;
+      const res = await mutate({
+        mutation: UPDATE_CARD_MUTATION,
+        variables: { cardId, front: 'newf', back: 'newb' },
+      });
+
+      assert.equal(res.data.updateCard.front, 'newf');
+      assert.equal(res.data.updateCard.back, 'newb');
     });
   });
 }
