@@ -16,6 +16,7 @@ const Decks = () => {
   const currentUser = useContext(CurrentUserContext);
   const { data, loading, refetch } = useQuery(DECKS_QUERY, {
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
   });
 
   const handleLearn = (deckId, hist) => {
@@ -43,28 +44,28 @@ const Decks = () => {
                   Decks
                 </Header>
                 <Modal
-                  trigger={(
+                  trigger={
                     <Button name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  )}
+                  }
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 {data.decks.length !== 0 ? (
                   <Modal
-                    trigger={(
+                    trigger={
                       <Button name="addDeckButton" size="small" secondary floated="right">
                         Add Card
                       </Button>
-                    )}
+                    }
                   >
                     <AddCardModal decks={data.decks} refetch={refetch} />
                   </Modal>
                 ) : null}
                 <Divider />
                 <Card.Group>
-                  {data.decks.map((deck) => (
+                  {data.decks.map(deck => (
                     <Card key={deck._id}>
                       <Card.Content>
                         <Button floated="right" onClick={() => handleEdit(deck._id, history)}>
@@ -73,34 +74,32 @@ const Decks = () => {
                         <Card.Header>{deck.name}</Card.Header>
                         <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
                         <Card.Meta>
-Interval modifier:
-{' '}
-{deck.intervalModifier}
-%
-</Card.Meta>
+                          Interval modifier:&nbsp;
+                          {deck.intervalModifier}%
+                        </Card.Meta>
                         <Card.Description>
                           <Label>
-                            Cards
+                            All Cards
                             <Label.Detail>{deck.numCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="green">
-                            New Cards
+                            Due New Cards
                             <Label.Detail>{deck.newCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="teal">
-                            Learning Cards
+                            Due Learning Cards
                             <Label.Detail>{deck.learningCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="blue">
-                            Relearning Cards
+                            Due Relearning Cards
                             <Label.Detail>{deck.relearningCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="brown">
-                            Graduated Cards
+                            Due Graduated Cards
                             <Label.Detail>{deck.graduatedCards}</Label.Detail>
                           </Label>
                         </Card.Description>

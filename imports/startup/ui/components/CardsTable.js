@@ -82,7 +82,7 @@ const CardsTable = ({ deck }) => {
                 <Table.Cell collapsing>{truncate(card._id, { length: 7 })}</Table.Cell>
                 <Table.Cell collapsing>{truncate(card.front, { length: 7 })}</Table.Cell>
                 <Table.Cell collapsing>{truncate(card.back, { length: 7 })}</Table.Cell>
-                <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm')}</Table.Cell>
+                <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
                 <Table.Cell collapsing>{card.state}</Table.Cell>
                 <Table.Cell collapsing>{card.tags}</Table.Cell>
                 <Table.Cell collapsing textAlign="right">

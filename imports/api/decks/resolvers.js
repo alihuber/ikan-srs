@@ -22,10 +22,11 @@ const logger = createLogger({
 const collectCardStats = deck => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const numCards = foundCards.length;
-  const newCards = foundCards.filter(c => c.state === 'NEW').length;
-  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
+  const now = new Date();
+  const newCards = foundCards.filter(c => c.state === 'NEW' && c.dueDate < now).length;
+  const learningCards = foundCards.filter(c => c.state === 'LEARNING' && c.dueDate < now).length;
+  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING' && c.dueDate < now).length;
+  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED' && c.dueDate < now).length;
   deck.cards = foundCards;
   deck.numCards = numCards;
   deck.newCards = newCards;
@@ -47,6 +48,7 @@ const updateCard = (settings, card, answer, deckId) => {
       // show again in lapseSettings minutes, increase lapseCount
       const stepInMinutes = settings.lapseSettings.stepInMinutes;
       const lapseCountBefore = card.lapseCount;
+      // TODO: handle leeches due to settings, if lapseCount > leechThreshold: tag or suspend
       Cards.update(
         { _id: card._id },
         {
