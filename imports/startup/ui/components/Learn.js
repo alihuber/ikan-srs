@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+import Markdown from 'markdown-to-jsx';
 import { Divider, Card, Container, Grid, Header, Button } from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
@@ -26,7 +27,6 @@ const Learn = () => {
   );
 
   const handleAnswer = (cardId, answerCardFunc, answer, reFetch) => {
-    debugger;
     answerCardFunc({ variables: { cardId, answer } }).then(() => {
       reFetch();
     });
@@ -89,7 +89,11 @@ const Learn = () => {
                     <Card.Content>
                       <Card.Description>{card.front}</Card.Description>
                       <Divider />
-                      {answerShown ? <Card.Description>{card.back}</Card.Description> : null}
+                      {answerShown ? (
+                        <Card.Description>
+                          <Markdown>{card.back}</Markdown>
+                        </Card.Description>
+                      ) : null}
                     </Card.Content>
                     <Card.Content extra>{answerShown ? rateAnswer(card.state, card._id, refetch) : showAnswer}</Card.Content>
                   </Card>

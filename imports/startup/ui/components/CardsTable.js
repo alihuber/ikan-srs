@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import Markdown from 'markdown-to-jsx';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { toast } from 'react-toastify';
 import { Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
@@ -81,7 +82,9 @@ const CardsTable = ({ deck }) => {
               <Table.Row key={card._id}>
                 <Table.Cell collapsing>{truncate(card._id, { length: 7 })}</Table.Cell>
                 <Table.Cell collapsing>{truncate(card.front, { length: 7 })}</Table.Cell>
-                <Table.Cell collapsing>{truncate(card.back, { length: 7 })}</Table.Cell>
+                <Table.Cell collapsing>
+                  <Markdown>{truncate(card.back, { length: 7 })}</Markdown>
+                </Table.Cell>
                 <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
                 <Table.Cell collapsing>{card.state}</Table.Cell>
                 <Table.Cell collapsing>{card.tags}</Table.Cell>
@@ -119,7 +122,9 @@ const CardsTable = ({ deck }) => {
               <Table.Row key={card._id}>
                 <Table.Cell collapsing>{card._id}</Table.Cell>
                 <Table.Cell collapsing>{card.front}</Table.Cell>
-                <Table.Cell collapsing>{card.back}</Table.Cell>
+                <Table.Cell collapsing>
+                  <Markdown>{card.back}</Markdown>
+                </Table.Cell>
                 <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm')}</Table.Cell>
                 <Table.Cell collapsing>{card.state}</Table.Cell>
                 <Table.Cell collapsing>{card.tags}</Table.Cell>
