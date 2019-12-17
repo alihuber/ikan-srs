@@ -9,6 +9,7 @@ import Users from './admin/Users';
 import Settings from './Settings';
 import Decks from './Decks';
 import Learn from './Learn';
+import EditDeck from './EditDeck';
 
 const Routing = ({ LayoutComponent }) => {
   const LoadingLayout = LayoutComponent;
@@ -34,6 +35,9 @@ const Routing = ({ LayoutComponent }) => {
             </Route>
             <Route exact path="/learn/:deckId">
               <Learn />
+            </Route>
+            <Route exact path="/editDeck/:deckId">
+              <EditDeck />
             </Route>
             <Route exact>
               <NotFoundPage />

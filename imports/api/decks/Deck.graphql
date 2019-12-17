@@ -13,6 +13,7 @@ type NewCardsToday {
 }
 
 type Card {
+  _id: String
   front: String
   back: String
   state: CardState
@@ -30,7 +31,8 @@ type Deck {
   createdAt: Date
   userId: String
   intervalModifier: Float
-  cards: Int
+  cards: [Card]
+  numCards: Int
   newCards: Int
   learningCars: Int
   relearningCards: Int
@@ -38,9 +40,15 @@ type Deck {
   newCardsToday: NewCardsToday
 }
 
+type CardConnection {
+  cardsList: [Card]!
+}
+
 extend type Query {
   decks: [Deck]
   nextCardForLearning(deckId: String!): Card
+  deckQuery(deckId: String!): Deck
+  cardsForDeck(deckId: String!): CardConnection!
 }
 
 extend type Mutation {

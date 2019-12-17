@@ -6,7 +6,7 @@ import { Container, Menu, Dropdown } from 'semantic-ui-react';
 
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
-const handleLogout = (history) => {
+const handleLogout = history => {
   Meteor.logout(() => {
     toast.success('Logout successful!', {
       position: toast.POSITION.BOTTOM_CENTER,
@@ -15,19 +15,19 @@ const handleLogout = (history) => {
   });
 };
 
-const handleHome = (history) => {
+const handleHome = history => {
   history.push('/');
 };
 
-const handleUsers = (history) => {
+const handleUsers = history => {
   history.push('/users');
 };
 
-const handleLogin = (history) => {
+const handleLogin = history => {
   history.push('/login');
 };
 
-const handleSettings = (history) => {
+const handleSettings = history => {
   history.push('/settings');
 };
 
@@ -47,10 +47,7 @@ const Navbar = () => {
         ) : null}
 
         {!currentUser || !currentUser._id ? (
-          <Menu.Item
-            position="right" as="a" header onClick={() => handleLogin(history)}
-            itemname="loginButton"
-          >
+          <Menu.Item position="right" as="a" header onClick={() => handleLogin(history)} itemname="loginButton">
             Login
           </Menu.Item>
         ) : null}

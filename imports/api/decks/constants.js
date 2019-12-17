@@ -12,7 +12,17 @@ export const DECKS_QUERY = gql`
       name
       createdAt
       intervalModifier
-      cards
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+      }
+      numCards
       newCards
       learningCars
       relearningCards
@@ -20,6 +30,46 @@ export const DECKS_QUERY = gql`
       newCardsToday {
         date
         numCards
+      }
+    }
+  }
+`;
+
+export const DECK_QUERY = gql`
+  query deckQuery($deckId: String!) {
+    deckQuery(deckId: $deckId) {
+      _id
+      userId
+      name
+      createdAt
+      intervalModifier
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+      }
+    }
+  }
+`;
+
+export const CARDS_FOR_DECK_QUERY = gql`
+  query cardsForDeck($deckId: String!) {
+    cardsForDeck(deckId: $deckId) {
+      cardsList {
+        _id
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
       }
     }
   }
@@ -63,7 +113,17 @@ export const CREATE_DECK_MUTATION = gql`
       name
       userId
       createdAt
-      cards
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+      }
+      numCards
       newCards
       learningCars
       relearningCards
@@ -89,7 +149,17 @@ export const ADD_CARD_MUTATION = gql`
       name
       userId
       createdAt
-      cards
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+      }
+      numCards
       newCards
       learningCars
       relearningCards

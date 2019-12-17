@@ -8,7 +8,16 @@ import moment from 'moment';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, Cards, DECKS_QUERY, CREATE_DECK_MUTATION, DELETE_DECK_MUTATION, ADD_CARD_MUTATION } from '../imports/api/decks/constants';
+import {
+  Decks,
+  Cards,
+  DECKS_QUERY,
+  DECK_QUERY,
+  CARDS_FOR_DECK_QUERY,
+  CREATE_DECK_MUTATION,
+  DELETE_DECK_MUTATION,
+  ADD_CARD_MUTATION,
+} from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
 
@@ -115,6 +124,99 @@ if (Meteor.isServer) {
     });
   });
 
+  describe('Deck query', () => {
+    it('returns no deck if no data found for user', async () => {
+      resetDatabase();
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: 1, username: 'testuser', admin: false } }),
+      });
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECK_QUERY, variables: { deckId: 'foo123' } });
+      assert.deepEqual(res.data.deckQuery, null);
+    });
+
+    it('returns deck if data found for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 1,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECK_QUERY, variables: { deckId } });
+      assert.equal(res.data.deckQuery.name, 'deck1');
+      assert.deepEqual(res.data.deckQuery.cards, []);
+    });
+  });
+
+  describe('Cards for deck query', () => {
+    it('returns no cards if no data found for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+      const { query } = createTestClient(server);
+      const res = await query({ query: CARDS_FOR_DECK_QUERY, variables: { deckId: 'foo123' } });
+      assert.deepEqual(res.data.cardsForDeck.cardsList, []);
+    });
+
+    it('returns cards if data found for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      const { query, mutate } = createTestClient(server);
+      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res1.data.addCard, null);
+      assert.equal(res1.errors, null);
+
+      const res = await query({ query: CARDS_FOR_DECK_QUERY, variables: { deckId } });
+      assert.notDeepEqual(res.data.cardsForDeck.cardsList, []);
+      assert.equal(res.data.cardsForDeck.cardsList[0].front, 'foo');
+      assert.equal(res.data.cardsForDeck.cardsList[0].back, 'bar');
+    });
+  });
+
   describe('Create deck mutation', () => {
     it('creates deck for user', async () => {
       resetDatabase();
@@ -134,7 +236,8 @@ if (Meteor.isServer) {
 
       assert.equal(res.data.createDeck.name, 'deck1');
       assert.equal(res.data.createDeck.userId, userId);
-      assert.equal(res.data.createDeck.cards, 0);
+      assert.deepEqual(res.data.createDeck.cards, []);
+      assert.equal(res.data.createDeck.numCards, 0);
       assert.equal(res.data.createDeck.newCardsToday.numCards, 0);
     });
   });
@@ -209,7 +312,9 @@ if (Meteor.isServer) {
 
       assert.equal(res.data.addCard.name, 'deck1');
       assert.equal(res.data.addCard.userId, userId);
-      assert.equal(res.data.addCard.cards, 1);
+      assert.equal(res.data.addCard.cards[0].front, 'foo');
+      assert.equal(res.data.addCard.cards[0].back, 'bar');
+      assert.equal(res.data.addCard.numCards, 1);
 
       const card = Cards.findOne();
       assert.equal(card.deckId, deckId);

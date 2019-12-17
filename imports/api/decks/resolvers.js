@@ -19,14 +19,15 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = deck => {
+const collectCardStats = (deck) => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
-  const cards = foundCards.length;
-  const newCards = foundCards.filter(c => c.state === 'NEW').length;
-  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
-  deck.cards = cards;
+  const numCards = foundCards.length;
+  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
+  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
+  deck.cards = foundCards;
+  deck.numCards = numCards;
   deck.newCards = newCards;
   deck.learningCards = learningCards;
   deck.relearningCards = relearningCards;
@@ -40,11 +41,6 @@ const updateDeckNewCardsToday = (state, deckId) => {
   }
 };
 
-//         new learning relearning graduated
-// easy    Y   Y        X          Y
-// good    Y   Y        X          Y
-// hard                            Y
-// again   Y   Y        Y          Y
 const updateCard = (settings, card, answer, deckId) => {
   if (answer === 'again') {
     if (card.state === 'RELEARNING') {
@@ -290,7 +286,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map(deck => {
+        foundDecks.map((deck) => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -298,7 +294,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map(deck => {
+        const decks = updatedDecks.map((deck) => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
@@ -312,6 +308,47 @@ export default {
         logger.log({ level: 'info', message: 'user not found, returning {}' });
         return [];
       }
+    },
+    deckQuery(_, args, context) {
+      Match.test(args, { deckId: String });
+      const { deckId } = args;
+      const reqUser = context.user;
+      logger.log({ level: 'info', message: `got deck request from _id ${reqUser && reqUser._id}` });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
+      if (!user) {
+        logger.log({ level: 'warn', message: `delete user requester with _id ${user._id} is not found` });
+        throw new Error('not authorized');
+      }
+      const deck = Decks.findOne({ _id: deckId, userId: user._id });
+      const foundCards = Cards.find({ deckId: deck._id }).fetch();
+      if (deck) {
+        logger.log({ level: 'info', message: `found deck with _id ${deckId}` });
+        deck.cards = foundCards;
+        return deck;
+      } else {
+        logger.log({ level: 'info', message: `could not delete deck with _id ${deckId}` });
+        return false;
+      }
+    },
+    cardsForDeck(_, args, context) {
+      Match.test(args, { deckId: String });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got cards for deck request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `cards for deck requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const { deckId } = args;
+      const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
+      if (!foundDeck) {
+        logger.log({ level: 'warn', message: `cards for deck with ${deckId} not found` });
+        return { cardsList: [] };
+      }
+      const cardsList = Cards.find({ deckId: foundDeck._id }).fetch();
+      return {
+        cardsList,
+      };
     },
     nextCardForLearning(_, args, context) {
       Match.test(args, { deckId: String });

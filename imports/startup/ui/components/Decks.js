@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Divider, Label, Card, Container, Grid, Header, Modal, Button } from 'semantic-ui-react';
-import { toast } from 'react-toastify';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import { DECKS_QUERY, DELETE_DECK_MUTATION } from '../../../api/decks/constants';
@@ -21,17 +20,21 @@ const Decks = () => {
   // eslint-disable-next-line no-unused-vars
   const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
 
-  const handleDelete = (deckId, deleteDeckFunc, reFetch) => {
-    deleteDeckFunc({ variables: { deckId } }).then(() => {
-      reFetch();
-      toast.success('Deletion successful!', {
-        position: toast.POSITION.BOTTOM_CENTER,
-      });
-    });
-  };
+  // const handleDelete = (deckId, deleteDeckFunc, reFetch) => {
+  //   deleteDeckFunc({ variables: { deckId } }).then(() => {
+  //     reFetch();
+  //     toast.success('Deletion successful!', {
+  //       position: toast.POSITION.BOTTOM_CENTER,
+  //     });
+  //   });
+  // };
 
   const handleLearn = (deckId, hist) => {
     hist.push(`/learn/${deckId}`);
+  };
+
+  const handleEdit = (deckId, hist) => {
+    hist.push(`/editDeck/${deckId}`);
   };
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {
@@ -75,8 +78,8 @@ const Decks = () => {
                   {data.decks.map((deck) => (
                     <Card key={deck._id}>
                       <Card.Content>
-                        <Button floated="right" onClick={() => handleDelete(deck._id, deleteDeck, refetch)}>
-                          Remove
+                        <Button floated="right" onClick={() => handleEdit(deck._id, history)}>
+                          Edit
                         </Button>
                         <Card.Header>{deck.name}</Card.Header>
                         <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
@@ -89,7 +92,7 @@ Interval modifier:
                         <Card.Description>
                           <Label>
                             Cards
-                            <Label.Detail>{deck.cards}</Label.Detail>
+                            <Label.Detail>{deck.numCards}</Label.Detail>
                           </Label>
                           <br />
                           <Label color="green">
