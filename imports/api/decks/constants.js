@@ -78,6 +78,7 @@ export const CARDS_FOR_DECK_QUERY = gql`
 export const NEXT_CARD_FOR_LEARNING_QUERY = gql`
   query nextCardForLearning($deckId: String!) {
     nextCardForLearning(deckId: $deckId) {
+      _id
       front
       back
       state

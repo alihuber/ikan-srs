@@ -19,13 +19,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const collectCardStats = (deck) => {
+const collectCardStats = deck => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const numCards = foundCards.length;
-  const newCards = foundCards.filter((c) => c.state === 'NEW').length;
-  const learningCards = foundCards.filter((c) => c.state === 'LEARNING').length;
-  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING').length;
-  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED').length;
+  const newCards = foundCards.filter(c => c.state === 'NEW').length;
+  const learningCards = foundCards.filter(c => c.state === 'LEARNING').length;
+  const relearningCards = foundCards.filter(c => c.state === 'RELEARNING').length;
+  const graduatedCards = foundCards.filter(c => c.state === 'GRADUATED').length;
   deck.cards = foundCards;
   deck.numCards = numCards;
   deck.newCards = newCards;
@@ -286,7 +286,7 @@ export default {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = moment().startOf('day');
         const todayEnd = moment().endOf('day');
-        foundDecks.map((deck) => {
+        foundDecks.map(deck => {
           const isToday = moment(deck.newCardsToday.date).isBetween(todayStart, todayEnd);
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
@@ -294,7 +294,7 @@ export default {
           }
         });
         const updatedDecks = Decks.find({ userId: user._id }, { sort: { createdAt: -1 } }).fetch();
-        const decks = updatedDecks.map((deck) => {
+        const decks = updatedDecks.map(deck => {
           return collectCardStats(deck);
         });
         if (decks && decks.length !== 0) {
@@ -459,7 +459,7 @@ export default {
         throw new Error('not authorized');
       }
       const settings = Settings.findOne({ userId: user._id });
-      const easeFactor = settings.startingEase;
+      const easeFactor = settings.learningSettings.startingEase;
       const dueDate = new Date();
       const id = Cards.insert({
         deckId,

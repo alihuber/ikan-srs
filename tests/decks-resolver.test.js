@@ -323,7 +323,7 @@ if (Meteor.isServer) {
       assert.equal(card.front, 'foo');
       assert.equal(card.back, 'bar');
       assert.equal(card.state, 'NEW');
-      assert.equal(card.easeFactor, DEFAULT_SETTINGS.easeFactor);
+      assert.equal(card.easeFactor, DEFAULT_SETTINGS.learningSettings.startingEase);
       assert.equal(card.currentInterval, 0);
       assert.equal(card.currentStep, 0);
       assert.equal(card.lapseCount, 0);
