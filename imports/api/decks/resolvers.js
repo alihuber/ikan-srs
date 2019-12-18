@@ -426,7 +426,7 @@ export default {
       logger.log({ level: 'info', message: `got deleteDeck request from _id ${reqUser && reqUser._id}` });
       const user = reqUser && Meteor.users.findOne(reqUser._id);
       if (!user) {
-        logger.log({ level: 'warn', message: `delete user requester with _id ${user._id} is not found` });
+        logger.log({ level: 'warn', message: `delete deck requester with _id ${user._id} is not found` });
         throw new Error('not authorized');
       }
       const deckToDelete = Decks.findOne({ _id: deckId, userId: user._id });
@@ -505,7 +505,7 @@ export default {
       logger.log({ level: 'info', message: `got delete card request from _id ${user && user._id}` });
       const foundUser = user && Meteor.users.findOne(user._id);
       if (!foundUser) {
-        logger.log({ level: 'warn', message: `add card requester with ${user._id} is no user` });
+        logger.log({ level: 'warn', message: `delete card requester with ${user._id} is no user` });
         throw new Error('not authorized');
       }
       const { cardId } = args;
@@ -528,6 +528,94 @@ export default {
       } else {
         logger.log({ level: 'info', message: `could not delete card with _id ${cardId}` });
         return false;
+      }
+    },
+    resetDeck(_, args, context) {
+      Match.test(args, { deckId: String });
+      const { deckId } = args;
+      const reqUser = context.user;
+      logger.log({ level: 'info', message: `got resetDeck request from _id ${reqUser && reqUser._id}` });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
+      if (!user) {
+        logger.log({ level: 'warn', message: `reset deck requester with _id ${user._id} is not found` });
+        throw new Error('not authorized');
+      }
+      const deckToReset = Decks.findOne({ _id: deckId, userId: user._id });
+      if (deckToReset) {
+        logger.log({ level: 'info', message: `resetting deck with _id ${deckId}` });
+        try {
+          const settings = Settings.findOne({ userId: user._id });
+          const easeFactor = settings.learningSettings.startingEase;
+          const dueDate = new Date();
+          Cards.update(
+            { deckId },
+            {
+              $set: {
+                state: 'NEW',
+                easeFactor,
+                currentInterval: 0,
+                currentStep: 0,
+                lapseCount: 0,
+                dueDate,
+              },
+            }
+          );
+          const updatedCards = Cards.find({ deckId }).fetch();
+          deckToReset.cards = updatedCards;
+          return deckToReset;
+        } catch (err) {
+          logger.log({ level: 'error', message: `resetting deck with _id ${deckId} failed: ${JSON.stringify(err)}` });
+          throw new Error('not authorized');
+        }
+      } else {
+        logger.log({ level: 'info', message: `could not reset deck with _id ${deckId}` });
+        throw new Error('not authorized');
+      }
+    },
+    resetCard(_, args, context) {
+      Match.test(args, { cardId: String });
+      const user = context.user;
+      logger.log({ level: 'info', message: `got reset card request from _id ${user && user._id}` });
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `reset card requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const { cardId } = args;
+      const foundCard = Cards.findOne(cardId);
+      if (foundCard) {
+        const deckId = foundCard.deckId;
+        const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
+        if (!foundDeck) {
+          logger.log({ level: 'warn', message: `reset card for ${deckId} not found` });
+          throw new Error('not authorized');
+        }
+        logger.log({ level: 'info', message: `resettin card with _id ${cardId}` });
+        try {
+          const settings = Settings.findOne({ userId: user._id });
+          const easeFactor = settings.learningSettings.startingEase;
+          const dueDate = new Date();
+          Cards.update(
+            { _id: cardId },
+            {
+              $set: {
+                state: 'NEW',
+                easeFactor,
+                currentInterval: 0,
+                currentStep: 0,
+                lapseCount: 0,
+                dueDate,
+              },
+            }
+          );
+          return Cards.findOne(cardId);
+        } catch (err) {
+          logger.log({ level: 'error', message: `resetting card with _id ${cardId} failed: ${JSON.stringify(err)}` });
+          throw new Error('not authorized');
+        }
+      } else {
+        logger.log({ level: 'info', message: `could not reset card with _id ${cardId}` });
+        throw new Error('not authorized');
       }
     },
     answerCard(_, args, context) {

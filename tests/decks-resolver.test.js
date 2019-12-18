@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
+import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
 import moment from 'moment';
@@ -19,6 +20,8 @@ import {
   ADD_CARD_MUTATION,
   DELETE_CARD_MUTATION,
   UPDATE_CARD_MUTATION,
+  RESET_CARD_MUTATION,
+  RESET_DECK_MUTATION,
 } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/resolvers';
@@ -372,6 +375,118 @@ if (Meteor.isServer) {
       assert.equal(res.data.deleteCard, true);
       const card = Cards.findOne(cardId);
       assert.equal(card, null);
+    });
+  });
+
+  describe('Reset card mutation', () => {
+    it('resets card data', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+      const now = new Date();
+      timekeeper.freeze(now);
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { mutate } = createTestClient(server);
+      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res1.data.addCard, null);
+      assert.equal(res1.errors, null);
+      const cardId = Cards.find({}).fetch()[0]._id;
+
+      const res = await mutate({
+        mutation: RESET_CARD_MUTATION,
+        variables: { cardId },
+      });
+
+      const settings = Settings.findOne({ userId });
+      const easeFactor = settings.learningSettings.startingEase;
+
+      assert.equal(res.data.resetCard.front, 'foo');
+      assert.equal(res.data.resetCard.back, 'bar');
+      assert.equal(res.data.resetCard.state, 'NEW');
+      assert.equal(res.data.resetCard.easeFactor, easeFactor);
+      assert.equal(res.data.resetCard.currentInterval, 0);
+      assert.equal(res.data.resetCard.currentStep, 0);
+      assert.equal(res.data.resetCard.lapseCount, 0);
+      assert.equal(res.data.resetCard.dueDate.getTime(), now.getTime());
+      timekeeper.reset();
+    });
+  });
+
+  describe('Reset deck mutation', () => {
+    it('resets all card data of deck', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+      const now = new Date();
+      timekeeper.freeze(now);
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { mutate } = createTestClient(server);
+      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      assert.notEqual(res1.data.addCard, null);
+      assert.equal(res1.errors, null);
+      const cardId = Cards.find({}).fetch()[0]._id;
+
+      const res = await mutate({
+        mutation: RESET_DECK_MUTATION,
+        variables: { deckId },
+      });
+
+      const settings = Settings.findOne({ userId });
+      const easeFactor = settings.learningSettings.startingEase;
+
+      assert.equal(res.data.resetDeck.cards[0].front, 'foo');
+      assert.equal(res.data.resetDeck.cards[0].back, 'bar');
+      assert.equal(res.data.resetDeck.cards[0].state, 'NEW');
+      assert.equal(res.data.resetDeck.cards[0].easeFactor, easeFactor);
+      assert.equal(res.data.resetDeck.cards[0].currentInterval, 0);
+      assert.equal(res.data.resetDeck.cards[0].currentStep, 0);
+      assert.equal(res.data.resetDeck.cards[0].lapseCount, 0);
+      assert.equal(res.data.resetDeck.cards[0].dueDate.getTime(), now.getTime());
+      timekeeper.reset();
     });
   });
 

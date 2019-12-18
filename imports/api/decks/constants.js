@@ -97,9 +97,50 @@ export const DELETE_CARD_MUTATION = gql`
   }
 `;
 
+export const RESET_CARD_MUTATION = gql`
+  mutation resetCard($cardId: String!) {
+    resetCard(cardId: $cardId) {
+      _id
+      front
+      back
+      state
+      easeFactor
+      currentInterval
+      dueDate
+      currentStep
+      createdAt
+      lapseCount
+    }
+  }
+`;
+
+export const RESET_DECK_MUTATION = gql`
+  mutation resetDeck($deckId: String!) {
+    resetDeck(deckId: $deckId) {
+      _id
+      userId
+      name
+      createdAt
+      intervalModifier
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+        lapseCount
+      }
+    }
+  }
+`;
+
 export const ANSWER_CARD_MUTATION = gql`
   mutation answerCard($cardId: String!, $answer: String!) {
     answerCard(cardId: $cardId, answer: $answer) {
+      _id
       front
       back
       state
@@ -145,6 +186,7 @@ export const CREATE_DECK_MUTATION = gql`
         dueDate
         currentStep
         createdAt
+        lapseCount
       }
       numCards
       newCards
@@ -181,6 +223,7 @@ export const ADD_CARD_MUTATION = gql`
         dueDate
         currentStep
         createdAt
+        lapseCount
       }
       numCards
       newCards

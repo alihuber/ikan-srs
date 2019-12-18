@@ -9,7 +9,13 @@ import truncate from 'lodash/truncate';
 import LoadingIndicator from './LoadingIndicator';
 import AddCardModal from './AddCardModal';
 import EditCardModal from './EditCardModal';
-import { CARDS_FOR_DECK_QUERY, DELETE_DECK_MUTATION, DELETE_CARD_MUTATION } from '../../../api/decks/constants';
+import {
+  CARDS_FOR_DECK_QUERY,
+  DELETE_DECK_MUTATION,
+  DELETE_CARD_MUTATION,
+  RESET_CARD_MUTATION,
+  RESET_DECK_MUTATION,
+} from '../../../api/decks/constants';
 
 const CardsTable = ({ deck }) => {
   const history = useHistory();
@@ -22,10 +28,10 @@ const CardsTable = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
-  const handleDeleteDeck = (dkId, deleteDeckFunc, reFetch, history) => {
+  const handleDeleteDeck = (dkId, deleteDeckFunc, reFetch, hist) => {
     deleteDeckFunc({ variables: { deckId: dkId } }).then(() => {
       reFetch();
-      history.push('/');
+      hist.push('/');
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
@@ -38,6 +44,28 @@ const CardsTable = ({ deck }) => {
       reFetch();
       setPageNum(0);
       toast.success('Deletion successful!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    });
+  };
+
+  const [resetCard, ___] = useMutation(RESET_CARD_MUTATION);
+  const handleResetCard = (cardId, resetCardFunc, reSetFetch) => {
+    resetCardFunc({ variables: { cardId } }).then(() => {
+      reSetFetch();
+      setPageNum(0);
+      toast.success('Card reset successful!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    });
+  };
+
+  const [resetDeck, ____] = useMutation(RESET_DECK_MUTATION);
+  const handleResetDeck = (deckId, resetDeckFunc, reSettFetch) => {
+    resetDeckFunc({ variables: { deckId } }).then(() => {
+      reSettFetch();
+      setPageNum(0);
+      toast.success('Deck reset successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
@@ -74,6 +102,20 @@ const CardsTable = ({ deck }) => {
         </Table.Row>
       </Table.Header>
     );
+
+    const tableFooter = (
+      <Table.Footer fullWidth>
+        <Table.Row>
+          <Table.HeaderCell />
+          <Table.HeaderCell colSpan="6">
+            <Button size="small" onClick={() => handleResetDeck(deck._id, resetDeck, refetch)}>
+              Reset All Cards
+            </Button>
+          </Table.HeaderCell>
+        </Table.Row>
+      </Table.Footer>
+    );
+
     const tableBody = (
       <Table.Body>
         {cardsList &&
@@ -81,9 +123,9 @@ const CardsTable = ({ deck }) => {
             return (
               <Table.Row key={card._id}>
                 <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
-                <Table.Cell>{card.front}</Table.Cell>
+                <Table.Cell>{truncate(card.front, { length: 50 })}</Table.Cell>
                 <Table.Cell>
-                  <Markdown>{card.back}</Markdown>
+                  <Markdown>{truncate(card.back, { length: 50 })}</Markdown>
                 </Table.Cell>
                 <Table.Cell>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
                 <Table.Cell>{card.state}</Table.Cell>
@@ -102,10 +144,19 @@ const CardsTable = ({ deck }) => {
                     name={'deleteCard_' + card._id}
                     compact
                     size="mini"
-                    secondary
+                    color="red"
                     onClick={() => handleDeleteCard(card._id, deleteCard, refetch)}
                   >
                     Delete
+                  </Button>
+                  <Button
+                    name={'resetCard_' + card._id}
+                    compact
+                    size="mini"
+                    secondary
+                    onClick={() => handleResetCard(card._id, resetCard, refetch)}
+                  >
+                    Reset
                   </Button>
                 </Table.Cell>
               </Table.Row>
@@ -139,11 +190,13 @@ const CardsTable = ({ deck }) => {
           <Table celled striped compact>
             {tableHeader}
             {tableBody}
+            {tableFooter}
           </Table>
         </Responsive>
         <Responsive maxWidth={768}>
           <Table celled striped compact>
             {tableBody}
+            {tableFooter}
           </Table>
         </Responsive>
       </>

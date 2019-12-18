@@ -96,7 +96,6 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
-      console.log(res);
       assert.equal(res.data.nextCardForLearning, null);
       assert.equal(res.errors, null);
     });
@@ -140,7 +139,6 @@ if (Meteor.isServer) {
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'first');
       const cardId = Cards.find({ front: 'first' }).fetch()[0]._id;
-      console.log('### RES ', res.data.nextCardForLearning);
       assert.equal(res.data.nextCardForLearning._id, cardId);
       assert.equal(res.errors, null);
     });
