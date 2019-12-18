@@ -74,21 +74,21 @@ const CardsTable = ({ deck }) => {
         </Table.Row>
       </Table.Header>
     );
-    const tableBodyFull = (
+    const tableBody = (
       <Table.Body>
         {cardsList &&
           cardsList.map(card => {
             return (
               <Table.Row key={card._id}>
-                <Table.Cell collapsing>{truncate(card._id, { length: 7 })}</Table.Cell>
-                <Table.Cell collapsing>{truncate(card.front, { length: 7 })}</Table.Cell>
-                <Table.Cell collapsing>
-                  <Markdown>{truncate(card.back, { length: 7 })}</Markdown>
+                <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
+                <Table.Cell>{card.front}</Table.Cell>
+                <Table.Cell>
+                  <Markdown>{card.back}</Markdown>
                 </Table.Cell>
-                <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
-                <Table.Cell collapsing>{card.state}</Table.Cell>
-                <Table.Cell collapsing>{card.tags}</Table.Cell>
-                <Table.Cell collapsing textAlign="right">
+                <Table.Cell>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
+                <Table.Cell>{card.state}</Table.Cell>
+                <Table.Cell>{card.tags}</Table.Cell>
+                <Table.Cell textAlign="right">
                   <Modal
                     trigger={
                       <Button compact size="mini" primary name={'editCard' + card._id}>
@@ -98,44 +98,6 @@ const CardsTable = ({ deck }) => {
                   >
                     <EditCardModal card={card} refetch={refetch} />
                   </Modal>
-                  <Button
-                    name={'deleteCard_' + card._id}
-                    compact
-                    size="mini"
-                    secondary
-                    onClick={() => handleDeleteCard(card._id, deleteCard, refetch)}
-                  >
-                    Delete
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            );
-          })}
-      </Table.Body>
-    );
-
-    const tableBodyMin = (
-      <Table.Body>
-        {cardsList &&
-          cardsList.map(card => {
-            return (
-              <Table.Row key={card._id}>
-                <Table.Cell collapsing>{card._id}</Table.Cell>
-                <Table.Cell collapsing>{card.front}</Table.Cell>
-                <Table.Cell collapsing>
-                  <Markdown>{card.back}</Markdown>
-                </Table.Cell>
-                <Table.Cell collapsing>{moment(card.dueDate).format('DD.MM.YYYY HH:mm')}</Table.Cell>
-                <Table.Cell collapsing>{card.state}</Table.Cell>
-                <Table.Cell collapsing>{card.tags}</Table.Cell>
-                <Table.Cell collapsing textAlign="right">
-                  <Modal
-                    trigger={
-                      <Button compact size="mini" primary name={'editCard' + card._id}>
-                        Edit
-                      </Button>
-                    }
-                  />
                   <Button
                     name={'deleteCard_' + card._id}
                     compact
@@ -176,12 +138,12 @@ const CardsTable = ({ deck }) => {
         <Responsive minWidth={768}>
           <Table celled striped compact>
             {tableHeader}
-            {tableBodyFull}
+            {tableBody}
           </Table>
         </Responsive>
         <Responsive maxWidth={768}>
           <Table celled striped compact>
-            {tableBodyMin}
+            {tableBody}
           </Table>
         </Responsive>
       </>

@@ -65,52 +65,61 @@ const Decks = () => {
                 ) : null}
                 <Divider />
                 <Card.Group>
-                  {data.decks.map(deck => (
-                    <Card key={deck._id}>
-                      <Card.Content>
-                        <Button floated="right" onClick={() => handleEdit(deck._id, history)}>
-                          Edit
-                        </Button>
-                        <Card.Header>{deck.name}</Card.Header>
-                        <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
-                        <Card.Meta>
-                          Interval modifier:&nbsp;
-                          {deck.intervalModifier}%
-                        </Card.Meta>
-                        <Card.Description>
-                          <Label>
-                            All Cards
-                            <Label.Detail>{deck.numCards}</Label.Detail>
-                          </Label>
-                          <br />
-                          <Label color="green">
-                            Due New Cards
-                            <Label.Detail>{deck.newCards}</Label.Detail>
-                          </Label>
-                          <br />
-                          <Label color="teal">
-                            Due Learning Cards
-                            <Label.Detail>{deck.learningCards}</Label.Detail>
-                          </Label>
-                          <br />
-                          <Label color="blue">
-                            Due Relearning Cards
-                            <Label.Detail>{deck.relearningCards}</Label.Detail>
-                          </Label>
-                          <br />
-                          <Label color="brown">
-                            Due Graduated Cards
-                            <Label.Detail>{deck.graduatedCards}</Label.Detail>
-                          </Label>
-                        </Card.Description>
-                      </Card.Content>
-                      <Card.Content extra>
-                        <Button basic color="green" onClick={() => handleLearn(deck._id, history)}>
-                          Learn now
-                        </Button>
-                      </Card.Content>
-                    </Card>
-                  ))}
+                  {data.decks.map(deck => {
+                    const nextDueDate = deck.cards.length !== 0 && deck.cards.sort(c => c.dueDate)[0].dueDate;
+                    return (
+                      <Card fluid key={deck._id}>
+                        <Card.Content>
+                          <Button floated="right" onClick={() => handleEdit(deck._id, history)}>
+                            Edit
+                          </Button>
+                          <Card.Header>{deck.name}</Card.Header>
+                          <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
+                          <Card.Meta>
+                            Interval modifier:&nbsp;
+                            {deck.intervalModifier}%
+                          </Card.Meta>
+                          {nextDueDate ? (
+                            <Card.Meta>
+                              Next due card: &nbsp;
+                              {moment(nextDueDate).format('DD.MM.YYYY HH:mm')}
+                            </Card.Meta>
+                          ) : null}
+                          <Card.Description>
+                            <Label>
+                              All Cards
+                              <Label.Detail>{deck.numCards}</Label.Detail>
+                            </Label>
+                            <br />
+                            <Label color="green">
+                              Due New Cards
+                              <Label.Detail>{deck.newCards}</Label.Detail>
+                            </Label>
+                            <br />
+                            <Label color="teal">
+                              Due Learning Cards
+                              <Label.Detail>{deck.learningCards}</Label.Detail>
+                            </Label>
+                            <br />
+                            <Label color="blue">
+                              Due Relearning Cards
+                              <Label.Detail>{deck.relearningCards}</Label.Detail>
+                            </Label>
+                            <br />
+                            <Label color="brown">
+                              Due Graduated Cards
+                              <Label.Detail>{deck.graduatedCards}</Label.Detail>
+                            </Label>
+                          </Card.Description>
+                        </Card.Content>
+                        <Card.Content extra>
+                          <Button basic color="green" onClick={() => handleLearn(deck._id, history)}>
+                            Learn now
+                          </Button>
+                        </Card.Content>
+                      </Card>
+                    );
+                  })}
                 </Card.Group>
               </Grid.Column>
             </Grid>

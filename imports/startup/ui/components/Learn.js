@@ -85,7 +85,7 @@ const Learn = () => {
                   Learn
                 </Header>
                 {card ? (
-                  <Card>
+                  <Card fluid>
                     <Card.Content>
                       <Card.Description>{card.front}</Card.Description>
                       <Divider />
