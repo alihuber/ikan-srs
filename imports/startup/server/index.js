@@ -69,27 +69,29 @@ WebApp.connectHandlers.use('/graphql', (req, res) => {
   }
 });
 
-Accounts.onLogin((loginObj) => {
+Accounts.onLogin(loginObj => {
   logger.log({ level: 'info', message: `successful login for user ${loginObj.user.username} with _id ${loginObj.user._id}` });
 });
 
-Accounts.onLogout((logoutObj) => {
+Accounts.onLogout(logoutObj => {
   logger.log({
     level: 'info',
     message: `successful logout for user ${logoutObj.user && logoutObj.user.username} with _id ${logoutObj.user && logoutObj.user._id}`,
   });
 });
 
-Meteor.startup(() => {
-  // seed admin user if not present
-  const user = Meteor.users.findOne({ username: 'admin' });
-  if (!user) {
-    logger.log({ level: 'info', message: 'admin user not found, seeding admin user...' });
-    Meteor.users.insert({ username: 'admin', admin: true });
-    const newUser = Meteor.users.findOne({ username: 'admin' });
-    const pw = process.env.ADMIN || 'adminadmin';
-    Accounts.setPassword(newUser._id, pw);
-  }
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    // seed admin user if not present
+    const user = Meteor.users.findOne({ username: 'admin' });
+    if (!user) {
+      logger.log({ level: 'info', message: 'admin user not found, seeding admin user...' });
+      Meteor.users.insert({ username: 'admin', admin: true });
+      const newUser = Meteor.users.findOne({ username: 'admin' });
+      const pw = process.env.ADMIN || 'adminadmin';
+      Accounts.setPassword(newUser._id, pw);
+    }
 
-  logger.log({ level: 'info', message: `server started... registered users: ${Meteor.users.find({}).fetch().length}` });
-});
+    logger.log({ level: 'info', message: `server started... registered users: ${Meteor.users.find({}).fetch().length}` });
+  });
+}
