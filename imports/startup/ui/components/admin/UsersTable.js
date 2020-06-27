@@ -49,7 +49,7 @@ const UsersTable = () => {
           <Table.HeaderCell>ID</Table.HeaderCell>
           <Table.HeaderCell>Username</Table.HeaderCell>
           <Table.HeaderCell>Admin</Table.HeaderCell>
-          <Table.HeaderCell colSpan="2"></Table.HeaderCell>
+          <Table.HeaderCell colSpan="2" />
         </Table.Row>
       </Table.Header>
     );
