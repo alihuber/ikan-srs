@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { CURRENT_USER_QUERY } from '../../../api/users/constants';
 import Layout from './Layout';
-import Loading from './Loading';
+import LoadingIndicator from './LoadingIndicator';
 import Routing from './Routing';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import AnimContext from '../contexts/AnimContext';
@@ -23,7 +23,7 @@ const Root = () => {
     <>
       {loading || !currentUser ? (
         <>
-          <Loading />
+          <LoadingIndicator />
         </>
       ) : null}
       {currentUser ? (
