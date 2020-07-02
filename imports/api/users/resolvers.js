@@ -33,8 +33,12 @@ export default {
         return {};
       }
     },
-    users(_, { pageNum = 1 }, context) {
+    users(_, { pageNum = 1, perPage = 10, q = '', sort = 'createdAt', order = 'desc' }, context) {
       check(pageNum, Number);
+      check(perPage, Number);
+      check(q, String);
+      check(sort, String);
+      check(order, String);
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got users request for _id ${reqUser && reqUser._id}` });
       const user = reqUser && first(Meteor.users.find({ _id: reqUser._id }, { fields: { admin: 1, username: 1 } }).fetch());
@@ -44,9 +48,19 @@ export default {
       }
       logger.log({ level: 'info', message: `returning users for _id ${user._id}` });
       // 5 == page size, not configurable for now
-      const skip = 5 * (pageNum - 1);
-      const usersCount = Meteor.users.find({}).count();
-      const foundUsers = Meteor.users.find({}, { fields: { emails: 1, admin: 1, username: 1 }, skip, limit: 5 }).fetch();
+      const skip = perPage * (pageNum - 1);
+      let foundUsers;
+      let usersCount;
+      const ord = order === 'desc' ? -1 : 1;
+      const opt = {};
+      opt[sort] = ord;
+      if (q.length === 0) {
+        usersCount = Meteor.users.find({}).count();
+        foundUsers = Meteor.users.find({}, { fields: { emails: 1, admin: 1, username: 1, createdAt: 1 }, skip, limit: perPage, sort: opt }).fetch();
+      } else {
+        usersCount = Meteor.users.find({ username: { $regex: q } }).count();
+        foundUsers = Meteor.users.find({ username: { $regex: q } }, { fields: { emails: 1, admin: 1, username: 1, createdAt: 1 }, skip, limit: perPage, sort: opt }).fetch();
+      }
       return {
         usersCount,
         usersList: foundUsers,

@@ -59,8 +59,10 @@ const HomePage = () => {
             </Grid>
 
             <Divider inverted section />
-            <List horizontal inverted divided link
-size="small">
+            <List
+              horizontal inverted divided link
+              size="small"
+            >
               <List.Item as="a" href="#">
                 Site Map
               </List.Item>

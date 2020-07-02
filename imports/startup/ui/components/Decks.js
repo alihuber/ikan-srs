@@ -44,29 +44,29 @@ const Decks = () => {
                   Decks
                 </Header>
                 <Modal
-                  trigger={
+                  trigger={(
                     <Button name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  }
+                  )}
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 {data.decks.length !== 0 ? (
                   <Modal
-                    trigger={
+                    trigger={(
                       <Button name="addDeckButton" size="small" secondary floated="right">
                         Add Card
                       </Button>
-                    }
+                    )}
                   >
                     <AddCardModal decks={data.decks} refetch={refetch} />
                   </Modal>
                 ) : null}
                 <Divider />
                 <Card.Group>
-                  {data.decks.map(deck => {
-                    const nextDueDate = deck.cards.length !== 0 && deck.cards.sort(c => c.dueDate)[0].dueDate;
+                  {data.decks.map((deck) => {
+                    const nextDueDate = deck.cards.length !== 0 && deck.cards.sort((c) => c.dueDate)[0].dueDate;
                     return (
                       <Card fluid key={deck._id}>
                         <Card.Content>
@@ -77,7 +77,8 @@ const Decks = () => {
                           <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
                           <Card.Meta>
                             Interval modifier:&nbsp;
-                            {deck.intervalModifier}%
+                            {deck.intervalModifier}
+                            %
                           </Card.Meta>
                           {nextDueDate ? (
                             <Card.Meta>

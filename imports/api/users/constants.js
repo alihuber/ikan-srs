@@ -1,13 +1,14 @@
 import gql from 'graphql-tag';
 
 export const USERS_QUERY = gql`
-  query getUsers($pageNum: Int) {
-    users(pageNum: $pageNum) {
+  query getUsers($pageNum: Int, $perPage: Int, $q: String, $sort: String, $order: String) {
+    users(pageNum: $pageNum, perPage: $perPage, q: $q, sort: $sort, order: $order) {
       usersCount
       usersList {
         _id
         admin
         username
+        createdAt
       }
     }
   }

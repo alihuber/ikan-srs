@@ -80,6 +80,10 @@ Accounts.onLogout((logoutObj) => {
   });
 });
 
+Accounts.config({
+  forbidClientAccountCreation: true,
+});
+
 Meteor.startup(() => {
   // seed admin user if not present
   const user = Meteor.users.findOne({ username: 'admin' });

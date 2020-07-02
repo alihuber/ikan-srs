@@ -98,8 +98,8 @@ const Learn = () => {
                     <Card.Content extra>{answerShown ? rateAnswer(card.state, card._id, refetch) : showAnswer}</Card.Content>
                   </Card>
                 ) : (
-                  'No cards left :)'
-                )}
+                    'No cards left :)'
+                  )}
               </Grid.Column>
             </Grid>
           </Container>

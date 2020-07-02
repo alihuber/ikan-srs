@@ -27,11 +27,13 @@ const EditDeck = () => {
     if (data) {
       return (
         <div className={animClass}>
-          <Container text style={{ paddingTop: '4em' }}>
+          <Container style={{ paddingTop: '4em' }}>
             <Grid verticalAlign="middle">
               <Grid.Column>
                 <Header size="large" color="teal" textAlign="center">
-                  Deck {data.deckQuery.name}
+                  Deck
+                  {' '}
+                  {data.deckQuery.name}
                 </Header>
                 <CardsTable deck={data.deckQuery} />
               </Grid.Column>

@@ -14,7 +14,7 @@ const Users = () => {
   }
   return (
     <div className={animClass}>
-      <Container text style={{ paddingTop: '4em' }}>
+      <Container style={{ paddingTop: '4em' }}>
         <Grid textAlign="center">
           <Grid.Column style={{ textAlign: 'inherit' }}>
             <Header size="large" color="teal" textAlign="center">

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Table } from 'semantic-ui-react';
+import { Menu, Table, Pagination } from 'semantic-ui-react';
 
 const UsersTableFooter = ({ rowsPerPage, count, page, onChangePage }) => {
   const handleBackButtonClick = (event) => {
@@ -12,36 +12,51 @@ const UsersTableFooter = ({ rowsPerPage, count, page, onChangePage }) => {
   };
 
   const handleNumButtonClick = (event, num) => {
+    debugger;
     onChangePage(event, num);
   };
 
   const numPages = Math.ceil(count / rowsPerPage);
-  const isLastPage = page + 1 === numPages;
+  // const isLastPage = page + 1 === numPages;
+  // <Menu floated="right" pagination>
+  //   <Menu.Item disabled={page === 0} as="a" onClick={(evt) => handleBackButtonClick(evt)} itemname="prevButton">
+  //     prev
+  //   </Menu.Item>
+  //   {[...Array(numPages).keys()].map((i) => (
+  //     <Menu.Item
+  //       key={i} as="a" disabled={page === i} onClick={(evt) => handleNumButtonClick(evt, i)}
+  //       itemname={'pageButton_' + i}
+  //     >
+  //       {i + 1}
+  //     </Menu.Item>
+  //   ))}
+  //   <Menu.Item as="a" disabled={isLastPage} onClick={(evt) => handleNextButtonClick(evt)} itemname="nextButton">
+  //     next
+  //   </Menu.Item>
+  // </Menu>
 
-  return (
-    <Table.Footer>
-      <Table.Row>
-        <Table.HeaderCell colSpan="4">
-          <Menu floated="right" pagination>
-            <Menu.Item disabled={page === 0} as="a" onClick={(evt) => handleBackButtonClick(evt)} itemname="prevButton">
-              prev
-            </Menu.Item>
-            {[...Array(numPages).keys()].map((i) => (
-              <Menu.Item
-                key={i} as="a" disabled={page === i} onClick={(evt) => handleNumButtonClick(evt, i)}
-                itemname={'pageButton_' + i}
-              >
-                {i + 1}
-              </Menu.Item>
-            ))}
-            <Menu.Item as="a" disabled={isLastPage} onClick={(evt) => handleNextButtonClick(evt)} itemname="nextButton">
-              next
-            </Menu.Item>
-          </Menu>
-        </Table.HeaderCell>
-      </Table.Row>
-    </Table.Footer>
-  );
+  if (numPages !== 1) {
+    return (
+      <Table.Footer>
+        <Table.Row>
+          <Table.HeaderCell colSpan="4">
+            <Pagination
+              activePage={page}
+              size="mini"
+              onPageChange={handleNumButtonClick}
+              totalPages={numPages}
+              disabled={numPages === 1}
+              ellipsisItem={null}
+              firstItem={null}
+              lastItem={null}
+            />
+          </Table.HeaderCell>
+        </Table.Row>
+      </Table.Footer>
+    );
+  } else {
+    return null;
+  }
 };
 
 UsersTableFooter.propTypes = {

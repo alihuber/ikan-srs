@@ -38,6 +38,7 @@ const CardsTable = ({ deck }) => {
     });
   };
 
+  // eslint-disable-next-line no-unused-vars
   const [deleteCard, __] = useMutation(DELETE_CARD_MUTATION);
   const handleDeleteCard = (cardId, deleteCardFunc, reFetch) => {
     deleteCardFunc({ variables: { cardId } }).then(() => {
@@ -49,6 +50,7 @@ const CardsTable = ({ deck }) => {
     });
   };
 
+  // eslint-disable-next-line no-unused-vars
   const [resetCard, ___] = useMutation(RESET_CARD_MUTATION);
   const handleResetCard = (cardId, resetCardFunc, reSetFetch) => {
     resetCardFunc({ variables: { cardId } }).then(() => {
@@ -60,6 +62,7 @@ const CardsTable = ({ deck }) => {
     });
   };
 
+  // eslint-disable-next-line no-unused-vars
   const [resetDeck, ____] = useMutation(RESET_DECK_MUTATION);
   const handleResetDeck = (deckId, resetDeckFunc, reSettFetch) => {
     resetDeckFunc({ variables: { deckId } }).then(() => {
@@ -98,7 +101,7 @@ const CardsTable = ({ deck }) => {
           <Table.HeaderCell>Due date</Table.HeaderCell>
           <Table.HeaderCell>State</Table.HeaderCell>
           <Table.HeaderCell>Tags</Table.HeaderCell>
-          <Table.HeaderCell colSpan="2"></Table.HeaderCell>
+          <Table.HeaderCell colSpan="2" />
         </Table.Row>
       </Table.Header>
     );
@@ -118,8 +121,8 @@ const CardsTable = ({ deck }) => {
 
     const tableBody = (
       <Table.Body>
-        {cardsList &&
-          cardsList.map(card => {
+        {cardsList
+          && cardsList.map((card) => {
             return (
               <Table.Row key={card._id}>
                 <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
@@ -132,11 +135,11 @@ const CardsTable = ({ deck }) => {
                 <Table.Cell>{card.tags}</Table.Cell>
                 <Table.Cell textAlign="right">
                   <Modal
-                    trigger={
+                    trigger={(
                       <Button compact size="mini" primary name={'editCard' + card._id}>
                         Edit
                       </Button>
-                    }
+                    )}
                   >
                     <EditCardModal card={card} refetch={refetch} />
                   </Modal>
@@ -168,11 +171,11 @@ const CardsTable = ({ deck }) => {
     return (
       <>
         <Modal
-          trigger={
+          trigger={(
             <Button name="addCardButton" size="small" primary>
               Add Card
             </Button>
-          }
+          )}
         >
           <AddCardModal deck={deck} refetch={refetch} />
         </Modal>

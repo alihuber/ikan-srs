@@ -1,8 +1,11 @@
+scalar Date
+
 type User {
   _id: String
   email: String
   username: String
   admin: Boolean
+  createdAt: Date
 }
 
 type UserConnection {
@@ -12,7 +15,7 @@ type UserConnection {
 
 type Query {
   currentUser: User
-  users(pageNum: Int): UserConnection!
+  users(pageNum: Int, perPage: Int, q: String, sort: String, order: String): UserConnection!
 }
 
 type Mutation {

@@ -1,101 +1,139 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { toast } from 'react-toastify';
-import { Icon, Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
+import { Button, Modal, Responsive, Divider, Segment } from 'semantic-ui-react';
+import sift from 'sift';
+import debounce from 'lodash/debounce';
 import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
-import EditUserModal from './EditUserModal';
-import UsersTableFooter from './UsersTableFooter';
+import UserTable from './UserTable';
+import UserFilter from './UserFilter';
 import { DELETE_USER_MUTATION, USERS_QUERY } from '../../../../api/users/constants';
+import DeleteUserModal from './DeleteUserModal';
 
 const UsersTable = () => {
   const [pageNum, setPageNum] = useState(0);
   const { data, loading, refetch, fetchMore } = useQuery(USERS_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
-  const [deleteUser, _] = useMutation(DELETE_USER_MUTATION);
+  const [sort, setSort] = useState('createdAt');
+  const [order, setOrder] = useState(null);
+  const [limit, setLimit] = useState(10);
+  const [q, setQ] = useState('');
+  const [usersList, setUsersList] = useState(data?.users?.usersList || []);
 
-  const handleDelete = (userId, deleteUserFunc, reFetch) => {
-    deleteUserFunc({ variables: { userId } }).then(() => {
-      reFetch();
-      setPageNum(0);
-      toast.success('Deletion successful!', {
-        position: toast.POSITION.BOTTOM_CENTER,
-      });
-    });
+  const [deleteUser, _] = useMutation(DELETE_USER_MUTATION);
+  const [showDelete, setShowDelete] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(false);
+
+  useEffect(() => {
+    if (data && data.users && data.users.usersList) {
+      if (q.length !== 0) {
+        const filtered = data.users.usersList.filter(sift({ username: { $regex: q } }));
+        setUsersList(filtered);
+      } else {
+        setUsersList(data.users.usersList);
+      }
+    }
+  }, [JSON.stringify(data?.users?.usersList)]);
+
+  const directionConverter = (ord) => {
+    if (ord === 'asc') {
+      return 'ascending';
+    } else if (ord === 'desc') {
+      return 'descending';
+    } else {
+      return null;
+    }
   };
 
-  const handleChangePage = (_, page, fetchmore) => {
-    fetchmore({
+  const handleSort = (clickedColumn) => {
+    let newOrder = order === 'asc' ? 'desc' : 'asc';
+    if (sort !== clickedColumn) {
+      newOrder = 'asc';
+    }
+    fetchMore({
       variables: {
-        pageNum: page + 1,
+        perPage: limit,
+        q,
+        order: newOrder,
+        sort: clickedColumn,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return fetchMoreResult;
       },
     });
-    setPageNum(page);
+    setOrder(newOrder);
+    setSort(clickedColumn);
   };
 
-  if (loading) {
-    return <LoadingIndicator />;
-  }
-  if (data) {
-    const { usersList, usersCount } = data.users;
-    const tableHeader = (
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>ID</Table.HeaderCell>
-          <Table.HeaderCell>Username</Table.HeaderCell>
-          <Table.HeaderCell>Admin</Table.HeaderCell>
-          <Table.HeaderCell colSpan="2" />
-        </Table.Row>
-      </Table.Header>
-    );
-    const tableBody = (
-      <Table.Body>
-        {usersList
-          && usersList.map((user) => {
-            return (
-              <Table.Row key={user._id}>
-                <Table.Cell>{user._id}</Table.Cell>
-                <Table.Cell collapsing>{user.username}</Table.Cell>
-                <Table.Cell collapsing textAlign="center">
-                  {user.admin ? <Icon name="check" /> : null}
-                </Table.Cell>
-                <Table.Cell collapsing textAlign="right">
-                  <Modal
-                    trigger={(
-                      <Button compact size="mini" primary name={'editUser_' + user._id}>
-                        Edit
-                      </Button>
-                    )}
-                  >
-                    <EditUserModal
-                      userId={user._id}
-                      username={user.username}
-                      admin={user.admin}
-                      refetch={refetch}
-                      setPageNum={setPageNum}
-                    />
-                  </Modal>
-                  <Button
-                    name={'deleteUser_' + user._id}
-                    compact
-                    size="mini"
-                    secondary
-                    onClick={() => handleDelete(user._id, deleteUser, refetch)}
-                  >
-                    Delete
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            );
-          })}
-      </Table.Body>
-    );
+  const submitFilter = (filter) => {
+    if (filter !== q) {
+      fetchMore({
+        variables: {
+          perPage: limit,
+          q: filter,
+          order,
+          sort,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+    setQ(filter);
+  };
+  const onSubmitFilter = debounce(submitFilter, 500);
 
+  const onChangeLimit = (event, dt) => {
+    if (parseInt(dt.value, 10) !== limit) {
+      fetchMore({
+        variables: {
+          perPage: parseInt(dt.value, 10),
+          q,
+          order,
+          sort,
+          pageNum,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+      setLimit(dt.value);
+    }
+  };
+
+  const handleDelete = (userId) => {
+    setUserToDelete(userId);
+    setShowDelete(true);
+  };
+
+  const cancelDelete = () => {
+    setShowDelete(false);
+    setUserToDelete(null);
+  };
+
+  const handleChangePage = (event, dt) => {
+    fetchMore({
+      variables: {
+        perPage: limit,
+        q: q || '',
+        order,
+        sort,
+        pageNum: dt.activePage,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return fetchMoreResult;
+      },
+    });
+    setPageNum(dt.activePage);
+  };
+
+  if (data) {
+    const usersCount = data.users.usersCount;
     return (
       <>
         <Modal
@@ -109,28 +147,69 @@ const UsersTable = () => {
         </Modal>
         <Divider />
         <Responsive minWidth={768}>
-          <Table celled striped compact>
-            {tableHeader}
-            {tableBody}
-            <UsersTableFooter
-              count={usersCount}
-              page={pageNum}
-              rowsPerPage={5}
-              onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
+          <Segment>
+            <UserFilter
+              filter={q}
+              totalCount={usersList.length}
+              onSubmitFilter={onSubmitFilter}
+              loading={loading}
             />
-          </Table>
+            <Divider />
+            {!loading ? (
+              <UserTable
+                handleDelete={handleDelete}
+                refetch={refetch}
+                setPageNum={setPageNum}
+                usersList={usersList}
+                totalCount={usersCount}
+                totalPages={Math.ceil(usersCount / limit)}
+                currentPage={pageNum}
+                onChangePage={handleChangePage}
+                column={sort}
+                direction={directionConverter(order)}
+                handleSort={handleSort}
+                onChangeLimit={onChangeLimit}
+                limit={limit.toString()}
+              />
+            ) : <LoadingIndicator />}
+          </Segment>
         </Responsive>
         <Responsive maxWidth={768}>
-          <Table celled striped compact>
-            {tableBody}
-            <UsersTableFooter
-              count={usersCount}
-              page={pageNum}
-              rowsPerPage={5}
-              onChangePage={(evt, page) => handleChangePage(evt, page, fetchMore)}
+          <Segment>
+            <UserFilter
+              filter={q}
+              totalCount={usersCount}
+              onSubmitFilter={onSubmitFilter}
+              loading={loading}
             />
-          </Table>
+            <Divider />
+            {!loading ? (
+              <UserTable
+                handleDelete={handleDelete}
+                refetch={refetch}
+                setPageNum={setPageNum}
+                usersList={usersList}
+                totalCount={usersCount}
+                totalPages={Math.ceil(usersCount / limit)}
+                currentPage={pageNum}
+                onChangePage={handleChangePage}
+                column={sort}
+                direction={directionConverter(order)}
+                handleSort={handleSort}
+                onChangeLimit={onChangeLimit}
+                limit={limit.toString()}
+              />
+            ) : <LoadingIndicator />}
+          </Segment>
         </Responsive>
+        <DeleteUserModal
+          setPageNum={setPageNum}
+          refetch={refetch}
+          deleteUserFunc={deleteUser}
+          open={showDelete}
+          onClose={cancelDelete}
+          userToDelete={userToDelete}
+        />
       </>
     );
   } else {

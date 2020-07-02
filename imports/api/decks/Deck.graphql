@@ -1,5 +1,3 @@
-scalar Date
-
 enum CardState {
   NEW
   LEARNING
