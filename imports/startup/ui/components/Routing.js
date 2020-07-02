@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import HomePage from './HomePage.js';
-import Login from './Login.js';
-import NotFoundPage from './NotFoundPage';
-import Users from './admin/Users';
-import Settings from './Settings';
-import Decks from './Decks';
-import Learn from './Learn';
-import EditDeck from './EditDeck';
+import LoadingIndicator from './LoadingIndicator.js';
+
+const Login = lazy(() => import('./Login'));
+const NotFoundPage = lazy(() => import('./NotFoundPage'));
+const Users = lazy(() => import('./admin/Users'));
+const Settings = lazy(() => import('./Settings'));
+const Decks = lazy(() => import('./Decks'));
+const Learn = lazy(() => import('./Learn'));
+const EditDeck = lazy(() => import('./EditDeck'));
+const renderLoader = () => <LoadingIndicator />;
 
 const Routing = ({ LayoutComponent }) => {
   const LoadingLayout = LayoutComponent;
@@ -22,25 +25,39 @@ const Routing = ({ LayoutComponent }) => {
               <HomePage />
             </Route>
             <Route exact path="/login">
-              <Login />
+              <Suspense fallback={renderLoader()}>
+                <Login />
+              </Suspense>
             </Route>
             <Route exact path="/users">
-              <Users />
+              <Suspense fallback={renderLoader()}>
+                <Users />
+              </Suspense>
             </Route>
             <Route exact path="/settings">
-              <Settings />
+              <Suspense fallback={renderLoader()}>
+                <Settings />
+              </Suspense>
             </Route>
             <Route exact path="/decks">
-              <Decks />
+              <Suspense fallback={renderLoader()}>
+                <Decks />
+              </Suspense>
             </Route>
             <Route exact path="/learn/:deckId">
-              <Learn />
+              <Suspense fallback={renderLoader()}>
+                <Learn />
+              </Suspense>
             </Route>
             <Route exact path="/editDeck/:deckId">
-              <EditDeck />
+              <Suspense fallback={renderLoader()}>
+                <EditDeck />
+              </Suspense>
             </Route>
             <Route exact>
-              <NotFoundPage />
+              <Suspense fallback={renderLoader()}>
+                <NotFoundPage />
+              </Suspense>
             </Route>
           </Switch>
         </LoadingLayout>
