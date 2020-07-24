@@ -75,3 +75,68 @@ db.getCollection('users').insert(
     }
   }
 );
+
+db.getCollection('users').insert(
+  {
+    "_id": "fosTmp23454RFmrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Vincent",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "fosTmpasd54RFmrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Gollum",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "fosTmpasd542lmrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Gimli",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "fosTmpasd54zzymrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Legolas",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);
+
+db.getCollection('users').insert(
+  {
+    "_id": "dosTmpa12sd5ymrDER",
+    "createdAt" : ISODate("2019-05-19T15:48:07.709Z"),
+    "username": "Sauron",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2b$10$b/4GFrlLbsbrCw.9K1zhVeyb7iVr3UZGBqiEE5QnCoTW0V8N3euOq"
+        }
+    }
+  }
+);

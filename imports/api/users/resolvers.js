@@ -33,7 +33,7 @@ export default {
         return {};
       }
     },
-    users(_, { pageNum = 1, perPage = 10, q = '', sort = 'createdAt', order = 'desc' }, context) {
+    users(_, { pageNum = 1, perPage = 10, q = '', sort = 'createdAt', order = 'asc' }, context) {
       check(pageNum, Number);
       check(perPage, Number);
       check(q, String);

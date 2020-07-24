@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Button, Modal, Responsive, Divider, Segment } from 'semantic-ui-react';
+import { Button, Responsive, Divider, Segment } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import LoadingIndicator from '../LoadingIndicator';
@@ -11,19 +11,20 @@ import { DELETE_USER_MUTATION, USERS_QUERY } from '../../../../api/users/constan
 import DeleteUserModal from './DeleteUserModal';
 
 const UsersTable = () => {
-  const [pageNum, setPageNum] = useState(0);
+  const [pageNum, setPageNum] = useState(1);
   const { data, loading, refetch, fetchMore } = useQuery(USERS_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
   const [sort, setSort] = useState('createdAt');
-  const [order, setOrder] = useState(null);
+  const [order, setOrder] = useState('asc');
   const [limit, setLimit] = useState(10);
   const [q, setQ] = useState('');
   const [usersList, setUsersList] = useState(data?.users?.usersList || []);
 
   const [deleteUser, _] = useMutation(DELETE_USER_MUTATION);
   const [showDelete, setShowDelete] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [userToDelete, setUserToDelete] = useState('');
 
   useEffect(() => {
     if (data && data.users && data.users.usersList) {
@@ -105,6 +106,10 @@ const UsersTable = () => {
     }
   };
 
+  const cancelAdd = () => {
+    setShowAdd(false);
+  };
+
   const handleDelete = (userId) => {
     setUserToDelete(userId);
     setShowDelete(true);
@@ -112,7 +117,7 @@ const UsersTable = () => {
 
   const cancelDelete = () => {
     setShowDelete(false);
-    setUserToDelete(null);
+    setUserToDelete('');
   };
 
   const handleChangePage = (event, dt) => {
@@ -136,15 +141,9 @@ const UsersTable = () => {
     const usersCount = data.users.usersCount;
     return (
       <>
-        <Modal
-          trigger={(
-            <Button name="addUserButton" size="small" primary>
-              Add User
-            </Button>
-          )}
-        >
-          <AddUserModal refetch={refetch} setPageNum={setPageNum} />
-        </Modal>
+        <Button onClick={() => setShowAdd(true)} name="addUserButton" size="small" primary>
+          Add User
+        </Button>
         <Divider />
         <Responsive minWidth={768}>
           <Segment>
@@ -202,6 +201,7 @@ const UsersTable = () => {
             ) : <LoadingIndicator />}
           </Segment>
         </Responsive>
+        <AddUserModal refetch={refetch} setPageNum={setPageNum} open={showAdd} onClose={cancelAdd} />
         <DeleteUserModal
           setPageNum={setPageNum}
           refetch={refetch}

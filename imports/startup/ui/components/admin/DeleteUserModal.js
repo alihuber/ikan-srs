@@ -23,14 +23,14 @@ const DeleteUserModal = ({ setPageNum, userToDelete, open, onClose, deleteUserFu
       </Modal.Content>
       <Modal.Actions>
         <Button negative onClick={onClose}>No</Button>
-        <Button positive onClick={onDelete}>Yes</Button>
+        <Button name="deleteUserOk" positive onClick={onDelete}>Yes</Button>
       </Modal.Actions>
     </Modal>
   );
 };
 
 DeleteUserModal.propTypes = {
-  userToDelete: PropTypes.string.isRequired,
+  userToDelete: PropTypes.string,
   refetch: PropTypes.func.isRequired,
   setPageNum: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,

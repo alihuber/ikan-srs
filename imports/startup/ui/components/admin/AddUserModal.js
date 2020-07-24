@@ -28,7 +28,7 @@ const addUserSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(addUserSchema);
 
-const handleSubmit = (values, createUser, refetch, setPageNum) => {
+const handleSubmit = (values, createUser, refetch, setPageNum, onClose) => {
   const admin = values.admin || false;
   const { username, password } = values;
   if (username && password) {
@@ -36,6 +36,7 @@ const handleSubmit = (values, createUser, refetch, setPageNum) => {
       .then(() => {
         refetch();
         setPageNum(0);
+        onClose();
         toast.success('Creation successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
@@ -52,18 +53,23 @@ const handleSubmit = (values, createUser, refetch, setPageNum) => {
   }
 };
 
-const AddUserModal = ({ refetch, setPageNum }) => {
+const AddUserModal = ({ refetch, setPageNum, open, onClose }) => {
   const [createUser, _] = useMutation(CREATE_USER_MUTATION);
   return (
-    <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createUser, refetch, setPageNum)} />
-    </Modal.Content>
+    <Modal size="small" open={open} onClose={onClose}>
+      <Modal.Header>Add user</Modal.Header>
+      <Modal.Content>
+        <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createUser, refetch, setPageNum, onClose)} />
+      </Modal.Content>
+    </Modal>
   );
 };
 
 AddUserModal.propTypes = {
   refetch: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   setPageNum: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
 };
 
 export default AddUserModal;

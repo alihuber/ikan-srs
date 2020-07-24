@@ -26,6 +26,7 @@ describe('delete-user', () => {
         cy.get('table').should('contain', 'admin');
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=deleteUser_ryfEzeGqzRvW7FbL5').click();
+        cy.get('button[name=deleteUserOk').click();
         cy.get('table').should('not.contain', 'testuser');
         // header tr, footer tr and 1 users
         cy.get('table')

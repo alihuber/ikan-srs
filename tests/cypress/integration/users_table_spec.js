@@ -16,7 +16,8 @@ describe('display-users-table', () => {
     cy.get('input[name=password]').type('testuser');
     cy.get('input[type=submit]').click();
 
-    cy.url().should('eq', 'http://localhost:3000/');
+    cy.wait(1000);
+    cy.url().should('eq', 'http://localhost:3000/decks');
 
     cy.window().then(() => {
       cy.get('a').should('not.contain', 'Users');
@@ -29,10 +30,12 @@ describe('display-users-table', () => {
     cy.get('input[name=password]').type('testuser');
     cy.get('input[type=submit]').click();
 
-    cy.url().should('eq', 'http://localhost:3000/');
+    cy.wait(1000);
+    cy.url().should('eq', 'http://localhost:3000/decks');
     cy.visit('http://localhost:3000/users');
 
     cy.window().then(() => {
+      cy.wait(1000);
       cy.get('button').should('not.contain', 'Users');
       cy.get('div.header').should('not.contain', 'Users');
       cy.get('table').should('not.exist');
