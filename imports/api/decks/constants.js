@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const Decks = new Mongo.Collection('decks');
 export const Cards = new Mongo.Collection('cards');

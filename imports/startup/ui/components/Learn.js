@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import Markdown from 'markdown-to-jsx';
 import { Divider, Card, Container, Grid, Header, Button } from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';

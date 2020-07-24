@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unused-state */
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloClient, createHttpLink, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import React from 'react';
 import { render } from 'react-dom';
 import Root from '../ui/components/Root';
@@ -12,13 +12,22 @@ import 'uniforms-bridge-simple-schema-2';
 import './react-transitions.css';
 import './service-worker.js';
 
-const client = new ApolloClient({
+const httpLink = createHttpLink({
   uri: '/graphql',
-  request: (operation) => operation.setContext(() => ({
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
     headers: {
+      ...headers,
       authorization: Accounts._storedLoginToken(),
     },
-  })),
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
 });
 
 const ApolloApp = () => {

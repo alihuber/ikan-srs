@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { Button, Responsive, Divider, Segment } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';

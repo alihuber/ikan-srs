@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Markdown from 'markdown-to-jsx';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
 import { Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
 import moment from 'moment';

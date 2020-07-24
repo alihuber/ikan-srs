@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { Modal } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
@@ -39,7 +39,7 @@ const handleSubmit = (values, addCard, refetch, deck) => {
           position: toast.POSITION.BOTTOM_CENTER,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         toast.error('Card add error!', {
           position: toast.POSITION.BOTTOM_CENTER,
@@ -56,13 +56,13 @@ const AddCardModal = ({ refetch, decks, deck }) => {
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
   let deckOptions;
   if (decks) {
-    deckOptions = decks.map(dk => {
+    deckOptions = decks.map((dk) => {
       return { label: dk.name, value: dk._id };
     });
   }
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={doc => handleSubmit(doc, addCard, refetch, deck)}>
+      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck)}>
         <h4>Add card</h4>
         {deck ? null : <SelectField name="deckId" options={deckOptions} />}
         <LongTextField name="front" />

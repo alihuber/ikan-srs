@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const USERS_QUERY = gql`
   query getUsers($pageNum: Int, $perPage: Int, $q: String, $sort: String, $order: String) {

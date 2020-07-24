@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
 import LoadingIndicator from './LoadingIndicator';
 import { SETTINGS_QUERY } from '../../../api/settings/constants';

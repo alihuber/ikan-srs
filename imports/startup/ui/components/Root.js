@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { toast } from 'react-toastify';
 
 import { CURRENT_USER_QUERY } from '../../../api/users/constants';
