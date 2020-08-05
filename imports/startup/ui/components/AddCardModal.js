@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
 import { Modal } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
-import { AutoForm, ErrorField, LongTextField, SelectField, SubmitField } from 'uniforms-semantic';
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/atom-one-light.css';
+import { AutoForm, ErrorField, SelectField, SubmitField } from 'uniforms-semantic';
 import { ADD_CARD_MUTATION } from '../../../api/decks/constants';
 
 const addCardSchema = new SimpleSchema({
   deckId: {
     type: String,
+    // TODO: make dependent from where dialog is launched
     optional: true,
   },
   front: {
@@ -24,6 +31,20 @@ const addCardSchema = new SimpleSchema({
 });
 
 const bridge = new SimpleSchema2Bridge(addCardSchema);
+
+const mdParser = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value;
+      } catch (__) { /* nothing */ }
+    }
+    return '';
+  },
+});
 
 const handleSubmit = (values, addCard, refetch, deck) => {
   const { front, back } = values;
@@ -54,21 +75,44 @@ const handleSubmit = (values, addCard, refetch, deck) => {
 
 const AddCardModal = ({ refetch, decks, deck }) => {
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
+  const [model, setModel] = useState({ front: '', back: '' });
+  const editorHeight = isTabletOrMobile ? '200px' : '500px';
   let deckOptions;
   if (decks) {
     deckOptions = decks.map((dk) => {
       return { label: dk.name, value: dk._id };
     });
   }
+  const handleFrontChange = ({ text }) => {
+    setModel({ ...model, front: text });
+  };
+  const handleBackChange = ({ text }) => {
+    setModel({ ...model, back: text });
+  };
+
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck)}>
+      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck)} model={model}>
         <h4>Add card</h4>
         {deck ? null : <SelectField name="deckId" options={deckOptions} />}
-        <LongTextField name="front" />
+        <label><b>Front*</b></label>
+        <MdEditor
+          style={{ height: editorHeight }}
+          renderHTML={(text) => mdParser.render(text)}
+          onChange={handleFrontChange}
+          value={model.front}
+        />
         <ErrorField name="front" errorMessage="Front is required" />
-        <LongTextField name="back" />
+        <label><b>Back*</b></label>
+        <MdEditor
+          style={{ height: editorHeight }}
+          renderHTML={(text) => mdParser.render(text)}
+          onChange={handleBackChange}
+          value={model.back}
+        />
         <ErrorField name="back" errorMessage="Back is required" />
+        <br />
         <SubmitField />
       </AutoForm>
     </Modal.Content>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Markdown from 'markdown-to-jsx';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
 import { Table, Button, Modal, Responsive, Divider } from 'semantic-ui-react';
@@ -74,19 +73,6 @@ const CardsTable = ({ deck }) => {
     });
   };
 
-  const handleChangePage = (_, page, fetchmore) => {
-    fetchmore({
-      variables: {
-        pageNum: page + 1,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-        return fetchMoreResult;
-      },
-    });
-    setPageNum(page);
-  };
-
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -127,9 +113,7 @@ const CardsTable = ({ deck }) => {
               <Table.Row key={card._id}>
                 <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
                 <Table.Cell>{truncate(card.front, { length: 50 })}</Table.Cell>
-                <Table.Cell>
-                  <Markdown>{truncate(card.back, { length: 50 })}</Markdown>
-                </Table.Cell>
+                <Table.Cell>{truncate(card.back, { length: 50 })}</Table.Cell>
                 <Table.Cell>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
                 <Table.Cell>{card.state}</Table.Cell>
                 <Table.Cell>{card.tags}</Table.Cell>

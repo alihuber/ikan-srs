@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
 import { Modal } from 'semantic-ui-react';
@@ -65,7 +66,9 @@ const handleSubmit = (values, updateCard, refetch, cardId) => {
 
 const EditCardModal = ({ refetch, card }) => {
   const [updateCard, _] = useMutation(UPDATE_CARD_MUTATION);
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
   const [model, setModel] = useState(card);
+  const editorHeight = isTabletOrMobile ? '200px' : '500px';
   const handleFrontChange = ({ text }) => {
     setModel({ ...model, front: text });
   };
@@ -79,7 +82,7 @@ const EditCardModal = ({ refetch, card }) => {
         <h4>Edit card</h4>
         <label><b>Front*</b></label>
         <MdEditor
-          style={{ height: '500px' }}
+          style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
           onChange={handleFrontChange}
           value={model.front}
@@ -87,7 +90,7 @@ const EditCardModal = ({ refetch, card }) => {
         <ErrorField name="front" errorMessage="Front is required" />
         <label><b>Back*</b></label>
         <MdEditor
-          style={{ height: '500px' }}
+          style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
           onChange={handleBackChange}
           value={model.back}
