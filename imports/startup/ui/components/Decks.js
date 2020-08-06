@@ -74,7 +74,6 @@ const Decks = () => {
                             Edit
                           </Button>
                           <Card.Header>{deck.name}</Card.Header>
-                          <Card.Meta>{moment(deck.createdAt).format('DD.MM.YYYY HH:mm')}</Card.Meta>
                           <Card.Meta>
                             Interval modifier:&nbsp;
                             {deck.intervalModifier}
