@@ -91,6 +91,16 @@ const AddCardModal = ({ refetch, decks, deck }) => {
     setModel({ ...model, back: text });
   };
 
+  const handleImageUpload = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (data) => {
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <Modal.Content>
       <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck)} model={model}>
@@ -100,6 +110,7 @@ const AddCardModal = ({ refetch, decks, deck }) => {
         <MdEditor
           style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
+          onImageUpload={handleImageUpload}
           onChange={handleFrontChange}
           value={model.front}
         />
@@ -108,6 +119,7 @@ const AddCardModal = ({ refetch, decks, deck }) => {
         <MdEditor
           style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
+          onImageUpload={handleImageUpload}
           onChange={handleBackChange}
           value={model.back}
         />

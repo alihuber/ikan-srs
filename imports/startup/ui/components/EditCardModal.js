@@ -76,6 +76,16 @@ const EditCardModal = ({ refetch, card }) => {
     setModel({ ...model, back: text });
   };
 
+  const handleImageUpload = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (data) => {
+        resolve(data.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <Modal.Content>
       <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, updateCard, refetch, card._id)} model={model}>
@@ -83,6 +93,7 @@ const EditCardModal = ({ refetch, card }) => {
         <label><b>Front*</b></label>
         <MdEditor
           style={{ height: editorHeight }}
+          onImageUpload={handleImageUpload}
           renderHTML={(text) => mdParser.render(text)}
           onChange={handleFrontChange}
           value={model.front}
@@ -92,6 +103,7 @@ const EditCardModal = ({ refetch, card }) => {
         <MdEditor
           style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
+          onImageUpload={handleImageUpload}
           onChange={handleBackChange}
           value={model.back}
         />
