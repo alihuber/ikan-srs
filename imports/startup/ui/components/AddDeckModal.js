@@ -37,6 +37,7 @@ const handleSubmit = (values, createDeck, refetch) => {
 };
 
 const AddDeckModal = ({ refetch }) => {
+  // eslint-disable-next-line no-unused-vars
   const [createDeck, _] = useMutation(CREATE_DECK_MUTATION);
   return (
     <Modal.Content>

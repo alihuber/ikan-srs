@@ -21,6 +21,7 @@ const UsersList = () => {
   const [q, setQ] = useState('');
   const [usersList, setUsersList] = useState(data?.users?.usersList || []);
 
+  // eslint-disable-next-line no-unused-vars
   const [deleteUser, _] = useMutation(DELETE_USER_MUTATION);
   const [showDelete, setShowDelete] = useState(false);
   const [showAdd, setShowAdd] = useState(false);

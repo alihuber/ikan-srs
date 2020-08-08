@@ -53,6 +53,7 @@ const handleSubmit = (values, userId, updateUser, refetch) => {
 };
 
 const EditUserModal = ({ userId, username, admin, refetch }) => {
+  // eslint-disable-next-line no-unused-vars
   const [updateUser, _] = useMutation(UPDATE_USER_MUTATION);
   const model = { username, admin };
   return (

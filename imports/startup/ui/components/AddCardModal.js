@@ -78,6 +78,7 @@ const handleSubmit = (values, addCard, refetch, deck, onClose, setOpen, setModel
 };
 
 const AddCardModal = ({ refetch, decks, deck, onClose }) => {
+  // eslint-disable-next-line no-unused-vars
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
   const location = useLocation();
   const onEditScreen = location.pathname.includes('editDeck');

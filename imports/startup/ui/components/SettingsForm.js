@@ -86,6 +86,7 @@ const handleSubmit = (values, updateSetting, refetch) => {
 };
 
 const SettingsForm = ({ lapseSettings, learningSettings, refetch }) => {
+  // eslint-disable-next-line no-unused-vars
   const [updateSetting, _] = useMutation(UPDATE_SETTINGS_MUTATION);
   const model = { lapseSettings, learningSettings };
   return <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, updateSetting, refetch)} model={model} />;

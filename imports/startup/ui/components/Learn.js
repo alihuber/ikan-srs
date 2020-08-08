@@ -41,6 +41,7 @@ const Learn = () => {
   const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
   const { deckId } = useParams();
+  // eslint-disable-next-line no-unused-vars
   const [answerCard, _] = useMutation(ANSWER_CARD_MUTATION);
   const { data, loading, refetch } = useQuery(NEXT_CARD_FOR_LEARNING_QUERY, {
     variables: { deckId },

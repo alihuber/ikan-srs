@@ -29,7 +29,6 @@ const CardsList = ({ deck }) => {
   const [order, setOrder] = useState('asc');
   const [limit, setLimit] = useState(10);
   const [q, setQ] = useState('');
-  // const [showAdd, setShowAdd] = useState(false);
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -115,7 +114,7 @@ const CardsList = ({ deck }) => {
     }
   };
 
-  const handleChangePage = (event, dt) => {
+  const handleChangePage = (_, dt) => {
     fetchMore({
       variables: {
         perPage: parseInt(limit, 10),
@@ -171,8 +170,8 @@ const CardsList = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [resetDeck, ____] = useMutation(RESET_DECK_MUTATION);
-  const handleResetDeck = (deckId, resetDeckFunc, reSettFetch) => {
-    resetDeckFunc({ variables: { deckId } }).then(() => {
+  const handleResetDeck = (dckId, resetDeckFunc, reSettFetch) => {
+    resetDeckFunc({ variables: { dckId } }).then(() => {
       reSettFetch();
       setPageNum(0);
       onChangeLimit(null, { value: 10 });
