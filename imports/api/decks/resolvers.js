@@ -332,8 +332,13 @@ export default {
         return false;
       }
     },
-    cardsForDeck(_, args, context) {
-      Match.test(args, { deckId: String });
+    cardsForDeck(_, { deckId, pageNum = 1, perPage = 10, q = '', sort = 'createdAt', order = 'asc' }, context) {
+      check(deckId, String);
+      check(pageNum, Number);
+      check(perPage, Number);
+      check(q, String);
+      check(sort, String);
+      check(order, String);
       const user = context.user;
       logger.log({ level: 'info', message: `got cards for deck request from _id ${user && user._id}` });
       const foundUser = user && Meteor.users.findOne(user._id);
@@ -341,15 +346,31 @@ export default {
         logger.log({ level: 'warn', message: `cards for deck requester with ${user._id} is no user` });
         throw new Error('not authorized');
       }
-      const { deckId } = args;
       const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
       if (!foundDeck) {
         logger.log({ level: 'warn', message: `cards for deck with ${deckId} not found` });
         return { cardsList: [] };
       }
-      const cardsList = Cards.find({ deckId: foundDeck._id }).fetch();
+      const skip = perPage * (pageNum - 1);
+      const ord = order === 'desc' ? -1 : 1;
+      const opt = {};
+      opt[sort] = ord;
+      let cardsList;
+      let cardsCount;
+      if (q.length === 0) {
+        cardsCount = Cards.find({ deckId: foundDeck._id }).count();
+        cardsList = Cards.find({ deckId: foundDeck._id }, { skip, limit: perPage, sort: opt }).fetch();
+      } else {
+        cardsCount = Cards.find({
+          deckId: foundDeck._id, $or: [{ front: { $regex: q } }, { back: { $regex: q } }]
+        }).count();
+        cardsList = Cards.find({
+          deckId: foundDeck._id, $or: [{ front: { $regex: q } }, { back: { $regex: q } }]
+        }, { skip, limit: perPage, sort: opt }).fetch();
+      }
       return {
         cardsList,
+        cardsCount,
       };
     },
     nextCardForLearning(_, args, context) {

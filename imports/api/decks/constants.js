@@ -58,8 +58,9 @@ export const DECK_QUERY = gql`
 `;
 
 export const CARDS_FOR_DECK_QUERY = gql`
-  query cardsForDeck($deckId: String!) {
-    cardsForDeck(deckId: $deckId) {
+  query cardsForDeck($deckId: String!, $pageNum: Int, $perPage: Int, $q: String, $sort: String, $order: String) {
+    cardsForDeck(deckId: $deckId, pageNum: $pageNum, perPage: $perPage, q: $q, sort: $sort, order: $order) {
+      cardsCount
       cardsList {
         _id
         front
@@ -157,6 +158,7 @@ export const ANSWER_CARD_MUTATION = gql`
 export const UPDATE_CARD_MUTATION = gql`
   mutation updateCard($cardId: String!, $front: String!, $back: String!) {
     updateCard(cardId: $cardId, front: $front, back: $back) {
+      _id
       front
       back
       state

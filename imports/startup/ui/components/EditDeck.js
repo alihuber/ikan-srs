@@ -7,7 +7,7 @@ import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import { DECK_QUERY } from '../../../api/decks/constants';
 import LoadingIndicator from './LoadingIndicator';
-import CardsTable from './CardsTable';
+import CardsList from './CardsList';
 
 const EditDeck = () => {
   const animClass = useContext(AnimContext);
@@ -45,7 +45,7 @@ const EditDeck = () => {
                   {' '}
                   {data.deckQuery.cards.length}
                 </Header>
-                <CardsTable deck={data.deckQuery} />
+                <CardsList deck={data.deckQuery} />
               </Grid.Column>
             </Grid>
           </Container>

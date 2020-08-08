@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Dropdown } from 'semantic-ui-react';
 
 const limitOptions = [
@@ -20,3 +21,8 @@ export const PageSizeSelect = ({ limit, onChangeLimit }) => (
     />
   </>
 );
+
+PageSizeSelect.propTypes = {
+  limit: PropTypes.string.isRequired,
+  onChangeLimit: PropTypes.func.isRequired,
+};

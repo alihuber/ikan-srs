@@ -4,11 +4,11 @@ import { Form, Popup } from 'semantic-ui-react';
 
 const regex = new RegExp('^[a-zA-Z0-9 ]+$');
 
-class UserFilter extends React.Component {
+class TableFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filter: '',
+      filter: props.filter,
       filterValid: true,
     };
   }
@@ -60,9 +60,11 @@ class UserFilter extends React.Component {
   }
 }
 
-UserFilter.propTypes = {
+TableFilter.propTypes = {
   onSubmitFilter: PropTypes.func.isRequired,
+  filter: PropTypes.string.isRequired,
   totalCount: PropTypes.number.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
-export default UserFilter;
+export default TableFilter;

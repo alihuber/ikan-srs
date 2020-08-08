@@ -47,7 +47,6 @@ export default {
         return { usersCount: 0, usersList: [] };
       }
       logger.log({ level: 'info', message: `returning users for _id ${user._id}` });
-      // 5 == page size, not configurable for now
       const skip = perPage * (pageNum - 1);
       let foundUsers;
       let usersCount;

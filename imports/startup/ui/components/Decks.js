@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
@@ -14,6 +14,7 @@ const Decks = () => {
   const animClass = useContext(AnimContext);
   const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
+  // const [showAdd, setShowAdd] = useState(false);
   const { data, loading, refetch } = useQuery(DECKS_QUERY, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
@@ -25,6 +26,10 @@ const Decks = () => {
 
   const handleEdit = (deckId, hist) => {
     hist.push(`/editDeck/${deckId}`);
+  };
+
+  const onAddClose = () => {
+    // setShowAdd(false);
   };
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {
@@ -53,20 +58,16 @@ const Decks = () => {
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 {data.decks.length !== 0 ? (
-                  <Modal
-                    trigger={(
-                      <Button name="addDeckButton" size="small" secondary floated="right">
-                        Add Card
-                      </Button>
-                    )}
-                  >
-                    <AddCardModal decks={data.decks} refetch={refetch} />
-                  </Modal>
+                  <AddCardModal
+                    decks={data.decks}
+                    refetch={refetch}
+                  />
                 ) : null}
                 <Divider />
                 <Card.Group>
                   {data.decks.map((deck) => {
-                    const nextDueDate = deck.cards.length !== 0 && deck.cards.sort((c) => c.dueDate)[0].dueDate;
+                    const cardsLength = (deck.cards && deck.cards.length) || 0;
+                    const nextDueDate = (cardsLength !== 0 && Array.from(deck.cards).sort((c) => c.dueDate)[0].dueDate) || null;
                     return (
                       <Card fluid key={deck._id}>
                         <Card.Content>

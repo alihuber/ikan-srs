@@ -29,7 +29,7 @@ const editUserSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(editUserSchema);
 
-const handleSubmit = (values, userId, updateUser, refetch, setPageNum) => {
+const handleSubmit = (values, userId, updateUser, refetch) => {
   const { username, password, admin } = values;
   const update = {
     userId,
@@ -49,25 +49,21 @@ const handleSubmit = (values, userId, updateUser, refetch, setPageNum) => {
       toast.error('Update error!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
-    })
-    .finally(() => {
-      setPageNum(0);
     });
 };
 
-const EditUserModal = ({ userId, username, admin, refetch, setPageNum }) => {
+const EditUserModal = ({ userId, username, admin, refetch }) => {
   const [updateUser, _] = useMutation(UPDATE_USER_MUTATION);
   const model = { username, admin };
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch, setPageNum)} model={model} />
+      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch)} model={model} />
     </Modal.Content>
   );
 };
 
 EditUserModal.propTypes = {
   refetch: PropTypes.func.isRequired,
-  setPageNum: PropTypes.func.isRequired,
   admin: PropTypes.bool,
   username: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,

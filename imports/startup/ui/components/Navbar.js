@@ -19,10 +19,6 @@ const handleHome = (history) => {
   history.push('/');
 };
 
-const handleCards = (history) => {
-  history.push('/cards');
-};
-
 const handleUsers = (history) => {
   history.push('/users');
 };
@@ -44,11 +40,6 @@ const Navbar = () => {
         <Menu.Item as="a" onClick={() => handleHome(history)} itemname="homeButton">
           {currentUser && currentUser._id ? 'Decks' : 'Home'}
         </Menu.Item>
-        {currentUser && currentUser._id && !currentUser.admin ? (
-          <Menu.Item as="a" onClick={() => handleCards(history)} itemname="cardsButton">
-            Cards
-          </Menu.Item>
-        ) : null}
         {currentUser && currentUser.admin ? (
           <Menu.Item as="a" onClick={() => handleUsers(history)} itemname="usersButton">
             Users

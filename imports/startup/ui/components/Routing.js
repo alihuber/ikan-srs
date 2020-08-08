@@ -2,8 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import HomePage from './HomePage.js';
-import LoadingIndicator from './LoadingIndicator.js';
+import HomePage from './HomePage';
+import LoadingIndicator from './LoadingIndicator';
 
 const Login = lazy(() => import('./Login'));
 const NotFoundPage = lazy(() => import('./NotFoundPage'));

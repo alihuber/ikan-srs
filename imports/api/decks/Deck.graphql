@@ -40,13 +40,14 @@ type Deck {
 
 type CardConnection {
   cardsList: [Card]!
+  cardsCount: Int!
 }
 
 extend type Query {
   decks: [Deck]
   nextCardForLearning(deckId: String!): Card
   deckQuery(deckId: String!): Deck
-  cardsForDeck(deckId: String!): CardConnection!
+  cardsForDeck(deckId: String!, pageNum: Int, perPage: Int, q: String, sort: String, order: String): CardConnection!
 }
 
 extend type Mutation {

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Container, Grid, Header } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';
 
 const NotFoundPage = () => {

@@ -1,7 +1,8 @@
 import { Table } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-export function UserTableHeader({ handleSort, column, direction }) {
+export function UsersTableHeader({ handleSort, column, direction }) {
   return (
     <Table.Header>
       <Table.Row>
@@ -42,3 +43,9 @@ export function UserTableHeader({ handleSort, column, direction }) {
     </Table.Header>
   );
 }
+
+UsersTableHeader.propTypes = {
+  handleSort: PropTypes.func.isRequired,
+  column: PropTypes.string.isRequired,
+  direction: PropTypes.string.isRequired,
+};

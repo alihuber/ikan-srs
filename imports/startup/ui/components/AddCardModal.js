@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
-import { Modal } from 'semantic-ui-react';
+import { Modal, Button } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
@@ -46,7 +47,7 @@ const mdParser = new MarkdownIt({
   },
 });
 
-const handleSubmit = (values, addCard, refetch, deck) => {
+const handleSubmit = (values, addCard, refetch, deck, onClose, setOpen, setModel) => {
   const { front, back } = values;
   let { deckId } = values;
   if (!deckId && deck) {
@@ -56,6 +57,9 @@ const handleSubmit = (values, addCard, refetch, deck) => {
     addCard({ variables: { deckId, front, back } })
       .then(() => {
         refetch();
+        onClose && onClose();
+        setOpen(false);
+        setModel({ front: '', back: '' });
         toast.success('Card added!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
@@ -73,11 +77,14 @@ const handleSubmit = (values, addCard, refetch, deck) => {
   }
 };
 
-const AddCardModal = ({ refetch, decks, deck }) => {
+const AddCardModal = ({ refetch, decks, deck, onClose }) => {
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
+  const location = useLocation();
+  const onEditScreen = location.pathname.includes('editDeck');
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
   const [model, setModel] = useState({ front: '', back: '' });
-  const editorHeight = isTabletOrMobile ? '200px' : '500px';
+  const [open, setOpen] = useState(false);
+  const editorHeight = isTabletOrMobile ? '200px' : '300px';
   let deckOptions;
   if (decks) {
     deckOptions = decks.map((dk) => {
@@ -102,32 +109,62 @@ const AddCardModal = ({ refetch, decks, deck }) => {
   };
 
   return (
-    <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck)} model={model}>
-        <h4>Add card</h4>
-        {deck ? null : <SelectField name="deckId" options={deckOptions} />}
-        <label><b>Front*</b></label>
-        <MdEditor
-          style={{ height: editorHeight }}
-          renderHTML={(text) => mdParser.render(text)}
-          onImageUpload={handleImageUpload}
-          onChange={handleFrontChange}
-          value={model.front}
-        />
-        <ErrorField name="front" errorMessage="Front is required" />
-        <label><b>Back*</b></label>
-        <MdEditor
-          style={{ height: editorHeight }}
-          renderHTML={(text) => mdParser.render(text)}
-          onImageUpload={handleImageUpload}
-          onChange={handleBackChange}
-          value={model.back}
-        />
-        <ErrorField name="back" errorMessage="Back is required" />
-        <br />
-        <SubmitField />
-      </AutoForm>
-    </Modal.Content>
+    <Modal
+      open={open}
+      trigger={(
+        onEditScreen ? (
+          <Button
+            compact
+            name="addCardButton"
+            size="small"
+            primary
+            floated="left"
+            onClick={() => setOpen(true)}
+          >
+            Add Card
+          </Button>
+        ) : (
+            <Button
+              compact
+              name="addCardButton"
+              size="small"
+              secondary
+              floated="right"
+              onClick={() => setOpen(true)}
+            >
+              Add Card
+            </Button>
+          )
+      )}
+    >
+      <Modal.Content>
+        <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck, onClose, setOpen, setModel)} model={model}>
+          <h4>Add card</h4>
+          {deck ? null : <SelectField name="deckId" options={deckOptions} />}
+          <label><b>Front*</b></label>
+          <MdEditor
+            style={{ height: editorHeight }}
+            renderHTML={(text) => mdParser.render(text)}
+            onImageUpload={handleImageUpload}
+            onChange={handleFrontChange}
+            value={model.front}
+          />
+          <ErrorField name="front" errorMessage="Front is required" />
+          <label><b>Back*</b></label>
+          <MdEditor
+            style={{ height: editorHeight }}
+            renderHTML={(text) => mdParser.render(text)}
+            onImageUpload={handleImageUpload}
+            onChange={handleBackChange}
+            value={model.back}
+          />
+          <ErrorField name="back" errorMessage="Back is required" />
+          <br />
+          <SubmitField />
+          <Button floated="right" negative onClick={() => { setOpen(false); setModel({ front: '', back: '' }); }}>Abort</Button>
+        </AutoForm>
+      </Modal.Content>
+    </Modal>
   );
 };
 
@@ -135,6 +172,7 @@ AddCardModal.propTypes = {
   refetch: PropTypes.func.isRequired,
   decks: PropTypes.array,
   deck: PropTypes.object,
+  onClose: PropTypes.func,
 };
 
 export default AddCardModal;
