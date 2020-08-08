@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
@@ -14,7 +14,6 @@ const Decks = () => {
   const animClass = useContext(AnimContext);
   const history = useHistory();
   const currentUser = useContext(CurrentUserContext);
-  // const [showAdd, setShowAdd] = useState(false);
   const { data, loading, refetch } = useQuery(DECKS_QUERY, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
@@ -26,10 +25,6 @@ const Decks = () => {
 
   const handleEdit = (deckId, hist) => {
     hist.push(`/editDeck/${deckId}`);
-  };
-
-  const onAddClose = () => {
-    // setShowAdd(false);
   };
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {

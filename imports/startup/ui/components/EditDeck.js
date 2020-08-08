@@ -14,7 +14,7 @@ const EditDeck = () => {
   const history = useHistory();
   const deckId = history.location.pathname.split('/')[2];
   const currentUser = useContext(CurrentUserContext);
-  const { data, loading, refetch } = useQuery(DECK_QUERY, {
+  const { data, loading } = useQuery(DECK_QUERY, {
     notifyOnNetworkStatusChange: true,
     variables: { deckId },
   });
