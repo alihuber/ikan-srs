@@ -18,7 +18,6 @@ import { ADD_CARD_MUTATION } from '../../../api/decks/constants';
 const addCardSchema = new SimpleSchema({
   deckId: {
     type: String,
-    // TODO: make dependent from where dialog is launched
     optional: true,
   },
   front: {
@@ -59,7 +58,7 @@ const handleSubmit = (values, addCard, refetch, deck, onClose, setOpen, setModel
         refetch();
         onClose && onClose();
         setOpen(false);
-        setModel({ front: '', back: '' });
+        setModel({ front: '', back: '', deckId: '' });
         toast.success('Card added!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
@@ -83,7 +82,7 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
   const location = useLocation();
   const onEditScreen = location.pathname.includes('editDeck');
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
-  const [model, setModel] = useState({ front: '', back: '' });
+  const [model, setModel] = useState({ front: '', back: '', deckId: '' });
   const [open, setOpen] = useState(false);
   const editorHeight = isTabletOrMobile ? '200px' : '300px';
   let deckOptions;
@@ -141,8 +140,8 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
       <Modal.Content>
         <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck, onClose, setOpen, setModel)} model={model}>
           <h4>Add card</h4>
-          {deck ? null : <SelectField name="deckId" options={deckOptions} />}
-          <label><b>Front*</b></label>
+          {deck ? null : <SelectField onChange={(v) => { setModel({ ...model, deckId: v }); }} name="deckId" options={deckOptions} value={model.deckId} />}
+          <b>Front*</b>
           <MdEditor
             style={{ height: editorHeight }}
             renderHTML={(text) => mdParser.render(text)}
@@ -151,7 +150,7 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
             value={model.front}
           />
           <ErrorField name="front" errorMessage="Front is required" />
-          <label><b>Back*</b></label>
+          <b>Back*</b>
           <MdEditor
             style={{ height: editorHeight }}
             renderHTML={(text) => mdParser.render(text)}

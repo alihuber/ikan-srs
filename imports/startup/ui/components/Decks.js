@@ -45,7 +45,7 @@ const Decks = () => {
                 </Header>
                 <Modal
                   trigger={(
-                    <Button name="addDeckButton" size="small" primary>
+                    <Button compact name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
                   )}
