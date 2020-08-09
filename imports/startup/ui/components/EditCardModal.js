@@ -65,10 +65,11 @@ const handleSubmit = (values, updateCard, refetch, cardId) => {
 };
 
 const EditCardModal = ({ refetch, card }) => {
+  // eslint-disable-next-line no-unused-vars
   const [updateCard, _] = useMutation(UPDATE_CARD_MUTATION);
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
   const [model, setModel] = useState(card);
-  const editorHeight = isTabletOrMobile ? '200px' : '500px';
+  const editorHeight = isTabletOrMobile ? '200px' : '300px';
   const handleFrontChange = ({ text }) => {
     setModel({ ...model, front: text });
   };
@@ -90,7 +91,7 @@ const EditCardModal = ({ refetch, card }) => {
     <Modal.Content>
       <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, updateCard, refetch, card._id)} model={model}>
         <h4>Edit card</h4>
-        <label><b>Front*</b></label>
+        <b>Front*</b>
         <MdEditor
           style={{ height: editorHeight }}
           onImageUpload={handleImageUpload}
@@ -99,7 +100,7 @@ const EditCardModal = ({ refetch, card }) => {
           value={model.front}
         />
         <ErrorField name="front" errorMessage="Front is required" />
-        <label><b>Back*</b></label>
+        <b>Back*</b>
         <MdEditor
           style={{ height: editorHeight }}
           renderHTML={(text) => mdParser.render(text)}
