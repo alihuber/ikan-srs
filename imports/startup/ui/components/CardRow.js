@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Table, Modal } from 'semantic-ui-react';
+import { Button, Table, Modal, Icon } from 'semantic-ui-react';
 import truncate from 'lodash/truncate';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -14,11 +14,17 @@ export const CardRow = ({ card, handleDeleteCard, deleteCard, handleResetCard, r
       <Table.Cell>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
       <Table.Cell>{card.state}</Table.Cell>
       <Table.Cell>{card.tags}</Table.Cell>
-      <Table.Cell textAlign="right">
+      <Table.Cell>
         <Modal
           trigger={(
-            <Button compact size="mini" primary name={'editCard' + card._id}>
-              Edit
+            <Button
+              compact
+              size="mini"
+              icon
+              primary
+              name={'editCard' + card._id}
+            >
+              <Icon name="edit" />
             </Button>
           )}
         >
@@ -26,21 +32,23 @@ export const CardRow = ({ card, handleDeleteCard, deleteCard, handleResetCard, r
         </Modal>
         <Button
           name={'deleteCard_' + card._id}
+          icon
           compact
           size="mini"
           color="red"
           onClick={() => handleDeleteCard(card._id, deleteCard, refetch)}
         >
-          Delete
+          <Icon name="trash" />
         </Button>
         <Button
           name={'resetCard_' + card._id}
+          icon
           compact
           size="mini"
           secondary
           onClick={() => handleResetCard(card._id, resetCard, refetch)}
         >
-          Reset
+          <Icon name="history" />
         </Button>
       </Table.Cell>
 
