@@ -50,7 +50,7 @@ const Learn = () => {
   const [answerShown, setAnswerShown] = useState(false);
 
   const showAnswer = (
-    <Button basic color="green" onClick={setAnswerShown}>
+    <Button basic color="green" onClick={() => setAnswerShown(true)}>
       Show answer
     </Button>
   );
@@ -58,6 +58,7 @@ const Learn = () => {
   const handleAnswer = (cardId, answerCardFunc, answer, reFetch) => {
     answerCardFunc({ variables: { cardId, answer } }).then(() => {
       reFetch();
+      setAnswerShown(false);
     });
   };
 
