@@ -62,7 +62,10 @@ const Decks = () => {
                 <Card.Group>
                   {data.decks.map((deck) => {
                     const cardsLength = (deck.cards && deck.cards.length) || 0;
-                    const nextDueDate = (cardsLength !== 0 && Array.from(deck.cards).sort((c) => c.dueDate)[0].dueDate) || null;
+                    const nextDueDate = (cardsLength !== 0
+                      && Array.from(deck.cards).sort((a, b) => {
+                        return (new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+                      })[0].dueDate) || null;
                     return (
                       <Card fluid key={deck._id}>
                         <Card.Content>
