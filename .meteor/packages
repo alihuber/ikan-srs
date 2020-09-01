@@ -13,7 +13,7 @@ ecmascript@0.14.3              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 mobile-experience@1.1.0
 mongo@1.10.0
-accounts-password@1.6.0
+accounts-password@1.6.2
 
 apollo@3.1.0
 swydo:graphql
