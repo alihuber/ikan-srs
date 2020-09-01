@@ -349,7 +349,7 @@ export default {
       const foundDeck = Decks.findOne({ _id: deckId, userId: user._id });
       if (!foundDeck) {
         logger.log({ level: 'warn', message: `cards for deck with ${deckId} not found` });
-        return { cardsList: [] };
+        return { cardsList: [], cardsCount: 0 };
       }
       const skip = perPage * (pageNum - 1);
       const ord = order === 'desc' ? -1 : 1;
