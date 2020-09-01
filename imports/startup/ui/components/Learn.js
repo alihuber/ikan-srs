@@ -46,6 +46,7 @@ const Learn = () => {
   const { data, loading, refetch } = useQuery(NEXT_CARD_FOR_LEARNING_QUERY, {
     variables: { deckId },
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
   });
   const [answerShown, setAnswerShown] = useState(false);
 
