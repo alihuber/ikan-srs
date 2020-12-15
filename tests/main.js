@@ -10,10 +10,10 @@ import './answer-learning-card.test';
 import './answer-relearning-card.test';
 import './answer-graduated-card.test';
 
-describe('base_app', function () {
+describe('ikan-srs', function () {
   it('package.json has correct name', async function () {
     const { name } = await import('../package.json');
-    assert.strictEqual(name, 'base_app');
+    assert.strictEqual(name, 'ikan-srs');
   });
 
   if (Meteor.isClient) {

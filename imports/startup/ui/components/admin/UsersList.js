@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { Button, Responsive, Divider, Segment } from 'semantic-ui-react';
+import { Button, Divider, Segment } from 'semantic-ui-react';
+import { createMedia } from '@artsy/fresnel';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import LoadingIndicator from '../LoadingIndicator';
@@ -9,6 +10,18 @@ import UsersTable from './UsersTable';
 import TableFilter from '../TableFilter';
 import { DELETE_USER_MUTATION, USERS_QUERY } from '../../../../api/users/constants';
 import DeleteUserModal from './DeleteUserModal';
+
+const AppMedia = createMedia({
+  breakpoints: {
+    mobile: 320,
+    tablet: 768,
+    computer: 992,
+    largeScreen: 1200,
+    widescreen: 1920,
+  },
+});
+const mediaStyles = AppMedia.createMediaStyle();
+const { Media, MediaContextProvider } = AppMedia;
 
 const UsersList = () => {
   const [pageNum, setPageNum] = useState(1);
@@ -147,8 +160,8 @@ const UsersList = () => {
           Add User
         </Button>
         <Divider />
-        <Responsive minWidth={768}>
-          <Segment>
+        <MediaContextProvider>
+          <Segment as={Media} greaterThanOrEqual="computer">
             <TableFilter
               filter={q}
               totalCount={usersList.length}
@@ -174,9 +187,9 @@ const UsersList = () => {
               />
             ) : <LoadingIndicator />}
           </Segment>
-        </Responsive>
-        <Responsive maxWidth={768}>
-          <Segment>
+        </MediaContextProvider>
+        <MediaContextProvider>
+          <Segment as={Media} at="mobile">
             <TableFilter
               filter={q}
               totalCount={usersCount}
@@ -202,7 +215,7 @@ const UsersList = () => {
               />
             ) : <LoadingIndicator />}
           </Segment>
-        </Responsive>
+        </MediaContextProvider>
         <AddUserModal refetch={refetch} setPageNum={setPageNum} open={showAdd} onClose={cancelAdd} />
         <DeleteUserModal
           setPageNum={setPageNum}
