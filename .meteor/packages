@@ -6,14 +6,14 @@
 
 meteor@1.9.3                  # Shared foundation for all Meteor packages
 static-html             # Define static page content in .html files
-standard-minifier-css@1.6.0   # CSS minifier run for production mode
+standard-minifier-css@1.7.1   # CSS minifier run for production mode
 standard-minifier-js@2.6.0    # JS minifier run for production mode
 es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
-ecmascript@0.14.3              # Enable ECMAScript2015+ syntax in app code
+ecmascript@0.14.4              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 mobile-experience@1.1.0
-mongo@1.10.0
-accounts-password@1.6.2
+mongo@1.10.1
+accounts-password@1.6.3
 
 apollo@3.1.0
 swydo:graphql

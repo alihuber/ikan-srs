@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
-import { Button, Responsive, Divider, Segment } from 'semantic-ui-react';
+import { Button, Divider, Segment } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import TableFilter from './TableFilter';
@@ -207,40 +207,38 @@ const CardsList = ({ deck }) => {
           </Button>
         </div>
         <Divider />
-        <Responsive minWidth={768}>
-          <Segment>
-            <TableFilter
-              filter={q}
-              totalCount={cardsList.length}
-              onSubmitFilter={onSubmitFilter}
-              loading={loading}
+        <Segment>
+          <TableFilter
+            filter={q}
+            totalCount={cardsList.length}
+            onSubmitFilter={onSubmitFilter}
+            loading={loading}
+          />
+          <Divider />
+          {!loading ? (
+            <CardsTable
+              handleDeleteCard={handleDeleteCard}
+              deleteCard={deleteCard}
+              handleResetCard={handleResetCard}
+              resetCard={resetCard}
+              handleResetDeck={handleResetDeck}
+              resetDeck={resetDeck}
+              deckId={deck._id}
+              refetch={refetch}
+              setPageNum={setPageNum}
+              cardsList={cardsList}
+              totalCount={cardsCount}
+              totalPages={Math.ceil(cardsCount / limit)}
+              currentPage={pageNum}
+              onChangePage={handleChangePage}
+              column={sort}
+              direction={directionConverter(order)}
+              handleSort={handleSort}
+              onChangeLimit={onChangeLimit}
+              limit={limit.toString()}
             />
-            <Divider />
-            {!loading ? (
-              <CardsTable
-                handleDeleteCard={handleDeleteCard}
-                deleteCard={deleteCard}
-                handleResetCard={handleResetCard}
-                resetCard={resetCard}
-                handleResetDeck={handleResetDeck}
-                resetDeck={resetDeck}
-                deckId={deck._id}
-                refetch={refetch}
-                setPageNum={setPageNum}
-                cardsList={cardsList}
-                totalCount={cardsCount}
-                totalPages={Math.ceil(cardsCount / limit)}
-                currentPage={pageNum}
-                onChangePage={handleChangePage}
-                column={sort}
-                direction={directionConverter(order)}
-                handleSort={handleSort}
-                onChangeLimit={onChangeLimit}
-                limit={limit.toString()}
-              />
-            ) : <LoadingIndicator />}
-          </Segment>
-        </Responsive>
+          ) : <LoadingIndicator />}
+        </Segment>
       </>
     );
   } else {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Button, Divider, Segment } from 'semantic-ui-react';
-import { createMedia } from '@artsy/fresnel';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import LoadingIndicator from '../LoadingIndicator';
@@ -10,18 +9,6 @@ import UsersTable from './UsersTable';
 import TableFilter from '../TableFilter';
 import { DELETE_USER_MUTATION, USERS_QUERY } from '../../../../api/users/constants';
 import DeleteUserModal from './DeleteUserModal';
-
-const AppMedia = createMedia({
-  breakpoints: {
-    mobile: 320,
-    tablet: 768,
-    computer: 992,
-    largeScreen: 1200,
-    widescreen: 1920,
-  },
-});
-const mediaStyles = AppMedia.createMediaStyle();
-const { Media, MediaContextProvider } = AppMedia;
 
 const UsersList = () => {
   const [pageNum, setPageNum] = useState(1);
@@ -160,62 +147,32 @@ const UsersList = () => {
           Add User
         </Button>
         <Divider />
-        <MediaContextProvider>
-          <Segment as={Media} greaterThanOrEqual="computer">
-            <TableFilter
-              filter={q}
-              totalCount={usersList.length}
-              onSubmitFilter={onSubmitFilter}
-              loading={loading}
-            />
-            <Divider />
-            {!loading ? (
-              <UsersTable
-                handleDelete={handleDelete}
-                refetch={refetch}
-                setPageNum={setPageNum}
-                usersList={usersList}
-                totalCount={usersCount}
-                totalPages={Math.ceil(usersCount / limit)}
-                currentPage={pageNum}
-                onChangePage={handleChangePage}
-                column={sort}
-                direction={directionConverter(order)}
-                handleSort={handleSort}
-                onChangeLimit={onChangeLimit}
-                limit={limit.toString()}
-              />
-            ) : <LoadingIndicator />}
-          </Segment>
-        </MediaContextProvider>
-        <MediaContextProvider>
-          <Segment as={Media} at="mobile">
-            <TableFilter
-              filter={q}
+        <Segment>
+          <TableFilter
+            filter={q}
+            totalCount={usersList.length}
+            onSubmitFilter={onSubmitFilter}
+            loading={loading}
+          />
+          <Divider />
+          {!loading ? (
+            <UsersTable
+              handleDelete={handleDelete}
+              refetch={refetch}
+              setPageNum={setPageNum}
+              usersList={usersList}
               totalCount={usersCount}
-              onSubmitFilter={onSubmitFilter}
-              loading={loading}
+              totalPages={Math.ceil(usersCount / limit)}
+              currentPage={pageNum}
+              onChangePage={handleChangePage}
+              column={sort}
+              direction={directionConverter(order)}
+              handleSort={handleSort}
+              onChangeLimit={onChangeLimit}
+              limit={limit.toString()}
             />
-            <Divider />
-            {!loading ? (
-              <UsersTable
-                handleDelete={handleDelete}
-                refetch={refetch}
-                setPageNum={setPageNum}
-                usersList={usersList}
-                totalCount={usersCount}
-                totalPages={Math.ceil(usersCount / limit)}
-                currentPage={pageNum}
-                onChangePage={handleChangePage}
-                column={sort}
-                direction={directionConverter(order)}
-                handleSort={handleSort}
-                onChangeLimit={onChangeLimit}
-                limit={limit.toString()}
-              />
-            ) : <LoadingIndicator />}
-          </Segment>
-        </MediaContextProvider>
+          ) : <LoadingIndicator />}
+        </Segment>
         <AddUserModal refetch={refetch} setPageNum={setPageNum} open={showAdd} onClose={cancelAdd} />
         <DeleteUserModal
           setPageNum={setPageNum}
