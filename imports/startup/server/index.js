@@ -12,7 +12,8 @@ import UserResolver from '../../api/users/resolvers';
 import SettingsSchema from '../../api/settings/Setting.graphql';
 import SettingsResolver from '../../api/settings/resolvers';
 import DecksSchema from '../../api/decks/Deck.graphql';
-import DecksResolver from '../../api/decks/resolvers';
+import DecksResolver from '../../api/decks/deck-resolvers';
+import CardsResolver from '../../api/decks/card-resolvers';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -48,7 +49,7 @@ const DateResolver = {
   }),
 };
 
-const resolvers = merge(DateResolver, UserResolver, SettingsResolver, DecksResolver);
+const resolvers = merge(DateResolver, UserResolver, SettingsResolver, DecksResolver, CardsResolver);
 
 const server = new ApolloServer({
   typeDefs,

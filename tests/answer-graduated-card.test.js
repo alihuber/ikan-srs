@@ -11,13 +11,13 @@ import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
 import { Decks, Cards, ANSWER_CARD_MUTATION } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
-import DecksResolver from '../imports/api/decks/resolvers';
+import CardsResolver from '../imports/api/decks/card-resolvers';
 
 const { createTestClient } = require('apollo-server-testing');
 
 const typeDefs = [UserSchema, SettingSchema, DecksSchema];
 
-const resolvers = merge(DecksResolver);
+const resolvers = merge(CardsResolver);
 
 if (Meteor.isServer) {
   const constructTestServer = ({ context }) => {
