@@ -23,6 +23,7 @@ export const CardRow = ({ card, handleDeleteCard, deleteCard, handleResetCard, r
               icon
               primary
               name={'editCard' + card._id}
+              title="Edit"
             >
               <Icon name="edit" />
             </Button>
@@ -32,6 +33,7 @@ export const CardRow = ({ card, handleDeleteCard, deleteCard, handleResetCard, r
         </Modal>
         <Button
           name={'deleteCard_' + card._id}
+          title="Delete"
           icon
           compact
           size="mini"
@@ -42,6 +44,7 @@ export const CardRow = ({ card, handleDeleteCard, deleteCard, handleResetCard, r
         </Button>
         <Button
           name={'resetCard_' + card._id}
+          title="Reset"
           icon
           compact
           size="mini"
