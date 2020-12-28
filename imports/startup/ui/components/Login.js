@@ -68,7 +68,7 @@ const Login = () => {
                 <AutoFields />
                 <ErrorsField />
                 <br />
-                <SubmitField />
+                <SubmitField value="Submit" />
               </AutoForm>
             </Segment>
           </Grid.Column>

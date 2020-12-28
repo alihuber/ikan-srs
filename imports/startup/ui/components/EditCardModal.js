@@ -110,7 +110,7 @@ const EditCardModal = ({ refetch, card }) => {
         />
         <ErrorField name="back" errorMessage="Back is required" />
         <br />
-        <SubmitField />
+        <SubmitField value="Submit" />
       </AutoForm>
     </Modal.Content>
   );

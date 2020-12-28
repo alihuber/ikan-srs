@@ -124,17 +124,17 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
             Add Card
           </Button>
         ) : (
-            <Button
-              compact
-              name="addCardButton"
-              size="small"
-              secondary
-              floated="right"
-              onClick={() => setOpen(true)}
-            >
-              Add Card
-            </Button>
-          )
+          <Button
+            compact
+            name="addCardButton"
+            size="small"
+            secondary
+            floated="right"
+            onClick={() => setOpen(true)}
+          >
+            Add Card
+          </Button>
+        )
       )}
     >
       <Modal.Content>
@@ -160,7 +160,7 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
           />
           <ErrorField name="back" errorMessage="Back is required" />
           <br />
-          <SubmitField />
+          <SubmitField value="Submit" />
           <Button floated="right" negative onClick={() => { setOpen(false); setModel({ front: '', back: '' }); }}>Abort</Button>
         </AutoForm>
       </Modal.Content>

@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
-import { Modal } from 'semantic-ui-react';
+import { Modal, Button } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm } from 'uniforms-semantic';
+import submitField from './CustomSubmitField';
 import { CREATE_DECK_MUTATION } from '../../../api/decks/constants';
 
 const createDeckSchema = new SimpleSchema({
@@ -41,7 +42,7 @@ const AddDeckModal = ({ refetch }) => {
   const [createDeck, _] = useMutation(CREATE_DECK_MUTATION);
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)} />
+      <AutoForm submitField={submitField} schema={bridge} onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)} />
     </Modal.Content>
   );
 };
