@@ -7,48 +7,51 @@ import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm } from 'uniforms-semantic';
 import submitField from './CustomSubmitField';
-import { CREATE_DECK_MUTATION } from '../../../api/decks/constants';
+import { RENAME_DECK_MUTATION } from '../../../api/decks/constants';
 
-const createDeckSchema = new SimpleSchema({
+const renameDeckSchema = new SimpleSchema({
   name: {
     type: String,
     min: 3,
   },
 });
 
-const bridge = new SimpleSchema2Bridge(createDeckSchema);
+const bridge = new SimpleSchema2Bridge(renameDeckSchema);
 
-const handleSubmit = (values, createDeck, refetch) => {
+const handleSubmit = (values, deckId, renameDeck, refetch, setRenameOpen) => {
   const name = values.name;
   if (name) {
-    createDeck({ variables: { name } })
+    renameDeck({ variables: { deckId, name } })
       .then(() => {
         refetch();
-        toast.success('Creation successful!', {
+        setRenameOpen(false);
+        toast.success('Rename successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
       })
       .catch((error) => {
         console.log(error);
-        toast.error('Creation error!', {
+        toast.error('Rename error!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
       });
   }
 };
 
-const AddDeckModal = ({ refetch }) => {
+const RenameDeckModal = ({ deckId, refetch, setRenameOpen }) => {
   // eslint-disable-next-line no-unused-vars
-  const [createDeck, _] = useMutation(CREATE_DECK_MUTATION);
+  const [renameDeck, _] = useMutation(RENAME_DECK_MUTATION);
   return (
     <Modal.Content>
-      <AutoForm submitField={submitField} schema={bridge} onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)} />
+      <AutoForm submitField={submitField} schema={bridge} onSubmit={(doc) => handleSubmit(doc, deckId, renameDeck, refetch, setRenameOpen)} />
     </Modal.Content>
   );
 };
 
-AddDeckModal.propTypes = {
+RenameDeckModal.propTypes = {
   refetch: PropTypes.func.isRequired,
+  setRenameOpen: PropTypes.func.isRequired,
+  deckId: PropTypes.string.isRequired,
 };
 
-export default AddDeckModal;
+export default RenameDeckModal;

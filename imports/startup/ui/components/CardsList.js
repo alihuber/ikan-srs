@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
-import { Button, Divider, Segment } from 'semantic-ui-react';
+import { Button, Divider, Segment, Modal } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import TableFilter from './TableFilter';
 import CardsTable from './CardsTable';
 import LoadingIndicator from './LoadingIndicator';
 import AddCardModal from './AddCardModal';
+import RenameDeckModal from './RenameDeckModal';
 import {
   CARDS_FOR_DECK_QUERY,
   DELETE_DECK_MUTATION,
@@ -29,6 +30,7 @@ const CardsList = ({ deck }) => {
   const [order, setOrder] = useState('asc');
   const [limit, setLimit] = useState(10);
   const [q, setQ] = useState('');
+  const [renameOpen, setRenameOpen] = useState(false);
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -196,11 +198,28 @@ const CardsList = ({ deck }) => {
             deck={deck}
             refetch={refetch}
           />
+          <Modal
+            open={renameOpen}
+            onOpen={() => setRenameOpen(true)}
+            onClose={() => setRenameOpen(false)}
+            trigger={(
+              <Button compact name="renameDeckButton" size="small" primary>
+                Rename Deck
+              </Button>
+            )}
+          >
+            <RenameDeckModal
+              deckId={deck._id}
+              refetch={refetch}
+              setRenameOpen={setRenameOpen}
+            />
+          </Modal>
           <Button
             name={'deleteDeck_' + deck._id}
             compact
             secondary
             floated="right"
+            size="small"
             onClick={() => handleDeleteDeck(deck._id, deleteDeck, refetch, history)}
           >
             Delete Deck

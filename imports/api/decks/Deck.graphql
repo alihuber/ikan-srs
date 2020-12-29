@@ -59,4 +59,5 @@ extend type Mutation {
   updateCard(cardId: String!, front: String!, back: String!): Card
   resetCard(cardId: String!): Card
   resetDeck(deckId: String!): Deck
+  renameDeck(deckId: String!, name: String!): Deck
 }

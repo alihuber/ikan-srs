@@ -111,6 +111,7 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
   return (
     <Modal
       open={open}
+      onClose={() => { setOpen(false); setModel({ front: '', back: '' }); }}
       trigger={(
         onEditScreen ? (
           <Button
@@ -161,7 +162,6 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
           <ErrorField name="back" errorMessage="Back is required" />
           <br />
           <SubmitField value="Submit" />
-          <Button floated="right" negative onClick={() => { setOpen(false); setModel({ front: '', back: '' }); }}>Abort</Button>
         </AutoForm>
       </Modal.Content>
     </Modal>

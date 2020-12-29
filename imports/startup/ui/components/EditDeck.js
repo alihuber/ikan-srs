@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { Container, Grid, Header } from 'semantic-ui-react';
+import { Container, Grid, Header, Icon, Button } from 'semantic-ui-react';
 import moment from 'moment';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';

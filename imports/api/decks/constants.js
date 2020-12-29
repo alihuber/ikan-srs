@@ -239,3 +239,26 @@ export const ADD_CARD_MUTATION = gql`
     }
   }
 `;
+
+export const RENAME_DECK_MUTATION = gql`
+  mutation renameDeck($deckId: String!, $name: String!) {
+    renameDeck(deckId: $deckId, name: $name) {
+      _id
+      userId
+      name
+      createdAt
+      intervalModifier
+      cards {
+        front
+        back
+        state
+        easeFactor
+        currentInterval
+        dueDate
+        currentStep
+        createdAt
+        lapseCount
+      }
+    }
+  }
+`;

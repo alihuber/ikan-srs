@@ -4,7 +4,6 @@ import AnimContext from '../contexts/AnimContext';
 
 const NotFoundPage = () => {
   const animClass = useContext(AnimContext);
-  console.log('## inside not found');
   return (
     <div className={animClass}>
       <Container text style={{ paddingTop: '4em' }}>

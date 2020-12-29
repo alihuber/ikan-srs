@@ -17,6 +17,7 @@ import {
   DELETE_DECK_MUTATION,
   ADD_CARD_MUTATION,
   RESET_DECK_MUTATION,
+  RENAME_DECK_MUTATION,
 } from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import DecksResolver from '../imports/api/decks/deck-resolvers';
@@ -265,7 +266,6 @@ if (Meteor.isServer) {
       const settings = Settings.findOne({ userId });
       const easeFactor = settings.learningSettings.startingEase;
 
-      debugger;
       assert.equal(res.data.resetDeck.cards[0].front, 'foo');
       assert.equal(res.data.resetDeck.cards[0].back, 'bar');
       assert.equal(res.data.resetDeck.cards[0].state, 'NEW');
@@ -275,6 +275,45 @@ if (Meteor.isServer) {
       assert.equal(res.data.resetDeck.cards[0].lapseCount, 0);
       assert.equal(res.data.resetDeck.cards[0].dueDate.getTime(), now.getTime());
       timekeeper.reset();
+    });
+  });
+
+  describe('rename deck mutation', () => {
+    it('renames a deck', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+      const { server } = constructTestServer({
+        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+      });
+
+      Settings.insert({
+        userId,
+        ...DEFAULT_SETTINGS,
+      });
+
+      const deckId = Decks.insert({
+        userId,
+        name: 'deck1',
+        intervalModifier: 1,
+        createdAt: new Date(),
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { mutate } = createTestClient(server);
+      const newName = 'renamed';
+      const res = await mutate({
+        mutation: RENAME_DECK_MUTATION,
+        variables: { deckId, name: newName },
+      });
+
+      assert.equal(res.data.renameDeck.name, 'renamed');
     });
   });
 }

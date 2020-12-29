@@ -75,6 +75,31 @@ export default {
     },
   },
   Mutation: {
+    renameDeck(_, args, context) {
+      const user = context.user;
+      const deckId = args.deckId;
+      logger.log({ level: 'info', message: `got rename deck request from _id ${user && user._id} for deck ${deckId}`});
+      const foundUser = user && Meteor.users.findOne(user._id);
+      if (!foundUser) {
+        logger.log({ level: 'warn', message: `rename deck requester with ${user._id} is no user` });
+        throw new Error('not authorized');
+      }
+      const deckToRename = Decks.findOne({ _id: deckId, userId: user._id });
+      if (deckToRename) {
+        logger.log({ level: 'info', message: `renaming deck with _id ${deckId}` });
+        try {
+        } catch (err) {
+          logger.log({ level: 'error', message: `renmming deck with _id ${deckId} failed: ${JSON.stringify(err)}` });
+          throw new Error('not authorized');
+        }
+      } else {
+        logger.log({ level: 'info', message: `could not rename deck with _id ${deckId}` });
+        throw new Error('not authorized');
+      }
+      Decks.update({ _id: deckId }, { $set: { name: args.name } });
+      logger.log({ level: 'info', message: `renamed deck  for user with _id ${user._id} with ${deckId}` });
+      return collectCardStats(Decks.findOne(deckId));
+    },
     createDeck(_, args, context) {
       Match.test(args, { name: String });
       const user = context.user;
@@ -129,7 +154,6 @@ export default {
       const reqUser = context.user;
       logger.log({ level: 'info', message: `got resetDeck request from _id ${reqUser && reqUser._id}` });
       const user = reqUser && Meteor.users.findOne(reqUser._id);
-      debugger;
       if (!user) {
         logger.log({ level: 'warn', message: `reset deck requester with _id ${user._id} is not found` });
         throw new Error('not authorized');
