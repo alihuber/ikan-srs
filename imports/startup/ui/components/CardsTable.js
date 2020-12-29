@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, Pagination, Button } from 'semantic-ui-react';
+import { Table, Pagination, Button, Confirm } from 'semantic-ui-react';
 import { PageSizeSelect } from './PageSizeSelect';
 import { CardRow } from './CardRow';
 import { CardsTableHeader } from './CardsTableHeader';
@@ -18,7 +18,9 @@ const CardsTable = ({
   currentPage,
   totalPages,
   handleDeleteCard,
-  deleteCard,
+  handleDeleteCardConfirm,
+  deleteCardConfirmOpen,
+  handleCancelDeleteCardConfirm,
   handleResetCard,
   resetCard,
   handleResetDeck,
@@ -31,7 +33,6 @@ const CardsTable = ({
   const cardsRows = cardsList.map((card) => (
     <CardRow
       handleDeleteCard={handleDeleteCard}
-      deleteCard={deleteCard}
       handleResetCard={handleResetCard}
       resetCard={resetCard}
       handleResetDeck={handleResetDeck}
@@ -40,6 +41,9 @@ const CardsTable = ({
       card={card}
       refetch={refetch}
       setPageNum={setPageNum}
+      deleteCardConfirmOpen={deleteCardConfirmOpen}
+      handleCancelDeleteCardConfirm={handleCancelDeleteCardConfirm}
+      handleDeleteCardConfirm={handleDeleteCardConfirm}
     />
   ));
   return (
@@ -57,7 +61,11 @@ const CardsTable = ({
           direction={direction}
           handleSort={handleSort}
         />
-
+        <Confirm
+          open={deleteCardConfirmOpen}
+          onCancel={handleCancelDeleteCardConfirm}
+          onConfirm={handleDeleteCardConfirm}
+        />
         <Table.Body>{cardsRows}</Table.Body>
 
         <Table.Footer>
@@ -93,7 +101,9 @@ CardsTable.propTypes = {
   direction: PropTypes.string,
   handleSort: PropTypes.func.isRequired,
   handleDeleteCard: PropTypes.func.isRequired,
-  deleteCard: PropTypes.func.isRequired,
+  handleDeleteCardConfirm: PropTypes.func.isRequired,
+  deleteCardConfirmOpen: PropTypes.bool.isRequired,
+  handleCancelDeleteCardConfirm: PropTypes.func.isRequired,
   handleResetCard: PropTypes.func.isRequired,
   resetCard: PropTypes.func.isRequired,
   handleResetDeck: PropTypes.func.isRequired,

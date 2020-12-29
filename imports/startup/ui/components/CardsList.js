@@ -31,6 +31,8 @@ const CardsList = ({ deck }) => {
   const [limit, setLimit] = useState(10);
   const [q, setQ] = useState('');
   const [renameOpen, setRenameOpen] = useState(false);
+  const [deleteCardConfirmOpen, setDeleteCardConfirmOpen] = useState(false);
+  const [deleteCardId, setDeleteCardId] = useState('');
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -147,15 +149,28 @@ const CardsList = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [deleteCard, __] = useMutation(DELETE_CARD_MUTATION);
-  const handleDeleteCard = (cardId, deleteCardFunc, reFetch) => {
-    deleteCardFunc({ variables: { cardId } }).then(() => {
-      reFetch();
+  const handleDeleteCard = (cardId) => {
+    setDeleteCardConfirmOpen(true);
+    setDeleteCardId(cardId);
+  };
+  const handleDeleteCardConfirm = () => {
+    const cardId = deleteCardId;
+    deleteCard({ variables: { cardId } }).then(() => {
+      refetch();
       setPageNum(0);
       onChangeLimit(null, { value: 10 });
+      setDeleteCardConfirmOpen(false);
+      setDeleteCardId('');
+      submitFilter('');
+      setQ('');
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
+  };
+  const handleCancelDeleteCardConfirm = () => {
+    setDeleteCardConfirmOpen(false);
+    setDeleteCardId('');
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -237,7 +252,9 @@ const CardsList = ({ deck }) => {
           {!loading ? (
             <CardsTable
               handleDeleteCard={handleDeleteCard}
-              deleteCard={deleteCard}
+              handleDeleteCardConfirm={handleDeleteCardConfirm}
+              deleteCardConfirmOpen={deleteCardConfirmOpen}
+              handleCancelDeleteCardConfirm={handleCancelDeleteCardConfirm}
               handleResetCard={handleResetCard}
               resetCard={resetCard}
               handleResetDeck={handleResetDeck}
