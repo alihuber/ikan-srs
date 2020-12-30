@@ -176,7 +176,8 @@ export default {
                 lapseCount: 0,
                 dueDate,
               },
-            }
+            },
+            { multi: true }
           );
           const updatedCards = Cards.find({ deckId }).fetch();
           deckToReset.cards = updatedCards;

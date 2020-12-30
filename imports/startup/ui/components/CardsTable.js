@@ -20,7 +20,6 @@ const CardsTable = ({
   handleDeleteCard,
   handleResetCard,
   handleResetDeck,
-  resetDeck,
   deckId,
   onChangePage }) => {
   if (!cardsList) {
@@ -62,7 +61,7 @@ const CardsTable = ({
                 activePage={currentPage}
                 onPageChange={onChangePage}
               />
-              <Button floated="right" size="small" onClick={() => handleResetDeck(deckId, resetDeck, refetch)}>
+              <Button floated="right" size="small" onClick={() => handleResetDeck(deckId)}>
                 Reset All Cards
               </Button>
             </Table.HeaderCell>
@@ -89,7 +88,6 @@ CardsTable.propTypes = {
   handleDeleteCard: PropTypes.func.isRequired,
   handleResetCard: PropTypes.func.isRequired,
   handleResetDeck: PropTypes.func.isRequired,
-  resetDeck: PropTypes.func.isRequired,
   deckId: PropTypes.string.isRequired,
 };
 

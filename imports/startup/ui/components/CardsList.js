@@ -35,6 +35,8 @@ const CardsList = ({ deck }) => {
   const [deleteCardId, setDeleteCardId] = useState('');
   const [resetCardConfirmOpen, setResetCardConfirmOpen] = useState(false);
   const [resetCardId, setResetCardId] = useState('');
+  const [resetDeckConfirmOpen, setResetDeckConfirmOpen] = useState(false);
+  const [resetDeckId, setResetDeckId] = useState('');
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -200,15 +202,26 @@ const CardsList = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [resetDeck, ____] = useMutation(RESET_DECK_MUTATION);
-  const handleResetDeck = (dckId, resetDeckFunc, reSettFetch) => {
-    resetDeckFunc({ variables: { dckId } }).then(() => {
-      reSettFetch();
+  const handleResetDeck = (dckId) => {
+    setResetDeckConfirmOpen(true);
+    setResetDeckId(dckId);
+  };
+  const handleResetDeckConfirm = () => {
+    const dckId = resetDeckId;
+    resetDeck({ variables: { deckId: dckId } }).then(() => {
+      refetch();
       setPageNum(0);
       onChangeLimit(null, { value: 10 });
+      setResetDeckConfirmOpen(false);
+      setResetDeckId('');
       toast.success('Deck reset successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
+  };
+  const handleCancelResetDeckConfirm = () => {
+    setResetDeckConfirmOpen(false);
+    setResetDeckId('');
   };
 
   const onAddClose = () => {
@@ -267,7 +280,6 @@ const CardsList = ({ deck }) => {
               handleDeleteCard={handleDeleteCard}
               handleResetCard={handleResetCard}
               handleResetDeck={handleResetDeck}
-              resetDeck={resetDeck}
               deckId={deck._id}
               refetch={refetch}
               setPageNum={setPageNum}
@@ -295,6 +307,12 @@ const CardsList = ({ deck }) => {
           onCancel={handleCancelResetCardConfirm}
           onConfirm={handleResetCardConfirm}
           content={`Reset card with id ${resetCardId}?`}
+        />
+        <Confirm
+          open={resetDeckConfirmOpen}
+          onCancel={handleCancelResetDeckConfirm}
+          onConfirm={handleResetDeckConfirm}
+          content="Reset deck?"
         />
       </>
     );

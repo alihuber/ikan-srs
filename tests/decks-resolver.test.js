@@ -11,6 +11,7 @@ import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
 import {
   Decks,
+  Cards,
   DECKS_QUERY,
   DECK_QUERY,
   CREATE_DECK_MUTATION,
@@ -255,8 +256,14 @@ if (Meteor.isServer) {
 
       const { mutate } = createTestClient(server);
       const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
+      const res2 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo2', back: 'bar2' } });
       assert.notEqual(res1.data.addCard, null);
       assert.equal(res1.errors, null);
+      assert.notEqual(res2.data.addCard, null);
+      assert.equal(res2.errors, null);
+      Cards.update({}, { $set: { state: 'LEARNING' } }, { multi: true });
+      const card = Cards.findOne();
+      assert.equal(card.state, 'LEARNING');
 
       const res = await mutate({
         mutation: RESET_DECK_MUTATION,
@@ -274,6 +281,15 @@ if (Meteor.isServer) {
       assert.equal(res.data.resetDeck.cards[0].currentStep, 0);
       assert.equal(res.data.resetDeck.cards[0].lapseCount, 0);
       assert.equal(res.data.resetDeck.cards[0].dueDate.getTime(), now.getTime());
+
+      assert.equal(res.data.resetDeck.cards[1].front, 'foo2');
+      assert.equal(res.data.resetDeck.cards[1].back, 'bar2');
+      assert.equal(res.data.resetDeck.cards[1].state, 'NEW');
+      assert.equal(res.data.resetDeck.cards[1].easeFactor, easeFactor);
+      assert.equal(res.data.resetDeck.cards[1].currentInterval, 0);
+      assert.equal(res.data.resetDeck.cards[1].currentStep, 0);
+      assert.equal(res.data.resetDeck.cards[1].lapseCount, 0);
+      assert.equal(res.data.resetDeck.cards[1].dueDate.getTime(), now.getTime());
       timekeeper.reset();
     });
   });
