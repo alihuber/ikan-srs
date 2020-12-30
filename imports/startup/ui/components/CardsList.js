@@ -37,6 +37,8 @@ const CardsList = ({ deck }) => {
   const [resetCardId, setResetCardId] = useState('');
   const [resetDeckConfirmOpen, setResetDeckConfirmOpen] = useState(false);
   const [resetDeckId, setResetDeckId] = useState('');
+  const [deleteDeckConfirmOpen, setDeleteDeckConfirmOpen] = useState(false);
+  const [deleteDeckId, setDeleteDeckId] = useState('');
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -141,14 +143,25 @@ const CardsList = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [deleteDeck, _] = useMutation(DELETE_DECK_MUTATION);
-  const handleDeleteDeck = (dkId, deleteDeckFunc, reFetch, hist) => {
-    deleteDeckFunc({ variables: { deckId: dkId } }).then(() => {
-      reFetch();
-      hist.push('/');
+  const handleDeleteDeck = (dckId) => {
+    setDeleteDeckConfirmOpen(true);
+    setDeleteDeckId(dckId);
+  };
+  const handleDeleteDeckConfirm = () => {
+    const dckId = deleteDeckId;
+    deleteDeck({ variables: { deckId: dckId } }).then(() => {
+      refetch();
+      setDeleteDeckConfirmOpen(false);
+      setDeleteDeckId('');
+      history.push('/');
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
+  };
+  const handleCancelDeleteDeckConfirm = () => {
+    setDeleteDeckConfirmOpen(false);
+    setDeleteDeckId('');
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -261,7 +274,7 @@ const CardsList = ({ deck }) => {
             secondary
             floated="right"
             size="small"
-            onClick={() => handleDeleteDeck(deck._id, deleteDeck, refetch, history)}
+            onClick={() => handleDeleteDeck(deck._id)}
           >
             Delete Deck
           </Button>
@@ -313,6 +326,12 @@ const CardsList = ({ deck }) => {
           onCancel={handleCancelResetDeckConfirm}
           onConfirm={handleResetDeckConfirm}
           content="Reset deck?"
+        />
+        <Confirm
+          open={deleteDeckConfirmOpen}
+          onCancel={handleCancelDeleteDeckConfirm}
+          onConfirm={handleDeleteDeckConfirm}
+          content="Delete deck?"
         />
       </>
     );
