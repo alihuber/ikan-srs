@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import EditCardModal from './EditCardModal';
 
-export const CardRow = ({ card, handleDeleteCard, handleResetCard, resetCard, refetch }) => {
+export const CardRow = ({ card, handleDeleteCard, handleResetCard, refetch }) => {
   return (
     <Table.Row>
       <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
@@ -49,7 +49,7 @@ export const CardRow = ({ card, handleDeleteCard, handleResetCard, resetCard, re
           compact
           size="mini"
           secondary
-          onClick={() => handleResetCard(card._id, resetCard, refetch)}
+          onClick={() => handleResetCard(card._id)}
         >
           <Icon name="history" />
         </Button>
@@ -62,6 +62,5 @@ CardRow.propTypes = {
   card: PropTypes.object.isRequired,
   handleDeleteCard: PropTypes.func.isRequired,
   handleResetCard: PropTypes.func.isRequired,
-  resetCard: PropTypes.func.isRequired,
   refetch: PropTypes.func.isRequired,
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, Pagination, Button, Confirm } from 'semantic-ui-react';
+import { Table, Pagination, Button } from 'semantic-ui-react';
 import { PageSizeSelect } from './PageSizeSelect';
 import { CardRow } from './CardRow';
 import { CardsTableHeader } from './CardsTableHeader';
@@ -18,11 +18,7 @@ const CardsTable = ({
   currentPage,
   totalPages,
   handleDeleteCard,
-  handleDeleteCardConfirm,
-  deleteCardConfirmOpen,
-  handleCancelDeleteCardConfirm,
   handleResetCard,
-  resetCard,
   handleResetDeck,
   resetDeck,
   deckId,
@@ -34,16 +30,10 @@ const CardsTable = ({
     <CardRow
       handleDeleteCard={handleDeleteCard}
       handleResetCard={handleResetCard}
-      resetCard={resetCard}
-      handleResetDeck={handleResetDeck}
-      resetDeck={resetDeck}
       key={card._id}
       card={card}
       refetch={refetch}
       setPageNum={setPageNum}
-      deleteCardConfirmOpen={deleteCardConfirmOpen}
-      handleCancelDeleteCardConfirm={handleCancelDeleteCardConfirm}
-      handleDeleteCardConfirm={handleDeleteCardConfirm}
     />
   ));
   return (
@@ -61,11 +51,7 @@ const CardsTable = ({
           direction={direction}
           handleSort={handleSort}
         />
-        <Confirm
-          open={deleteCardConfirmOpen}
-          onCancel={handleCancelDeleteCardConfirm}
-          onConfirm={handleDeleteCardConfirm}
-        />
+
         <Table.Body>{cardsRows}</Table.Body>
 
         <Table.Footer>
@@ -101,11 +87,7 @@ CardsTable.propTypes = {
   direction: PropTypes.string,
   handleSort: PropTypes.func.isRequired,
   handleDeleteCard: PropTypes.func.isRequired,
-  handleDeleteCardConfirm: PropTypes.func.isRequired,
-  deleteCardConfirmOpen: PropTypes.bool.isRequired,
-  handleCancelDeleteCardConfirm: PropTypes.func.isRequired,
   handleResetCard: PropTypes.func.isRequired,
-  resetCard: PropTypes.func.isRequired,
   handleResetDeck: PropTypes.func.isRequired,
   resetDeck: PropTypes.func.isRequired,
   deckId: PropTypes.string.isRequired,

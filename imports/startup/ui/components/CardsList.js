@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
-import { Button, Divider, Segment, Modal } from 'semantic-ui-react';
+import { Button, Divider, Segment, Modal, Confirm } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
 import TableFilter from './TableFilter';
@@ -33,6 +33,8 @@ const CardsList = ({ deck }) => {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteCardConfirmOpen, setDeleteCardConfirmOpen] = useState(false);
   const [deleteCardId, setDeleteCardId] = useState('');
+  const [resetCardConfirmOpen, setResetCardConfirmOpen] = useState(false);
+  const [resetCardId, setResetCardId] = useState('');
 
   const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
 
@@ -175,14 +177,25 @@ const CardsList = ({ deck }) => {
 
   // eslint-disable-next-line no-unused-vars
   const [resetCard, ___] = useMutation(RESET_CARD_MUTATION);
-  const handleResetCard = (cardId, resetCardFunc, reSetFetch) => {
-    resetCardFunc({ variables: { cardId } }).then(() => {
-      reSetFetch();
+  const handleResetCard = (cardId) => {
+    setResetCardConfirmOpen(true);
+    setResetCardId(cardId);
+  };
+  const handleResetCardConfirm = () => {
+    const cardId = resetCardId;
+    resetCard({ variables: { cardId } }).then(() => {
+      refetch();
       setPageNum(0);
+      setResetCardConfirmOpen(false);
+      setResetCardId('');
       toast.success('Card reset successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     });
+  };
+  const handleCancelResetCardConfirm = () => {
+    setResetCardConfirmOpen(false);
+    setResetCardId('');
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -252,11 +265,7 @@ const CardsList = ({ deck }) => {
           {!loading ? (
             <CardsTable
               handleDeleteCard={handleDeleteCard}
-              handleDeleteCardConfirm={handleDeleteCardConfirm}
-              deleteCardConfirmOpen={deleteCardConfirmOpen}
-              handleCancelDeleteCardConfirm={handleCancelDeleteCardConfirm}
               handleResetCard={handleResetCard}
-              resetCard={resetCard}
               handleResetDeck={handleResetDeck}
               resetDeck={resetDeck}
               deckId={deck._id}
@@ -275,6 +284,18 @@ const CardsList = ({ deck }) => {
             />
           ) : <LoadingIndicator />}
         </Segment>
+        <Confirm
+          open={deleteCardConfirmOpen}
+          onCancel={handleCancelDeleteCardConfirm}
+          onConfirm={handleDeleteCardConfirm}
+          content={`Delete card with id ${deleteCardId}?`}
+        />
+        <Confirm
+          open={resetCardConfirmOpen}
+          onCancel={handleCancelResetCardConfirm}
+          onConfirm={handleResetCardConfirm}
+          content={`Reset card with id ${resetCardId}?`}
+        />
       </>
     );
   } else {
