@@ -62,6 +62,7 @@ const Decks = () => {
                 <Card.Group>
                   {data.decks.map((deck) => {
                     const cardsLength = (deck.cards && deck.cards.length) || 0;
+                    const learnDisabled = deck.newCards === 0 && deck.learningCards === 0 && deck.relearningCards === 0 && deck.graduatedCards === 0;
                     const nextDueDate = (cardsLength !== 0
                       && Array.from(deck.cards).sort((a, b) => {
                         return (new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
@@ -81,7 +82,7 @@ const Decks = () => {
                           {nextDueDate ? (
                             <Card.Meta>
                               Next due card: &nbsp;
-                              {moment(nextDueDate).format('DD.MM.YYYY HH:mm')}
+                              {moment(nextDueDate).isBefore(moment()) ? <b style={{ color: 'red' }}>{moment(nextDueDate).format('DD.MM.YYYY HH:mm')}</b> : moment(nextDueDate).format('DD.MM.YYYY HH:mm')}
                             </Card.Meta>
                           ) : null}
                           <Card.Description>
@@ -112,7 +113,12 @@ const Decks = () => {
                           </Card.Description>
                         </Card.Content>
                         <Card.Content extra>
-                          <Button basic color="green" onClick={() => handleLearn(deck._id, history)}>
+                          <Button
+                            disabled={learnDisabled}
+                            basic
+                            color="green"
+                            onClick={() => handleLearn(deck._id, history)}
+                          >
                             Learn now
                           </Button>
                         </Card.Content>

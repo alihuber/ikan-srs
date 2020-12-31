@@ -48,7 +48,7 @@ export default {
           return [];
         }
       } else {
-        logger.log({ level: 'info', message: 'user not found, returning {}' });
+        logger.log({ level: 'info', message: 'user not found, returning []' });
         return [];
       }
     },

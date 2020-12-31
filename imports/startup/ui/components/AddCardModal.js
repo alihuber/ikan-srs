@@ -19,6 +19,7 @@ const addCardSchema = new SimpleSchema({
   deckId: {
     type: String,
     optional: true,
+    label: 'Deck name',
   },
   front: {
     type: String,
