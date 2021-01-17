@@ -64,7 +64,7 @@ const Learn = () => {
   };
 
   const rateAnswer = (cardState, cardId) => {
-    if (cardState === 'NEW') {
+    if (cardState === 'NEW' || cardState === 'LEARNING' || cardState === 'RELEARNING') {
       return (
         <>
           <Button basic color="red" onClick={() => handleAnswer(cardId, answerCard, 'again', refetch)}>
@@ -137,8 +137,8 @@ const Learn = () => {
                     <Card.Content extra>{answerShown ? rateAnswer(card.state, card._id, refetch) : showAnswer}</Card.Content>
                   </Card>
                 ) : (
-                    'No cards left :)'
-                  )}
+                  'No cards left :)'
+                )}
               </Grid.Column>
             </Grid>
           </Container>
