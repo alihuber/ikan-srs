@@ -1,9 +1,0 @@
-{
-  "name": "BASE_APP",
-  "short_name": "BASE_APP",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#2e2e49",
-  "theme_color": "#3b395e",
-  "orientation": "portrait"
-}
