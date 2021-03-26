@@ -58,8 +58,22 @@ export const DECK_QUERY = gql`
 `;
 
 export const CARDS_FOR_DECK_QUERY = gql`
-  query cardsForDeck($deckId: String!, $pageNum: Int, $perPage: Int, $q: String, $sort: String, $order: String) {
-    cardsForDeck(deckId: $deckId, pageNum: $pageNum, perPage: $perPage, q: $q, sort: $sort, order: $order) {
+  query cardsForDeck(
+    $deckId: String!
+    $pageNum: Int
+    $perPage: Int
+    $q: String
+    $sort: String
+    $order: String
+  ) {
+    cardsForDeck(
+      deckId: $deckId
+      pageNum: $pageNum
+      perPage: $perPage
+      q: $q
+      sort: $sort
+      order: $order
+    ) {
       cardsCount
       cardsList {
         _id
