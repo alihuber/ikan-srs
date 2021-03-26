@@ -1,16 +1,21 @@
 /* eslint-disable react/no-unused-state */
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { ApolloClient, createHttpLink, ApolloProvider, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  createHttpLink,
+  ApolloProvider,
+  InMemoryCache,
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import React from 'react';
 import { render } from 'react-dom';
+import 'semantic-ui-css/components/icon.min.css';
+import 'semantic-ui-css/semantic.min.css';
 import Root from '../ui/components/Root';
 import 'react-toastify/dist/ReactToastify.min.css';
-import 'semantic-ui-css/semantic.min.css';
 import 'uniforms-bridge-simple-schema-2';
 import './react-transitions.css';
-import './service-worker.js';
 
 const httpLink = createHttpLink({
   uri: '/graphql',

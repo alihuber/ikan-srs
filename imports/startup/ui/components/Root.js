@@ -13,7 +13,10 @@ toast.configure();
 
 const Root = () => {
   const layout = Layout;
-  const animClass = window.innerWidth > 860 ? 'ract-transition fade-in' : 'ract-transition swipe-right';
+  const animClass =
+    window.innerWidth > 860
+      ? 'ract-transition fade-in'
+      : 'ract-transition swipe-right';
   const { data, loading } = useQuery(CURRENT_USER_QUERY);
   let currentUser;
   if (data) {

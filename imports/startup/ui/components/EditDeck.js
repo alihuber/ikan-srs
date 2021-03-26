@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { Container, Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Container, Grid, Header } from 'semantic-ui-react';
 import moment from 'moment';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
@@ -32,18 +32,12 @@ const EditDeck = () => {
             <Grid verticalAlign="middle">
               <Grid.Column>
                 <Header size="large" color="teal" textAlign="center">
-                  Deck
-                  {' '}
-                  {data.deckQuery.name}
+                  Deck {data.deckQuery.name}
                 </Header>
                 <Header size="small" color="teal" textAlign="center">
-                  Created:
-                  {' '}
-                  {moment(data.deckQuery.createdAt).format('DD.MM.YYYY HH:mm')}
-                  {' '}
-                  # Cards:
-                  {' '}
-                  {data.deckQuery.cards.length}
+                  Created:{' '}
+                  {moment(data.deckQuery.createdAt).format('DD.MM.YYYY HH:mm')}{' '}
+                  # Cards: {data.deckQuery.cards.length}
                 </Header>
                 <CardsList deck={data.deckQuery} />
               </Grid.Column>

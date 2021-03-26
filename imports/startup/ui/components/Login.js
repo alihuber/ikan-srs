@@ -1,7 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AutoFields, AutoForm, ErrorsField, SubmitField } from 'uniforms-semantic';
+import {
+  AutoFields,
+  AutoForm,
+  ErrorsField,
+  SubmitField,
+} from 'uniforms-semantic';
 import { Container, Grid, Header, Segment } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
@@ -64,7 +69,10 @@ const Login = () => {
               Log in
             </Header>
             <Segment>
-              <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, history)}>
+              <AutoForm
+                schema={bridge}
+                onSubmit={(doc) => handleSubmit(doc, history)}
+              >
                 <AutoFields />
                 <ErrorsField />
                 <br />

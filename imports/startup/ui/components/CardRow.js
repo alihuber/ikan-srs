@@ -5,18 +5,25 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import EditCardModal from './EditCardModal';
 
-export const CardRow = ({ card, handleDeleteCard, handleResetCard, refetch }) => {
+export const CardRow = ({
+  card,
+  handleDeleteCard,
+  handleResetCard,
+  refetch,
+}) => {
   return (
     <Table.Row>
       <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
       <Table.Cell>{truncate(card.front, { length: 50 })}</Table.Cell>
       <Table.Cell>{truncate(card.back, { length: 50 })}</Table.Cell>
-      <Table.Cell>{moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}</Table.Cell>
+      <Table.Cell>
+        {moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}
+      </Table.Cell>
       <Table.Cell>{card.state}</Table.Cell>
       <Table.Cell>{card.tags}</Table.Cell>
       <Table.Cell>
         <Modal
-          trigger={(
+          trigger={
             <Button
               compact
               size="mini"
@@ -27,7 +34,7 @@ export const CardRow = ({ card, handleDeleteCard, handleResetCard, refetch }) =>
             >
               <Icon name="edit" />
             </Button>
-          )}
+          }
         >
           <EditCardModal card={card} refetch={refetch} />
         </Modal>
