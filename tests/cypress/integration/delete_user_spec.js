@@ -1,4 +1,4 @@
-/* globals cy expect */
+/* globals cy */
 
 describe('delete-user', () => {
   before(() => {
@@ -29,9 +29,7 @@ describe('delete-user', () => {
         cy.get('button[name=deleteUserOk').click();
         cy.get('table').should('not.contain', 'testuser');
         // header tr, footer tr and 1 users
-        cy.get('table')
-          .find('tr')
-          .should('have.length', 3);
+        cy.get('table').find('tr').should('have.length', 3);
       });
     });
   });

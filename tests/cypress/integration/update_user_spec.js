@@ -24,17 +24,13 @@ describe('update-user', () => {
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=editUser_ryfEzeGqzRvW7FbL5').click();
 
-        cy.get('#uniforms-0001-0001')
-          .clear()
-          .type('newuser');
+        cy.get('input[name=username]').clear().type('newuser');
         cy.get('input[type=submit]').click();
 
         cy.get('table').should('not.contain', 'testuser');
         cy.get('table').should('contain', 'newuser');
         // header tr, footer tr and 2 users
-        cy.get('table')
-          .find('tr')
-          .should('have.length', 4);
+        cy.get('table').find('tr').should('have.length', 4);
 
         // login with updated username
         cy.get('a[itemname="logoutButton"]').click();
@@ -78,9 +74,7 @@ describe('update-user', () => {
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name=editUser_ryfEzeGqzRvW7FbL5').click();
 
-        cy.get('#uniforms-0001-0001')
-          .clear()
-          .type('newuser');
+        cy.get('input[name=username]').clear().type('newuser');
         cy.get('input[name=password]').type('newpassword');
         cy.get('div.checkbox').click();
         cy.get('input[type=submit]').click();
@@ -88,9 +82,7 @@ describe('update-user', () => {
         cy.get('table').should('not.contain', 'testuser');
         cy.get('table').should('contain', 'newuser');
         // header tr, footer tr and 2 users
-        cy.get('table')
-          .find('tr')
-          .should('have.length', 4);
+        cy.get('table').find('tr').should('have.length', 4);
 
         // login with updated user
         cy.get('a[itemname="logoutButton"]').click();

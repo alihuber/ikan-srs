@@ -26,15 +26,13 @@ describe('create-user', () => {
         cy.get('table').should('contain', 'admin');
         cy.get('table').should('contain', 'testuser');
         cy.get('button[name="addUserButton"]').click();
-        cy.get('#uniforms-0001-0001').type('newuser');
+        cy.get('input[name=username]').type('newuser');
         cy.get('input[name=password]').type('newpassword');
         cy.get('div.checkbox').click();
         cy.get('input[type=submit]').click();
         cy.get('table').should('contain', 'newuser');
         // header tr, footer tr and 3 users
-        cy.get('table')
-          .find('tr')
-          .should('have.length', 5);
+        cy.get('table').find('tr').should('have.length', 5);
       });
     });
   });
