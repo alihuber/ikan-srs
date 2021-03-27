@@ -1,4 +1,10 @@
 /* globals Cypress cy */
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  return false;
+});
+
 Cypress.Commands.add('resetDatabase', () =>
   cy.exec(
     '~/mongodb4/bin/mongo mongodb://localhost:3001/meteor --eval "db.dropDatabase()"'
