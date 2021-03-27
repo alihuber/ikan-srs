@@ -3,7 +3,13 @@ import { Decks, Cards } from './constants';
 
 const updateDeckNewCardsToday = (state, deckId) => {
   if (state === 'NEW') {
-    Decks.update({ _id: deckId }, { $set: { 'newCardsToday.date': new Date() }, $inc: { 'newCardsToday.numCards': 1 } });
+    Decks.update(
+      { _id: deckId },
+      {
+        $set: { 'newCardsToday.date': new Date() },
+        $inc: { 'newCardsToday.numCards': 1 },
+      }
+    );
   }
 };
 
@@ -19,9 +25,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             lapseCount: lapseCountBefore + 1,
-            dueDate: moment()
-              .add(stepInMinutes, 'minutes')
-              .toDate(),
+            dueDate: moment().add(stepInMinutes, 'minutes').toDate(),
           },
         }
       );
@@ -37,9 +41,7 @@ export const updateCard = (settings, card, answer, deckId) => {
           $set: {
             state: newState,
             currentStep: 0,
-            dueDate: moment()
-              .add(stepsInMinutes[0], 'minutes')
-              .toDate(),
+            dueDate: moment().add(stepsInMinutes[0], 'minutes').toDate(),
           },
         }
       );
@@ -63,9 +65,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             state: 'RELEARNING',
-            dueDate: moment()
-              .add(stepInMinutes, 'minutes')
-              .toDate(),
+            dueDate: moment().add(stepInMinutes, 'minutes').toDate(),
             easeFactor: newEaseFactor,
           },
         }
@@ -93,9 +93,7 @@ export const updateCard = (settings, card, answer, deckId) => {
       {
         $set: {
           currentInterval: newInterval,
-          dueDate: moment()
-            .add(newInterval, 'days')
-            .toDate(),
+          dueDate: moment().add(newInterval, 'days').toDate(),
           easeFactor: newEaseFactor,
         },
       }
@@ -114,9 +112,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: moment()
-              .add(newInterval, 'days')
-              .toDate(),
+            dueDate: moment().add(newInterval, 'days').toDate(),
           },
         }
       );
@@ -125,7 +121,8 @@ export const updateCard = (settings, card, answer, deckId) => {
       // Good: Will move the card to the next step. If the step was the last step,
       //       the card graduates and its currentInterval is set to graduating inverval setting
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
-      const graduatingIntervalInDays = settings.learningSettings.graduatingIntervalInDays;
+      const graduatingIntervalInDays =
+        settings.learningSettings.graduatingIntervalInDays;
       if (card.currentStep === stepsInMinutes.length - 1) {
         Cards.update(
           { _id: card._id },
@@ -134,9 +131,7 @@ export const updateCard = (settings, card, answer, deckId) => {
               state: 'GRADUATED',
               currentStep: 0,
               currentInterval: graduatingIntervalInDays,
-              dueDate: moment()
-                .add(graduatingIntervalInDays, 'days')
-                .toDate(),
+              dueDate: moment().add(graduatingIntervalInDays, 'days').toDate(),
             },
           }
         );
@@ -166,15 +161,14 @@ export const updateCard = (settings, card, answer, deckId) => {
       const currentInterval = card.currentInterval;
       const currentEaseFactor = card.easeFactor;
       const intervalModifier = foundDeck.intervalModifier;
-      const newInterval = currentInterval * currentEaseFactor * intervalModifier;
+      const newInterval =
+        currentInterval * currentEaseFactor * intervalModifier;
       Cards.update(
         { _id: card._id },
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: moment()
-              .add(newInterval, 'days')
-              .toDate(),
+            dueDate: moment().add(newInterval, 'days').toDate(),
           },
         }
       );
@@ -194,9 +188,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: moment()
-              .add(newInterval, 'days')
-              .toDate(),
+            dueDate: moment().add(newInterval, 'days').toDate(),
           },
         }
       );
@@ -210,9 +202,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             state: 'GRADUATED',
             currentStep: 0,
             currentInterval: easyIntervalInDays,
-            dueDate: moment()
-              .add(easyIntervalInDays, 'days')
-              .toDate(),
+            dueDate: moment().add(easyIntervalInDays, 'days').toDate(),
           },
         }
       );
@@ -225,16 +215,15 @@ export const updateCard = (settings, card, answer, deckId) => {
       const currentEaseFactor = card.easeFactor;
       const intervalModifier = foundDeck.intervalModifier;
       const easyBonus = 1.3; // fixed value
-      const newInterval = currentInterval * currentEaseFactor * intervalModifier * easyBonus;
+      const newInterval =
+        currentInterval * currentEaseFactor * intervalModifier * easyBonus;
       const newEaseFactor = currentEaseFactor + 0.15;
       Cards.update(
         { _id: card._id },
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: moment()
-              .add(newInterval, 'days')
-              .toDate(),
+            dueDate: moment().add(newInterval, 'days').toDate(),
             easeFactor: newEaseFactor,
           },
         }
@@ -247,10 +236,18 @@ export const collectCardStats = (deck) => {
   const foundCards = Cards.find({ deckId: deck._id }).fetch();
   const numCards = foundCards.length;
   const now = new Date();
-  const newCards = foundCards.filter((c) => c.state === 'NEW' && c.dueDate < now).length;
-  const learningCards = foundCards.filter((c) => c.state === 'LEARNING' && c.dueDate < now).length;
-  const relearningCards = foundCards.filter((c) => c.state === 'RELEARNING' && c.dueDate < now).length;
-  const graduatedCards = foundCards.filter((c) => c.state === 'GRADUATED' && c.dueDate < now).length;
+  const newCards = foundCards.filter(
+    (c) => c.state === 'NEW' && c.dueDate < now
+  ).length;
+  const learningCards = foundCards.filter(
+    (c) => c.state === 'LEARNING' && c.dueDate < now
+  ).length;
+  const relearningCards = foundCards.filter(
+    (c) => c.state === 'RELEARNING' && c.dueDate < now
+  ).length;
+  const graduatedCards = foundCards.filter(
+    (c) => c.state === 'GRADUATED' && c.dueDate < now
+  ).length;
   deck.cards = foundCards;
   deck.numCards = numCards;
   deck.newCards = newCards;

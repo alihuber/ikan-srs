@@ -9,7 +9,11 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, Cards, ANSWER_CARD_MUTATION } from '../imports/api/decks/constants';
+import {
+  Decks,
+  Cards,
+  ANSWER_CARD_MUTATION,
+} from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import CardsResolver from '../imports/api/decks/card-resolvers';
 
@@ -43,7 +47,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -88,10 +94,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 1);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(stepInMinutes, 'minutes')
-          .toDate()
-          .getTime()
+        moment(now).add(stepInMinutes, 'minutes').toDate().getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);
@@ -107,7 +110,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -150,10 +155,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(7, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(7, 'days').toDate().getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);
@@ -169,7 +171,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -212,10 +216,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(7, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(7, 'days').toDate().getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);

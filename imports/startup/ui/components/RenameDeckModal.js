@@ -43,7 +43,13 @@ const RenameDeckModal = ({ deckId, refetch, setRenameOpen }) => {
   const [renameDeck, _] = useMutation(RENAME_DECK_MUTATION);
   return (
     <Modal.Content>
-      <AutoForm submitField={submitField} schema={bridge} onSubmit={(doc) => handleSubmit(doc, deckId, renameDeck, refetch, setRenameOpen)} />
+      <AutoForm
+        submitField={submitField}
+        schema={bridge}
+        onSubmit={(doc) =>
+          handleSubmit(doc, deckId, renameDeck, refetch, setRenameOpen)
+        }
+      />
     </Modal.Content>
   );
 };

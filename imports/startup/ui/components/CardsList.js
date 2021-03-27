@@ -40,14 +40,18 @@ const CardsList = ({ deck }) => {
   const [deleteDeckConfirmOpen, setDeleteDeckConfirmOpen] = useState(false);
   const [deleteDeckId, setDeleteDeckId] = useState('');
 
-  const [cardsList, setCardsList] = useState(data?.cardsForDeck?.cardsList || []);
+  const [cardsList, setCardsList] = useState(
+    data?.cardsForDeck?.cardsList || []
+  );
 
   useEffect(() => {
     if (data && data.cardsForDeck && data.cardsForDeck.cardsList) {
       if (q.length !== 0) {
-        const filtered = data.cardsForDeck.cardsList.filter(sift({
-          $or: [{ front: { $regex: q } }, { back: { $regex: q } }],
-        }));
+        const filtered = data.cardsForDeck.cardsList.filter(
+          sift({
+            $or: [{ front: { $regex: q } }, { back: { $regex: q } }],
+          })
+        );
         setCardsList(filtered);
       } else {
         setCardsList(data.cardsForDeck.cardsList);
@@ -247,20 +251,16 @@ const CardsList = ({ deck }) => {
     return (
       <>
         <div style={{ height: '33px' }}>
-          <AddCardModal
-            onClose={onAddClose}
-            deck={deck}
-            refetch={refetch}
-          />
+          <AddCardModal onClose={onAddClose} deck={deck} refetch={refetch} />
           <Modal
             open={renameOpen}
             onOpen={() => setRenameOpen(true)}
             onClose={() => setRenameOpen(false)}
-            trigger={(
+            trigger={
               <Button compact name="renameDeckButton" size="small" primary>
                 Rename Deck
               </Button>
-            )}
+            }
           >
             <RenameDeckModal
               deckId={deck._id}
@@ -307,7 +307,9 @@ const CardsList = ({ deck }) => {
               onChangeLimit={onChangeLimit}
               limit={limit.toString()}
             />
-          ) : <LoadingIndicator />}
+          ) : (
+            <LoadingIndicator />
+          )}
         </Segment>
         <Confirm
           open={deleteCardConfirmOpen}

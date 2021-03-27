@@ -9,15 +9,17 @@ export const UserRow = ({ user, handleDelete, refetch, setPageNum }) => {
     <Table.Row>
       <Table.Cell>{user._id}</Table.Cell>
       <Table.Cell>{user.username}</Table.Cell>
-      <Table.Cell>{moment(user.createdAt).format('DD.MM.YYYY HH:mm')}</Table.Cell>
+      <Table.Cell>
+        {moment(user.createdAt).format('DD.MM.YYYY HH:mm')}
+      </Table.Cell>
       <Table.Cell>{user.admin ? <Icon name="check" /> : ''}</Table.Cell>
       <Table.Cell collapsing textAlign="right">
         <Modal
-          trigger={(
+          trigger={
             <Button compact size="mini" primary name={'editUser_' + user._id}>
               Edit
             </Button>
-          )}
+          }
         >
           <EditUserModal
             userId={user._id}

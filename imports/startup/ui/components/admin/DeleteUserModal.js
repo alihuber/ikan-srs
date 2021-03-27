@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Button, Modal } from 'semantic-ui-react';
 
-const DeleteUserModal = ({ setPageNum, userToDelete, open, onClose, deleteUserFunc, refetch }) => {
+const DeleteUserModal = ({
+  setPageNum,
+  userToDelete,
+  open,
+  onClose,
+  deleteUserFunc,
+  refetch,
+}) => {
   const onDelete = () => {
     deleteUserFunc({ variables: { userId: userToDelete } }).then(() => {
       refetch();
@@ -22,8 +29,12 @@ const DeleteUserModal = ({ setPageNum, userToDelete, open, onClose, deleteUserFu
         <p>Are you sure you want to delete this user?</p>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={onClose}>No</Button>
-        <Button name="deleteUserOk" positive onClick={onDelete}>Yes</Button>
+        <Button negative onClick={onClose}>
+          No
+        </Button>
+        <Button name="deleteUserOk" positive onClick={onDelete}>
+          Yes
+        </Button>
       </Modal.Actions>
     </Modal>
   );

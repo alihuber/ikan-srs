@@ -6,7 +6,12 @@ import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
-import { Settings, SETTINGS_QUERY, UPDATE_SETTINGS_MUTATION, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
+import {
+  Settings,
+  SETTINGS_QUERY,
+  UPDATE_SETTINGS_MUTATION,
+  DEFAULT_SETTINGS,
+} from '../imports/api/settings/constants';
 import SettingResolver from '../imports/api/settings/resolvers';
 
 const { createTestClient } = require('apollo-server-testing');
@@ -30,7 +35,9 @@ if (Meteor.isServer) {
     it('returns no settings if no data found for user', async () => {
       resetDatabase();
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: 1, username: 'testuser', admin: false },
+        }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
@@ -47,7 +54,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Settings.insert({
         userId,
@@ -60,7 +69,11 @@ if (Meteor.isServer) {
       assert.equal(res.data.settings.lapseSettings.leechAction, 'TAG');
       assert.equal(res.data.settings.learningSettings.startingEase, 2.5);
       assert.equal(res.data.settings.learningSettings.newCardsOrder, 'ADDED');
-      assert.deepEqual(res.data.settings.learningSettings.stepsInMinutes, [15, 1440, 8640]);
+      assert.deepEqual(res.data.settings.learningSettings.stepsInMinutes, [
+        15,
+        1440,
+        8640,
+      ]);
     });
   });
 
@@ -73,7 +86,9 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Settings.insert({
         userId,
@@ -98,19 +113,37 @@ if (Meteor.isServer) {
       };
 
       const { mutate } = createTestClient(server);
-      const res = await mutate({ mutation: UPDATE_SETTINGS_MUTATION, variables: { setting } });
+      const res = await mutate({
+        mutation: UPDATE_SETTINGS_MUTATION,
+        variables: { setting },
+      });
       assert.notEqual(res.data.updateSetting, null);
 
       assert.equal(res.data.updateSetting.lapseSettings.newInterval, 1);
-      assert.equal(res.data.updateSetting.lapseSettings.minimumIntervalInDays, 2);
+      assert.equal(
+        res.data.updateSetting.lapseSettings.minimumIntervalInDays,
+        2
+      );
       assert.equal(res.data.updateSetting.lapseSettings.leechThreshold, 10);
       assert.equal(res.data.updateSetting.lapseSettings.leechAction, 'TAG');
 
-      assert.deepEqual(res.data.updateSetting.learningSettings.stepsInMinutes, [2, 20]);
-      assert.equal(res.data.updateSetting.learningSettings.newCardsOrder, 'RANDOM');
+      assert.deepEqual(res.data.updateSetting.learningSettings.stepsInMinutes, [
+        2,
+        20,
+      ]);
+      assert.equal(
+        res.data.updateSetting.learningSettings.newCardsOrder,
+        'RANDOM'
+      );
       assert.equal(res.data.updateSetting.learningSettings.newCardsPerDay, 30);
-      assert.equal(res.data.updateSetting.learningSettings.graduatingIntervalInDays, 2);
-      assert.equal(res.data.updateSetting.learningSettings.easyIntervalInDays, 8);
+      assert.equal(
+        res.data.updateSetting.learningSettings.graduatingIntervalInDays,
+        2
+      );
+      assert.equal(
+        res.data.updateSetting.learningSettings.easyIntervalInDays,
+        8
+      );
       assert.equal(res.data.updateSetting.learningSettings.startingEase, 1.9);
     });
   });

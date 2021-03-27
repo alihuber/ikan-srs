@@ -2,7 +2,16 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
-import { Divider, Label, Card, Container, Grid, Header, Modal, Button } from 'semantic-ui-react';
+import {
+  Divider,
+  Label,
+  Card,
+  Container,
+  Grid,
+  Header,
+  Modal,
+  Button,
+} from 'semantic-ui-react';
 import AnimContext from '../contexts/AnimContext';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import { DECKS_QUERY } from '../../../api/decks/constants';
@@ -44,45 +53,61 @@ const Decks = () => {
                   Decks
                 </Header>
                 <Modal
-                  trigger={(
+                  trigger={
                     <Button compact name="addDeckButton" size="small" primary>
                       Add Deck
                     </Button>
-                  )}
+                  }
                 >
                   <AddDeckModal refetch={refetch} />
                 </Modal>
                 {data.decks.length !== 0 ? (
-                  <AddCardModal
-                    decks={data.decks}
-                    refetch={refetch}
-                  />
+                  <AddCardModal decks={data.decks} refetch={refetch} />
                 ) : null}
                 <Divider />
                 <Card.Group>
                   {data.decks.map((deck) => {
                     const cardsLength = (deck.cards && deck.cards.length) || 0;
-                    const learnDisabled = deck.newCards === 0 && deck.learningCards === 0 && deck.relearningCards === 0 && deck.graduatedCards === 0;
-                    const nextDueDate = (cardsLength !== 0
-                      && Array.from(deck.cards).sort((a, b) => {
-                        return (new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
-                      })[0].dueDate) || null;
+                    const learnDisabled =
+                      deck.newCards === 0 &&
+                      deck.learningCards === 0 &&
+                      deck.relearningCards === 0 &&
+                      deck.graduatedCards === 0;
+                    const nextDueDate =
+                      (cardsLength !== 0 &&
+                        Array.from(deck.cards).sort((a, b) => {
+                          return (
+                            new Date(a.dueDate).getTime() -
+                            new Date(b.dueDate).getTime()
+                          );
+                        })[0].dueDate) ||
+                      null;
                     return (
                       <Card fluid key={deck._id}>
                         <Card.Content>
-                          <Button floated="right" onClick={() => handleEdit(deck._id, history)}>
+                          <Button
+                            floated="right"
+                            onClick={() => handleEdit(deck._id, history)}
+                          >
                             Edit
                           </Button>
                           <Card.Header>{deck.name}</Card.Header>
                           <Card.Meta>
                             Interval modifier:&nbsp;
-                            {deck.intervalModifier}
-                            %
+                            {deck.intervalModifier}%
                           </Card.Meta>
                           {nextDueDate ? (
                             <Card.Meta>
                               Next due card: &nbsp;
-                              {moment(nextDueDate).isBefore(moment()) ? <b style={{ color: 'red' }}>{moment(nextDueDate).format('DD.MM.YYYY HH:mm')}</b> : moment(nextDueDate).format('DD.MM.YYYY HH:mm')}
+                              {moment(nextDueDate).isBefore(moment()) ? (
+                                <b style={{ color: 'red' }}>
+                                  {moment(nextDueDate).format(
+                                    'DD.MM.YYYY HH:mm'
+                                  )}
+                                </b>
+                              ) : (
+                                moment(nextDueDate).format('DD.MM.YYYY HH:mm')
+                              )}
                             </Card.Meta>
                           ) : null}
                           <Card.Description>
@@ -103,7 +128,9 @@ const Decks = () => {
                             <br />
                             <Label color="blue">
                               Due Relearning Cards
-                              <Label.Detail>{deck.relearningCards}</Label.Detail>
+                              <Label.Detail>
+                                {deck.relearningCards}
+                              </Label.Detail>
                             </Label>
                             <br />
                             <Label color="brown">

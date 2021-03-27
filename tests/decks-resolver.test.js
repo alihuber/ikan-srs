@@ -45,7 +45,9 @@ if (Meteor.isServer) {
     it('returns no decks if no data found for user', async () => {
       resetDatabase();
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: 1, username: 'testuser', admin: false },
+        }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
@@ -61,7 +63,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Decks.insert({
         userId,
@@ -97,7 +101,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Decks.insert({
         userId,
@@ -131,10 +137,15 @@ if (Meteor.isServer) {
     it('returns no deck if no data found for user', async () => {
       resetDatabase();
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: 1, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: 1, username: 'testuser', admin: false },
+        }),
       });
       const { query } = createTestClient(server);
-      const res = await query({ query: DECK_QUERY, variables: { deckId: 'foo123' } });
+      const res = await query({
+        query: DECK_QUERY,
+        variables: { deckId: 'foo123' },
+      });
       assert.deepEqual(res.data.deckQuery, null);
     });
 
@@ -147,7 +158,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       const deckId = Decks.insert({
         userId,
@@ -173,11 +186,16 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const { mutate } = createTestClient(server);
-      const res = await mutate({ mutation: CREATE_DECK_MUTATION, variables: { name: 'deck1' } });
+      const res = await mutate({
+        mutation: CREATE_DECK_MUTATION,
+        variables: { name: 'deck1' },
+      });
       assert.notEqual(res.data.createDeck, null);
       assert.equal(res.errors, null);
 
@@ -198,7 +216,9 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const id = Decks.insert({
@@ -233,7 +253,9 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       Settings.insert({
@@ -255,8 +277,14 @@ if (Meteor.isServer) {
       });
 
       const { mutate } = createTestClient(server);
-      const res1 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo', back: 'bar' } });
-      const res2 = await mutate({ mutation: ADD_CARD_MUTATION, variables: { deckId, front: 'foo2', back: 'bar2' } });
+      const res1 = await mutate({
+        mutation: ADD_CARD_MUTATION,
+        variables: { deckId, front: 'foo', back: 'bar' },
+      });
+      const res2 = await mutate({
+        mutation: ADD_CARD_MUTATION,
+        variables: { deckId, front: 'foo2', back: 'bar2' },
+      });
       assert.notEqual(res1.data.addCard, null);
       assert.equal(res1.errors, null);
       assert.notEqual(res2.data.addCard, null);
@@ -280,7 +308,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.resetDeck.cards[0].currentInterval, 0);
       assert.equal(res.data.resetDeck.cards[0].currentStep, 0);
       assert.equal(res.data.resetDeck.cards[0].lapseCount, 0);
-      assert.equal(res.data.resetDeck.cards[0].dueDate.getTime(), now.getTime());
+      assert.equal(
+        res.data.resetDeck.cards[0].dueDate.getTime(),
+        now.getTime()
+      );
 
       assert.equal(res.data.resetDeck.cards[1].front, 'foo2');
       assert.equal(res.data.resetDeck.cards[1].back, 'bar2');
@@ -289,7 +320,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.resetDeck.cards[1].currentInterval, 0);
       assert.equal(res.data.resetDeck.cards[1].currentStep, 0);
       assert.equal(res.data.resetDeck.cards[1].lapseCount, 0);
-      assert.equal(res.data.resetDeck.cards[1].dueDate.getTime(), now.getTime());
+      assert.equal(
+        res.data.resetDeck.cards[1].dueDate.getTime(),
+        now.getTime()
+      );
       timekeeper.reset();
     });
   });
@@ -303,7 +337,9 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       Settings.insert({

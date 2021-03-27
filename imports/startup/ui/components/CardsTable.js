@@ -21,7 +21,8 @@ const CardsTable = ({
   handleResetCard,
   handleResetDeck,
   deckId,
-  onChangePage }) => {
+  onChangePage,
+}) => {
   if (!cardsList) {
     return null;
   }
@@ -37,13 +38,8 @@ const CardsTable = ({
   ));
   return (
     <>
-      <PageSizeSelect
-        limit={limit}
-        onChangeLimit={onChangeLimit}
-      />
-      Total count:
-      {' '}
-      {totalCount}
+      <PageSizeSelect limit={limit} onChangeLimit={onChangeLimit} />
+      Total count: {totalCount}
       <Table celled selectable sortable>
         <CardsTableHeader
           column={column}
@@ -61,7 +57,11 @@ const CardsTable = ({
                 activePage={currentPage}
                 onPageChange={onChangePage}
               />
-              <Button floated="right" size="small" onClick={() => handleResetDeck(deckId)}>
+              <Button
+                floated="right"
+                size="small"
+                onClick={() => handleResetDeck(deckId)}
+              >
                 Reset All Cards
               </Button>
             </Table.HeaderCell>

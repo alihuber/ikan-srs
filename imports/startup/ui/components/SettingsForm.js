@@ -69,7 +69,10 @@ const handleSubmit = (values, updateSetting, refetch) => {
     easyIntervalInDays: learningSettings.easyIntervalInDays,
     startingEase: learningSettings.startingEase,
   };
-  const setting = { lapseSettings: newLapseSettings, learningSettings: newLearningSettings };
+  const setting = {
+    lapseSettings: newLapseSettings,
+    learningSettings: newLearningSettings,
+  };
   updateSetting({ variables: { setting } })
     .then(() => {
       refetch();
@@ -89,7 +92,13 @@ const SettingsForm = ({ lapseSettings, learningSettings, refetch }) => {
   // eslint-disable-next-line no-unused-vars
   const [updateSetting, _] = useMutation(UPDATE_SETTINGS_MUTATION);
   const model = { lapseSettings, learningSettings };
-  return <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, updateSetting, refetch)} model={model} />;
+  return (
+    <AutoForm
+      schema={bridge}
+      onSubmit={(doc) => handleSubmit(doc, updateSetting, refetch)}
+      model={model}
+    />
+  );
 };
 
 SettingsForm.propTypes = {

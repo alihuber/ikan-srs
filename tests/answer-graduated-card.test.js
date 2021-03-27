@@ -9,7 +9,11 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, Cards, ANSWER_CARD_MUTATION } from '../imports/api/decks/constants';
+import {
+  Decks,
+  Cards,
+  ANSWER_CARD_MUTATION,
+} from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import CardsResolver from '../imports/api/decks/card-resolvers';
 
@@ -40,7 +44,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -83,7 +89,8 @@ if (Meteor.isServer) {
       });
 
       const easyBonus = 1.3;
-      const newInterval = currentInterval * currentEaseFactor * intervalModifier * easyBonus;
+      const newInterval =
+        currentInterval * currentEaseFactor * intervalModifier * easyBonus;
 
       assert.notEqual(res.data.answerCard, null);
       assert.equal(res.data.answerCard.currentStep, 0);
@@ -92,15 +99,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.easeFactor, 2.65);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(newInterval, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(newInterval, 'days').toDate().getTime()
       );
       assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
+        moment(now).toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
@@ -117,7 +119,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -159,7 +163,8 @@ if (Meteor.isServer) {
         variables: { cardId, answer: 'good' },
       });
 
-      const newInterval = currentInterval * currentEaseFactor * intervalModifier;
+      const newInterval =
+        currentInterval * currentEaseFactor * intervalModifier;
 
       assert.notEqual(res.data.answerCard, null);
       assert.equal(res.data.answerCard.currentStep, 0);
@@ -168,15 +173,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.easeFactor, 2.5);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(newInterval, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(newInterval, 'days').toDate().getTime()
       );
       assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
+        moment(now).toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
@@ -193,7 +193,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -243,15 +245,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.easeFactor, 2.35);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(newInterval, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(newInterval, 'days').toDate().getTime()
       );
       assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
+        moment(now).toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
@@ -268,7 +265,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -318,15 +317,10 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.easeFactor, 1.3);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now)
-          .add(newInterval, 'days')
-          .toDate()
-          .getTime()
+        moment(now).add(newInterval, 'days').toDate().getTime()
       );
       assert.notEqual(
-        moment(now)
-          .toDate()
-          .getTime(),
+        moment(now).toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
@@ -343,7 +337,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -389,10 +385,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.currentInterval, 2);
       assert.equal(res.data.answerCard.easeFactor, 1.5);
       assert.equal(
-        moment(now)
-          .add(stepInMinutes, 'minutes')
-          .toDate()
-          .getTime(),
+        moment(now).add(stepInMinutes, 'minutes').toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);
@@ -409,7 +402,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
 
       const deckId = Decks.insert({
@@ -455,10 +450,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.currentInterval, 2);
       assert.equal(res.data.answerCard.easeFactor, 1.3);
       assert.equal(
-        moment(now)
-          .add(stepInMinutes, 'minutes')
-          .toDate()
-          .getTime(),
+        moment(now).add(stepInMinutes, 'minutes').toDate().getTime(),
         res.data.answerCard.dueDate.getTime()
       );
       const deck = Decks.findOne(deckId);

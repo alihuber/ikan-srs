@@ -12,7 +12,12 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-light.css';
-import { AutoForm, ErrorField, SelectField, SubmitField } from 'uniforms-semantic';
+import {
+  AutoForm,
+  ErrorField,
+  SelectField,
+  SubmitField,
+} from 'uniforms-semantic';
 import { ADD_CARD_MUTATION } from '../../../api/decks/constants';
 
 const addCardSchema = new SimpleSchema({
@@ -41,13 +46,23 @@ const mdParser = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(lang, str).value;
-      } catch (__) { /* nothing */ }
+      } catch (__) {
+        /* nothing */
+      }
     }
     return '';
   },
 });
 
-const handleSubmit = (values, addCard, refetch, deck, onClose, setOpen, setModel) => {
+const handleSubmit = (
+  values,
+  addCard,
+  refetch,
+  deck,
+  onClose,
+  setOpen,
+  setModel
+) => {
   const { front, back } = values;
   let { deckId } = values;
   if (!deckId && deck) {
@@ -112,8 +127,11 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
   return (
     <Modal
       open={open}
-      onClose={() => { setOpen(false); setModel({ front: '', back: '' }); }}
-      trigger={(
+      onClose={() => {
+        setOpen(false);
+        setModel({ front: '', back: '' });
+      }}
+      trigger={
         onEditScreen ? (
           <Button
             compact
@@ -137,12 +155,35 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
             Add Card
           </Button>
         )
-      )}
+      }
     >
       <Modal.Content>
-        <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, addCard, refetch, deck, onClose, setOpen, setModel)} model={model}>
+        <AutoForm
+          schema={bridge}
+          onSubmit={(doc) =>
+            handleSubmit(
+              doc,
+              addCard,
+              refetch,
+              deck,
+              onClose,
+              setOpen,
+              setModel
+            )
+          }
+          model={model}
+        >
           <h4>Add card</h4>
-          {deck ? null : <SelectField onChange={(v) => { setModel({ ...model, deckId: v }); }} name="deckId" options={deckOptions} value={model.deckId} />}
+          {deck ? null : (
+            <SelectField
+              onChange={(v) => {
+                setModel({ ...model, deckId: v });
+              }}
+              name="deckId"
+              options={deckOptions}
+              value={model.deckId}
+            />
+          )}
           <b>Front*</b>
           <MdEditor
             style={{ height: editorHeight }}

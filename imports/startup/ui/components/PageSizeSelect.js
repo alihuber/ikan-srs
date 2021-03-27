@@ -11,8 +11,7 @@ const limitOptions = [
 
 export const PageSizeSelect = ({ limit, onChangeLimit }) => (
   <>
-    Records per page:
-    {' '}
+    Records per page:{' '}
     <Dropdown
       inline
       options={limitOptions}

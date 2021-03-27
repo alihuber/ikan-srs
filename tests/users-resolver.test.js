@@ -42,7 +42,9 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
@@ -116,12 +118,18 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'noadmin', admin: null } }),
+        context: () => ({
+          user: { _id: userId, username: 'noadmin', admin: null },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: CREATE_USER_MUTATION,
-        variables: { username: 'newuser', password: 'newpassword', admin: false },
+        variables: {
+          username: 'newuser',
+          password: 'newpassword',
+          admin: false,
+        },
       });
       assert.equal(res.errors[0].message, 'not authorized');
       assert.equal(res.errors[0].path[0], 'createUser');
@@ -137,7 +145,10 @@ if (Meteor.isServer) {
         mutation: CREATE_USER_MUTATION,
         variables: { password: 'newpassword', admin: false },
       });
-      assert.equal(res.errors[0].message, 'Variable "$username" of required type "String!" was not provided.');
+      assert.equal(
+        res.errors[0].message,
+        'Variable "$username" of required type "String!" was not provided.'
+      );
     });
 
     it('creates an admin user', async () => {
@@ -148,12 +159,18 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: CREATE_USER_MUTATION,
-        variables: { username: 'newuser', password: 'newpassword', admin: true },
+        variables: {
+          username: 'newuser',
+          password: 'newpassword',
+          admin: true,
+        },
       });
       assert.equal(res.data.createUser.username, 'newuser');
       assert.equal(res.data.createUser.admin, true);
@@ -172,12 +189,18 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: CREATE_USER_MUTATION,
-        variables: { username: 'newuser', password: 'newpassword', admin: false },
+        variables: {
+          username: 'newuser',
+          password: 'newpassword',
+          admin: false,
+        },
       });
       assert.equal(res.data.createUser.username, 'newuser');
       assert.equal(res.data.createUser.admin, null);
@@ -196,12 +219,18 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: CREATE_USER_MUTATION,
-        variables: { username: 'newuser', password: 'newpassword', admin: false },
+        variables: {
+          username: 'newuser',
+          password: 'newpassword',
+          admin: false,
+        },
       });
       assert.equal(res.data.createUser.username, 'newuser');
       assert.equal(res.data.createUser.admin, null);
@@ -216,7 +245,11 @@ if (Meteor.isServer) {
       assert.equal(settings.lapseSettings.leechAction, 'TAG');
       assert.equal(settings.learningSettings.startingEase, 2.5);
       assert.equal(settings.learningSettings.newCardsOrder, 'ADDED');
-      assert.deepEqual(settings.learningSettings.stepsInMinutes, [15, 1440, 8640]);
+      assert.deepEqual(settings.learningSettings.stepsInMinutes, [
+        15,
+        1440,
+        8640,
+      ]);
     });
   });
 
@@ -228,12 +261,19 @@ if (Meteor.isServer) {
         password: 'example123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: id, username: 'noadmin', admin: null } }),
+        context: () => ({
+          user: { _id: id, username: 'noadmin', admin: null },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: UPDATE_USER_MUTATION,
-        variables: { userId: id, username: 'changeduser', password: 'newpassword', admin: false },
+        variables: {
+          userId: id,
+          username: 'changeduser',
+          password: 'newpassword',
+          admin: false,
+        },
       });
       assert.equal(res.errors[0].message, 'not authorized');
       assert.equal(res.errors[0].path[0], 'updateUser');
@@ -254,7 +294,10 @@ if (Meteor.isServer) {
         mutation: UPDATE_USER_MUTATION,
         variables: { userId: id, password: 'newpassword', admin: false },
       });
-      assert.equal(res.errors[0].message, 'Variable "$username" of required type "String!" was not provided.');
+      assert.equal(
+        res.errors[0].message,
+        'Variable "$username" of required type "String!" was not provided.'
+      );
     });
 
     it('throws no error if password param is missing', async () => {
@@ -269,7 +312,9 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: adminId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: adminId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: adminId, username: 'admin', admin: true },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -291,12 +336,19 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
         mutation: UPDATE_USER_MUTATION,
-        variables: { userId: otherUserId, username: 'newuser', password: 'newpassword', admin: false },
+        variables: {
+          userId: otherUserId,
+          username: 'newuser',
+          password: 'newpassword',
+          admin: false,
+        },
       });
       assert.equal(res.data.updateUser.username, 'newuser');
       assert.equal(res.data.updateUser.admin, false);
@@ -318,7 +370,9 @@ if (Meteor.isServer) {
         password: 'abc123',
       });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: null } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: null },
+        }),
       });
       const { mutate } = createTestClient(server);
       const res = await mutate({
@@ -350,7 +404,9 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const id = Accounts.createUser({
         username: 'testuser',
@@ -378,7 +434,9 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const id = Accounts.createUser({
         username: 'testuser',
@@ -413,7 +471,9 @@ if (Meteor.isServer) {
       });
       Meteor.users.update({ _id: userId }, { $set: { admin: true } });
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'admin', admin: true } }),
+        context: () => ({
+          user: { _id: userId, username: 'admin', admin: true },
+        }),
       });
       const id = Accounts.createUser({
         username: 'testuser',

@@ -7,7 +7,10 @@ import LoadingIndicator from '../LoadingIndicator';
 import AddUserModal from './AddUserModal';
 import UsersTable from './UsersTable';
 import TableFilter from '../TableFilter';
-import { DELETE_USER_MUTATION, USERS_QUERY } from '../../../../api/users/constants';
+import {
+  DELETE_USER_MUTATION,
+  USERS_QUERY,
+} from '../../../../api/users/constants';
 import DeleteUserModal from './DeleteUserModal';
 
 const UsersList = () => {
@@ -30,7 +33,9 @@ const UsersList = () => {
   useEffect(() => {
     if (data && data.users && data.users.usersList) {
       if (q.length !== 0) {
-        const filtered = data.users.usersList.filter(sift({ username: { $regex: q } }));
+        const filtered = data.users.usersList.filter(
+          sift({ username: { $regex: q } })
+        );
         setUsersList(filtered);
       } else {
         setUsersList(data.users.usersList);
@@ -143,7 +148,12 @@ const UsersList = () => {
     const usersCount = data.users.usersCount;
     return (
       <>
-        <Button onClick={() => setShowAdd(true)} name="addUserButton" size="small" primary>
+        <Button
+          onClick={() => setShowAdd(true)}
+          name="addUserButton"
+          size="small"
+          primary
+        >
           Add User
         </Button>
         <Divider />
@@ -171,9 +181,16 @@ const UsersList = () => {
               onChangeLimit={onChangeLimit}
               limit={limit.toString()}
             />
-          ) : <LoadingIndicator />}
+          ) : (
+            <LoadingIndicator />
+          )}
         </Segment>
-        <AddUserModal refetch={refetch} setPageNum={setPageNum} open={showAdd} onClose={cancelAdd} />
+        <AddUserModal
+          refetch={refetch}
+          setPageNum={setPageNum}
+          open={showAdd}
+          onClose={cancelAdd}
+        />
         <DeleteUserModal
           setPageNum={setPageNum}
           refetch={refetch}

@@ -42,7 +42,11 @@ const AddDeckModal = ({ refetch }) => {
   const [createDeck, _] = useMutation(CREATE_DECK_MUTATION);
   return (
     <Modal.Content>
-      <AutoForm submitField={submitField} schema={bridge} onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)} />
+      <AutoForm
+        submitField={submitField}
+        schema={bridge}
+        onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)}
+      />
     </Modal.Content>
   );
 };

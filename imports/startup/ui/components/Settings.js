@@ -35,7 +35,11 @@ const Settings = () => {
                 <Header size="large" color="teal" textAlign="center">
                   Settings
                 </Header>
-                <SettingsForm refetch={refetch} lapseSettings={lapseSettings} learningSettings={learningSettings} />
+                <SettingsForm
+                  refetch={refetch}
+                  lapseSettings={lapseSettings}
+                  learningSettings={learningSettings}
+                />
               </Grid.Column>
             </Grid>
           </Container>

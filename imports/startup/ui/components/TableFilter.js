@@ -38,7 +38,7 @@ class TableFilter extends React.Component {
         <Form.Group>
           <Form.Field>
             <Popup
-              trigger={(
+              trigger={
                 <Form.Input
                   placeholder="Enter the filter."
                   name="filter"
@@ -49,7 +49,7 @@ class TableFilter extends React.Component {
                   icon="search"
                   loading={loading}
                 />
-              )}
+              }
               content={popupMessage}
               on="click"
               open={filter.length !== 0 && (!filterValid || totalCount === 0)}

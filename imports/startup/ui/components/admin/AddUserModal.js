@@ -59,7 +59,12 @@ const AddUserModal = ({ refetch, setPageNum, open, onClose }) => {
     <Modal size="small" open={open} onClose={onClose}>
       <Modal.Header>Add user</Modal.Header>
       <Modal.Content>
-        <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, createUser, refetch, setPageNum, onClose)} />
+        <AutoForm
+          schema={bridge}
+          onSubmit={(doc) =>
+            handleSubmit(doc, createUser, refetch, setPageNum, onClose)
+          }
+        />
       </Modal.Content>
     </Modal>
   );

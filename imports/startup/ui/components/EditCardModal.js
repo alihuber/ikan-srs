@@ -22,7 +22,9 @@ const mdParser = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(lang, str).value;
-      } catch (__) { /* nothing */ }
+      } catch (__) {
+        /* nothing */
+      }
     }
     return '';
   },
@@ -89,7 +91,11 @@ const EditCardModal = ({ refetch, card }) => {
 
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, updateCard, refetch, card._id)} model={model}>
+      <AutoForm
+        schema={bridge}
+        onSubmit={(doc) => handleSubmit(doc, updateCard, refetch, card._id)}
+        model={model}
+      >
         <h4>Edit card</h4>
         <b>Front*</b>
         <MdEditor

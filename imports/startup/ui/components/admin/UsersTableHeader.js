@@ -34,11 +34,7 @@ export function UsersTableHeader({ handleSort, column, direction }) {
         >
           admin
         </Table.HeaderCell>
-        <Table.HeaderCell
-          width={1}
-        >
-          Actions
-        </Table.HeaderCell>
+        <Table.HeaderCell width={1}>Actions</Table.HeaderCell>
       </Table.Row>
     </Table.Header>
   );

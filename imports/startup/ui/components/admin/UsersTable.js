@@ -19,7 +19,8 @@ const UsersTable = ({
   currentPage,
   totalPages,
   handleDelete,
-  onChangePage }) => {
+  onChangePage,
+}) => {
   if (!usersList) {
     return null;
   }
@@ -34,13 +35,8 @@ const UsersTable = ({
   ));
   return (
     <>
-      <PageSizeSelect
-        limit={limit}
-        onChangeLimit={onChangeLimit}
-      />
-      Total count:
-      {' '}
-      {totalCount}
+      <PageSizeSelect limit={limit} onChangeLimit={onChangeLimit} />
+      Total count: {totalCount}
       <Table celled selectable sortable>
         <UsersTableHeader
           column={column}

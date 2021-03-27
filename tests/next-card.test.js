@@ -8,7 +8,12 @@ import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
-import { Decks, Cards, ADD_CARD_MUTATION, NEXT_CARD_FOR_LEARNING_QUERY } from '../imports/api/decks/constants';
+import {
+  Decks,
+  Cards,
+  ADD_CARD_MUTATION,
+  NEXT_CARD_FOR_LEARNING_QUERY,
+} from '../imports/api/decks/constants';
 import { Settings, DEFAULT_SETTINGS } from '../imports/api/settings/constants';
 import CardsResolver from '../imports/api/decks/card-resolvers';
 
@@ -39,7 +44,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Settings.insert({
         userId,
@@ -54,7 +61,10 @@ if (Meteor.isServer) {
       });
 
       const { query } = createTestClient(server);
-      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      const res = await query({
+        query: NEXT_CARD_FOR_LEARNING_QUERY,
+        variables: { deckId },
+      });
       assert.equal(res.data.nextCardForLearning, null);
       assert.equal(res.errors, null);
     });
@@ -68,7 +78,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       Settings.insert({
         userId,
@@ -89,13 +101,14 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         state: 'LEARNING',
         currentStep: 0,
-        dueDate: moment()
-          .add(1, 'day')
-          .toDate(),
+        dueDate: moment().add(1, 'day').toDate(),
       });
 
       const { query } = createTestClient(server);
-      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      const res = await query({
+        query: NEXT_CARD_FOR_LEARNING_QUERY,
+        variables: { deckId },
+      });
       assert.equal(res.data.nextCardForLearning, null);
       assert.equal(res.errors, null);
     });
@@ -109,7 +122,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       const deckId = Decks.insert({
         userId,
@@ -135,7 +150,10 @@ if (Meteor.isServer) {
         variables: { deckId, front: 'second', back: 'blargh' },
       });
 
-      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      const res = await query({
+        query: NEXT_CARD_FOR_LEARNING_QUERY,
+        variables: { deckId },
+      });
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'first');
       const cardId = Cards.find({ front: 'first' }).fetch()[0]._id;
@@ -152,7 +170,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       const deckId = Decks.insert({
         userId,
@@ -167,7 +187,10 @@ if (Meteor.isServer) {
         userId,
         ...DEFAULT_SETTINGS,
       });
-      Settings.update({ _id: settingsId }, { $set: { newCardsOrder: 'RANDOM' } });
+      Settings.update(
+        { _id: settingsId },
+        { $set: { newCardsOrder: 'RANDOM' } }
+      );
 
       await mutate({
         mutation: ADD_CARD_MUTATION,
@@ -179,7 +202,10 @@ if (Meteor.isServer) {
         variables: { deckId, front: 'second', back: 'blargh' },
       });
 
-      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      const res = await query({
+        query: NEXT_CARD_FOR_LEARNING_QUERY,
+        variables: { deckId },
+      });
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.errors, null);
     });
@@ -193,7 +219,9 @@ if (Meteor.isServer) {
       });
 
       const { server } = constructTestServer({
-        context: () => ({ user: { _id: userId, username: 'testuser', admin: false } }),
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
       });
       const deckId = Decks.insert({
         userId,
@@ -221,12 +249,13 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         state: 'LEARNING',
         currentStep: 0,
-        dueDate: moment()
-          .subtract(1, 'minute')
-          .toDate(),
+        dueDate: moment().subtract(1, 'minute').toDate(),
       });
 
-      const res = await query({ query: NEXT_CARD_FOR_LEARNING_QUERY, variables: { deckId } });
+      const res = await query({
+        query: NEXT_CARD_FOR_LEARNING_QUERY,
+        variables: { deckId },
+      });
       assert.notEqual(res.data.nextCardForLearning, null);
       assert.equal(res.data.nextCardForLearning.front, 'blaa');
       assert.equal(res.data.nextCardForLearning.currentStep, 0);

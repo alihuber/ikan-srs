@@ -58,7 +58,11 @@ const EditUserModal = ({ userId, username, admin, refetch }) => {
   const model = { username, admin };
   return (
     <Modal.Content>
-      <AutoForm schema={bridge} onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch)} model={model} />
+      <AutoForm
+        schema={bridge}
+        onSubmit={(doc) => handleSubmit(doc, userId, updateUser, refetch)}
+        model={model}
+      />
     </Modal.Content>
   );
 };
