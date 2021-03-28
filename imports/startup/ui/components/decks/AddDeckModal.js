@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm } from 'uniforms-semantic';
-import submitField from './CustomSubmitField';
-import { CREATE_DECK_MUTATION } from '../../../api/decks/constants';
+import submitField from '../CustomSubmitField';
+import { CREATE_DECK_MUTATION } from '../../../../api/decks/constants';
 
 const createDeckSchema = new SimpleSchema({
   name: {

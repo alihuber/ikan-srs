@@ -5,18 +5,18 @@ import { toast } from 'react-toastify';
 import { Button, Divider, Segment, Modal, Confirm } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
-import TableFilter from './TableFilter';
+import TableFilter from '../TableFilter';
 import CardsTable from './CardsTable';
-import LoadingIndicator from './LoadingIndicator';
+import LoadingIndicator from '../../LoadingIndicator';
 import AddCardModal from './AddCardModal';
-import RenameDeckModal from './RenameDeckModal';
+import RenameDeckModal from '../decks/RenameDeckModal';
 import {
   CARDS_FOR_DECK_QUERY,
   DELETE_DECK_MUTATION,
   DELETE_CARD_MUTATION,
   RESET_CARD_MUTATION,
   RESET_DECK_MUTATION,
-} from '../../../api/decks/constants';
+} from '../../../../api/decks/constants';
 
 const CardsList = ({ deck }) => {
   const history = useHistory();

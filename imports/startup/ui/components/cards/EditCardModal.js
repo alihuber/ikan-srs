@@ -12,7 +12,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-light.css';
 import { AutoForm, ErrorField, SubmitField } from 'uniforms-semantic';
-import { UPDATE_CARD_MUTATION } from '../../../api/decks/constants';
+import { UPDATE_CARD_MUTATION } from '../../../../api/decks/constants';
 
 const mdParser = new MarkdownIt({
   html: true,

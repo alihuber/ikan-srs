@@ -2,12 +2,12 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import { toast } from 'react-toastify';
 
-import { CURRENT_USER_QUERY } from '../../../api/users/constants';
+import { CURRENT_USER_QUERY } from '../../api/users/constants';
 import Layout from './Layout';
 import LoadingIndicator from './LoadingIndicator';
 import Routing from './Routing';
-import CurrentUserContext from '../contexts/CurrentUserContext';
-import AnimContext from '../contexts/AnimContext';
+import CurrentUserContext from './contexts/CurrentUserContext';
+import AnimContext from './contexts/AnimContext';
 
 toast.configure();
 

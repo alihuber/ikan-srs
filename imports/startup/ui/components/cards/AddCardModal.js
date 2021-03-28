@@ -18,7 +18,7 @@ import {
   SelectField,
   SubmitField,
 } from 'uniforms-semantic';
-import { ADD_CARD_MUTATION } from '../../../api/decks/constants';
+import { ADD_CARD_MUTATION } from '../../../../api/decks/constants';
 
 const addCardSchema = new SimpleSchema({
   deckId: {

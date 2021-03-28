@@ -5,7 +5,7 @@ import SimpleSchema from 'simpl-schema';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm } from 'uniforms-semantic';
 import { toast } from 'react-toastify';
-import { UPDATE_SETTINGS_MUTATION } from '../../../api/settings/constants';
+import { UPDATE_SETTINGS_MUTATION } from '../../../../api/settings/constants';
 
 const lapseSettingsSchema = new SimpleSchema({
   stepInMinutes: {

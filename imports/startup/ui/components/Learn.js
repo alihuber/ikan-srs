@@ -20,7 +20,7 @@ import {
   NEXT_CARD_FOR_LEARNING_QUERY,
   ANSWER_CARD_MUTATION,
 } from '../../../api/decks/constants';
-import LoadingIndicator from './LoadingIndicator';
+import LoadingIndicator from '../LoadingIndicator';
 import './learnCard.css';
 
 const mdParser = new MarkdownIt({

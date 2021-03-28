@@ -3,11 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
 import moment from 'moment';
-import AnimContext from '../contexts/AnimContext';
-import CurrentUserContext from '../contexts/CurrentUserContext';
-import { DECK_QUERY } from '../../../api/decks/constants';
-import LoadingIndicator from './LoadingIndicator';
-import CardsList from './CardsList';
+import AnimContext from '../../contexts/AnimContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { DECK_QUERY } from '../../../../api/decks/constants';
+import LoadingIndicator from '../../LoadingIndicator';
+import CardsList from '../cards/CardsList';
 
 const EditDeck = () => {
   const animClass = useContext(AnimContext);

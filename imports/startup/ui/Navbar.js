@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, Menu, Dropdown } from 'semantic-ui-react';
 
-import CurrentUserContext from '../contexts/CurrentUserContext';
+import CurrentUserContext from './contexts/CurrentUserContext';
 
 const handleLogout = (history) => {
   Meteor.logout(() => {
@@ -15,8 +15,8 @@ const handleLogout = (history) => {
   });
 };
 
-const handleHome = (history) => {
-  history.push('/');
+const handleDecks = (history) => {
+  history.push('/decks');
 };
 
 const handleUsers = (history) => {
@@ -37,13 +37,15 @@ const Navbar = () => {
   return (
     <Menu fixed="top" inverted>
       <Container>
-        <Menu.Item
-          as="a"
-          onClick={() => handleHome(history)}
-          itemname="homeButton"
-        >
-          {currentUser && currentUser._id ? 'Decks' : 'Home'}
-        </Menu.Item>
+        {currentUser && currentUser._id && !currentUser.admin ? (
+          <Menu.Item
+            as="a"
+            onClick={() => handleDecks(history)}
+            itemname="decksButton"
+          >
+            Decks
+          </Menu.Item>
+        ) : null}
         {currentUser && currentUser.admin ? (
           <Menu.Item
             as="a"

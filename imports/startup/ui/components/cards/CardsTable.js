@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Pagination, Button } from 'semantic-ui-react';
-import { PageSizeSelect } from './PageSizeSelect';
+import { PageSizeSelect } from '../PageSizeSelect';
 import { CardRow } from './CardRow';
 import { CardsTableHeader } from './CardsTableHeader';
 

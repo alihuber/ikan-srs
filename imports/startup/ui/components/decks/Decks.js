@@ -12,12 +12,12 @@ import {
   Modal,
   Button,
 } from 'semantic-ui-react';
-import AnimContext from '../contexts/AnimContext';
-import CurrentUserContext from '../contexts/CurrentUserContext';
-import { DECKS_QUERY } from '../../../api/decks/constants';
-import LoadingIndicator from './LoadingIndicator';
+import AnimContext from '../../contexts/AnimContext';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { DECKS_QUERY } from '../../../../api/decks/constants';
+import LoadingIndicator from '../../LoadingIndicator';
 import AddDeckModal from './AddDeckModal';
-import AddCardModal from './AddCardModal';
+import AddCardModal from '../cards/AddCardModal';
 
 const Decks = () => {
   const animClass = useContext(AnimContext);

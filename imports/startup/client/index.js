@@ -12,7 +12,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import 'semantic-ui-css/components/icon.min.css';
 import 'semantic-ui-css/semantic.min.css';
-import Root from '../ui/components/Root';
+import Root from '../ui/Root';
 import 'react-toastify/dist/ReactToastify.min.css';
 import 'uniforms-bridge-simple-schema-2';
 import './react-transitions.css';

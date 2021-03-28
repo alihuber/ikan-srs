@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { Button, Divider, Segment } from 'semantic-ui-react';
 import sift from 'sift';
 import debounce from 'lodash/debounce';
-import LoadingIndicator from '../LoadingIndicator';
+import LoadingIndicator from '../../LoadingIndicator';
 import AddUserModal from './AddUserModal';
 import UsersTable from './UsersTable';
 import TableFilter from '../TableFilter';
