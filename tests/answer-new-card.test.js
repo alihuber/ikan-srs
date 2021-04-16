@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
-import moment from 'moment';
+import addMinutes from 'date-fns/addMinutes';
+import addDays from 'date-fns/addDays';
 import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
@@ -88,7 +89,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.state, 'LEARNING');
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(stepsInMinutes[0], 'minutes').toDate().getTime()
+        addMinutes(now, stepsInMinutes[0]).getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.equal(deck.newCardsToday.numCards, 1);
@@ -148,12 +149,9 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.state, 'LEARNING');
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(stepsInMinutes[2], 'minutes').toDate().getTime()
+        addMinutes(now, stepsInMinutes[2]).getTime()
       );
-      assert.notEqual(
-        moment(now).toDate().getTime(),
-        res.data.answerCard.dueDate.getTime()
-      );
+      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
       const deck = Decks.findOne(deckId);
       assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
@@ -218,12 +216,9 @@ if (Meteor.isServer) {
       );
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(graduatingIntervalInDays, 'days').toDate().getTime()
+        addDays(now, graduatingIntervalInDays).getTime()
       );
-      assert.notEqual(
-        moment(now).toDate().getTime(),
-        res.data.answerCard.dueDate.getTime()
-      );
+      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
       const deck = Decks.findOne(deckId);
       assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
@@ -282,12 +277,9 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.currentInterval, easyIntervalInDays);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(easyIntervalInDays, 'days').toDate().getTime()
+        addDays(now, easyIntervalInDays).getTime()
       );
-      assert.notEqual(
-        moment(now).toDate().getTime(),
-        res.data.answerCard.dueDate.getTime()
-      );
+      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
       const deck = Decks.findOne(deckId);
       assert.equal(deck.newCardsToday.numCards, 1);
       timekeeper.reset();

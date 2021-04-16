@@ -1,4 +1,5 @@
-import moment from 'moment';
+import addMinutes from 'date-fns/addMinutes';
+import addDays from 'date-fns/addDays';
 import { Decks, Cards } from './constants';
 
 const updateDeckNewCardsToday = (state, deckId) => {
@@ -25,7 +26,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             lapseCount: lapseCountBefore + 1,
-            dueDate: moment().add(stepInMinutes, 'minutes').toDate(),
+            dueDate: addMinutes(new Date(), stepInMinutes),
           },
         }
       );
@@ -41,7 +42,7 @@ export const updateCard = (settings, card, answer, deckId) => {
           $set: {
             state: newState,
             currentStep: 0,
-            dueDate: moment().add(stepsInMinutes[0], 'minutes').toDate(),
+            dueDate: addMinutes(new Date(), stepsInMinutes[0]),
           },
         }
       );
@@ -65,7 +66,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             state: 'RELEARNING',
-            dueDate: moment().add(stepInMinutes, 'minutes').toDate(),
+            dueDate: addMinutes(new Date(), stepInMinutes),
             easeFactor: newEaseFactor,
           },
         }
@@ -93,7 +94,7 @@ export const updateCard = (settings, card, answer, deckId) => {
       {
         $set: {
           currentInterval: newInterval,
-          dueDate: moment().add(newInterval, 'days').toDate(),
+          dueDate: addDays(new Date(), newInterval),
           easeFactor: newEaseFactor,
         },
       }
@@ -112,7 +113,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: moment().add(newInterval, 'days').toDate(),
+            dueDate: addDays(new Date(), newInterval),
           },
         }
       );
@@ -131,7 +132,7 @@ export const updateCard = (settings, card, answer, deckId) => {
               state: 'GRADUATED',
               currentStep: 0,
               currentInterval: graduatingIntervalInDays,
-              dueDate: moment().add(graduatingIntervalInDays, 'days').toDate(),
+              dueDate: addDays(new Date(), graduatingIntervalInDays),
             },
           }
         );
@@ -146,9 +147,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             $set: {
               state: newState,
               currentStep: nextStep,
-              dueDate: moment()
-                .add(stepsInMinutes[nextStep], 'minutes')
-                .toDate(),
+              dueDate: addMinutes(new Date(), stepsInMinutes[nextStep]),
             },
           }
         );
@@ -168,7 +167,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: moment().add(newInterval, 'days').toDate(),
+            dueDate: addDays(new Date(), newInterval),
           },
         }
       );
@@ -188,7 +187,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: moment().add(newInterval, 'days').toDate(),
+            dueDate: addDays(new Date(), newInterval),
           },
         }
       );
@@ -202,7 +201,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             state: 'GRADUATED',
             currentStep: 0,
             currentInterval: easyIntervalInDays,
-            dueDate: moment().add(easyIntervalInDays, 'days').toDate(),
+            dueDate: addDays(new Date(), easyIntervalInDays),
           },
         }
       );
@@ -223,7 +222,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: moment().add(newInterval, 'days').toDate(),
+            dueDate: addDays(new Date(), newInterval),
             easeFactor: newEaseFactor,
           },
         }

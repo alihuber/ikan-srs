@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Table, Modal, Icon } from 'semantic-ui-react';
 import truncate from 'lodash/truncate';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import format from 'date-fns/format';
 import EditCardModal from './EditCardModal';
 
 export const CardRow = ({
@@ -16,9 +16,7 @@ export const CardRow = ({
       <Table.Cell>{truncate(card._id, { length: 6 })}</Table.Cell>
       <Table.Cell>{truncate(card.front, { length: 50 })}</Table.Cell>
       <Table.Cell>{truncate(card.back, { length: 50 })}</Table.Cell>
-      <Table.Cell>
-        {moment(card.dueDate).format('DD.MM.YYYY HH:mm:ss')}
-      </Table.Cell>
+      <Table.Cell>{format(card.dueDate, 'dd.MM.yyyy HH:mm:ss')}</Table.Cell>
       <Table.Cell>{card.state}</Table.Cell>
       <Table.Cell>{card.tags}</Table.Cell>
       <Table.Cell>

@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
-import moment from 'moment';
+import addDays from 'date-fns/addDays';
+import subMinutes from 'date-fns/subMinutes';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
 import UserSchema from '../imports/api/users/User.graphql';
@@ -101,7 +102,7 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         state: 'LEARNING',
         currentStep: 0,
-        dueDate: moment().add(1, 'day').toDate(),
+        dueDate: addDays(new Date(), 1),
       });
 
       const { query } = createTestClient(server);
@@ -249,7 +250,7 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         state: 'LEARNING',
         currentStep: 0,
-        dueDate: moment().subtract(1, 'minute').toDate(),
+        dueDate: subMinutes(new Date(), 1),
       });
 
       const res = await query({

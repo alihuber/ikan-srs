@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import moment from 'moment';
+import format from 'date-fns/format';
+import isBefore from 'date-fns/isBefore';
 import { useQuery } from '@apollo/client';
 import {
   Divider,
@@ -99,14 +100,12 @@ const Decks = () => {
                           {nextDueDate ? (
                             <Card.Meta>
                               Next due card: &nbsp;
-                              {moment(nextDueDate).isBefore(moment()) ? (
+                              {isBefore(nextDueDate, new Date()) ? (
                                 <b style={{ color: 'red' }}>
-                                  {moment(nextDueDate).format(
-                                    'DD.MM.YYYY HH:mm'
-                                  )}
+                                  {format(nextDueDate, 'dd.MM.yyyy HH:mm')}
                                 </b>
                               ) : (
-                                moment(nextDueDate).format('DD.MM.YYYY HH:mm')
+                                format(nextDueDate, 'dd.MM.yyyy HH:mm')
                               )}
                             </Card.Meta>
                           ) : null}

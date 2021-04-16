@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
-import moment from 'moment';
+import addMinutes from 'date-fns/addMinutes';
+import addDays from 'date-fns/addDays';
 import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
@@ -94,7 +95,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 1);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(stepInMinutes, 'minutes').toDate().getTime()
+        addMinutes(now, stepInMinutes).getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);
@@ -155,7 +156,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(7, 'days').toDate().getTime()
+        addDays(now, 7).getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);
@@ -216,7 +217,7 @@ if (Meteor.isServer) {
       assert.equal(res.data.answerCard.lapseCount, 0);
       assert.equal(
         res.data.answerCard.dueDate.getTime(),
-        moment(now).add(7, 'days').toDate().getTime()
+        addDays(now, 7).getTime()
       );
       const deck = Decks.findOne(deckId);
       assert.notEqual(deck.newCardsToday.numCards, 1);

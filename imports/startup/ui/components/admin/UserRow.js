@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Table, Modal, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import format from 'date-fns/format';
 import EditUserModal from './EditUserModal';
 
 export const UserRow = ({ user, handleDelete, refetch, setPageNum }) => {
@@ -10,7 +10,7 @@ export const UserRow = ({ user, handleDelete, refetch, setPageNum }) => {
       <Table.Cell>{user._id}</Table.Cell>
       <Table.Cell>{user.username}</Table.Cell>
       <Table.Cell>
-        {moment(user.createdAt).format('DD.MM.YYYY HH:mm')}
+        {format(new Date(user.createdAt), 'dd.MM.yyyy HH:mm')}
       </Table.Cell>
       <Table.Cell>{user.admin ? <Icon name="check" /> : ''}</Table.Cell>
       <Table.Cell collapsing textAlign="right">

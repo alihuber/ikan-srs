@@ -5,7 +5,7 @@ import merge from 'lodash/merge';
 import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
-import moment from 'moment';
+import subDays from 'date-fns/subDays';
 import UserSchema from '../imports/api/users/User.graphql';
 import SettingSchema from '../imports/api/settings/Setting.graphql';
 import DecksSchema from '../imports/api/decks/Deck.graphql';
@@ -118,7 +118,7 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         intervalModifier: 1,
         newCardsToday: {
-          date: moment().subtract(2, 'days'),
+          date: subDays(new Date(), 2),
           numCards: 19,
         },
       });

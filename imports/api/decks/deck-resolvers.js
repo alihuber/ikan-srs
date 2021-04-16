@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Match } from 'meteor/check';
-import moment from 'moment';
+import startOfDay from 'date-fns/startOfDay';
+import endOfDay from 'date-fns/endOfDay';
+import isWithinInterval from 'date-fns/isWithinInterval';
 import { Decks, Cards } from './constants';
 import { Settings } from '../settings/constants';
 import { collectCardStats } from './utils';
@@ -29,13 +31,13 @@ export default {
       const user = reqUser && Meteor.users.findOne(reqUser._id);
       if (user) {
         const foundDecks = Decks.find({ userId: user._id }).fetch();
-        const todayStart = moment().startOf('day');
-        const todayEnd = moment().endOf('day');
+        const todayStart = startOfDay(new Date());
+        const todayEnd = endOfDay(new Date());
         foundDecks.map((deck) => {
-          const isToday = moment(deck.newCardsToday.date).isBetween(
-            todayStart,
-            todayEnd
-          );
+          const isToday = isWithinInterval(deck.newCardsToday.date, {
+            start: todayStart,
+            end: todayEnd,
+          });
           if (!isToday) {
             const newCardsToday = { date: new Date(), numCards: 0 };
             Decks.update({ _id: deck._id }, { $set: { newCardsToday } });
