@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+import { SyncedCron } from 'meteor/littledata:synced-cron';
 import { ApolloServer } from 'apollo-server-express';
 import { WebApp } from 'meteor/webapp';
 import { getUser } from 'meteor/apollo';
@@ -13,6 +14,9 @@ import SettingsResolver from '../../api/settings/resolvers';
 import DecksSchema from '../../api/decks/Deck.graphql';
 import DecksResolver from '../../api/decks/deck-resolvers';
 import CardsResolver from '../../api/decks/card-resolvers';
+import StatsSchema from '../../api/stats/Stats.graphql';
+import StatsResolver from '../../api/stats/stats-resolvers';
+import CollectStatsJob from './collectStatsJob';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -27,7 +31,7 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const typeDefs = [UserSchema, SettingsSchema, DecksSchema];
+const typeDefs = [UserSchema, SettingsSchema, DecksSchema, StatsSchema];
 
 const DateResolver = {
   Date: new GraphQLScalarType({
@@ -53,7 +57,8 @@ const resolvers = merge(
   UserResolver,
   SettingsResolver,
   DecksResolver,
-  CardsResolver
+  CardsResolver,
+  StatsResolver
 );
 
 const server = new ApolloServer({
@@ -116,3 +121,16 @@ Meteor.startup(() => {
     }`,
   });
 });
+
+SyncedCron.add({
+  name: 'collect stats',
+  schedule: function (parser) {
+    return parser.text('at 11:59 am');
+  },
+  job: async function () {
+    const res = await CollectStatsJob.collectStats();
+    return res;
+  },
+});
+
+SyncedCron.start();

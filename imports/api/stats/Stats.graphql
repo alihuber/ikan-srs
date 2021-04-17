@@ -1,0 +1,19 @@
+type StatsData {
+  decksCount: Int
+  cardsCount: Int
+  NEW: Int
+  LEARNING: Int
+  RELEARNING: Int
+  GRADUATED: Int
+}
+
+type Stats {
+  _id: String
+  date: Date
+  userId: String
+  data: StatsData
+}
+
+extend type Query {
+  stats: [Stats]
+}

@@ -33,8 +33,8 @@ const handleLogin = (history) => {
   history.push('/login');
 };
 
-const handleDecks = (history) => {
-  history.push('/decks');
+const handleDashboard = (history) => {
+  history.push('/dashboard');
 };
 
 const handleSubmit = (values, history) => {
@@ -50,7 +50,7 @@ const handleSubmit = (values, history) => {
         toast.success('Login successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
-        handleDecks(history);
+        handleDashboard(history);
       }
     });
   }

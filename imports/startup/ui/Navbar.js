@@ -15,8 +15,8 @@ const handleLogout = (history) => {
   });
 };
 
-const handleDecks = (history) => {
-  history.push('/decks');
+const handleDashboard = (history) => {
+  history.push('/dashboard');
 };
 
 const handleUsers = (history) => {
@@ -25,6 +25,10 @@ const handleUsers = (history) => {
 
 const handleLogin = (history) => {
   history.push('/login');
+};
+
+const handleDecks = (history) => {
+  history.push('/decks');
 };
 
 const handleSettings = (history) => {
@@ -40,10 +44,10 @@ const Navbar = () => {
         {currentUser && currentUser._id && !currentUser.admin ? (
           <Menu.Item
             as="a"
-            onClick={() => handleDecks(history)}
-            itemname="decksButton"
+            onClick={() => handleDashboard(history)}
+            itemname="dashboardButton"
           >
-            Decks
+            Dashboard
           </Menu.Item>
         ) : null}
         {currentUser && currentUser.admin ? (
@@ -71,6 +75,9 @@ const Navbar = () => {
           <Menu.Menu position="right">
             <Dropdown item text="Menu">
               <Dropdown.Menu>
+                <Dropdown.Item as="a" onClick={() => handleDecks(history)}>
+                  Decks
+                </Dropdown.Item>
                 <Dropdown.Item as="a" onClick={() => handleSettings(history)}>
                   Settings
                 </Dropdown.Item>
