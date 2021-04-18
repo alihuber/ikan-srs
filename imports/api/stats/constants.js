@@ -20,23 +20,3 @@ export const STATS_QUERY = gql`
     }
   }
 `;
-
-export const LEARNABLE_DECKS_QUERY = gql`
-  query {
-    learnable {
-      _id
-      userId
-      name
-      createdAt
-      numCards
-      newCards
-      learningCards
-      relearningCards
-      graduatedCards
-      newCardsToday {
-        date
-        numCards
-      }
-    }
-  }
-`;

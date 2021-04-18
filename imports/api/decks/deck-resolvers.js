@@ -3,6 +3,7 @@ import { Match } from 'meteor/check';
 import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
 import isWithinInterval from 'date-fns/isWithinInterval';
+import groupBy from 'lodash/groupBy';
 import { Decks, Cards } from './constants';
 import { Settings } from '../settings/constants';
 import { collectCardStats } from './utils';
@@ -97,6 +98,35 @@ export default {
         });
         return false;
       }
+    },
+    learnable(_, args, context) {
+      const user = context.user;
+      const deckIdsForUser = Decks.find({ userId: user._id }, { _id: 1 })
+        .fetch()
+        .map((d) => d._id);
+      const dueCards = Cards.find({
+        deckId: { $in: deckIdsForUser },
+        dueDate: { $lte: new Date() },
+      }).fetch();
+      const res = [];
+      if (dueCards.length !== 0) {
+        const deckGroups = groupBy(dueCards, 'deckId');
+        Object.keys(deckGroups).forEach((deckId) => {
+          const deck = Decks.findOne(deckId);
+          const nextDueCard = Array.from(deckGroups[deckId]).sort((a, b) => {
+            return (
+              new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+            );
+          })[0].dueDate;
+          res.push({
+            _id: deckId,
+            name: deck.name,
+            dueCards: deckGroups[deckId].length,
+            nextDueCard,
+          });
+        });
+      }
+      return res;
     },
   },
   Mutation: {

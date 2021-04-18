@@ -43,11 +43,26 @@ type CardConnection {
   cardsCount: Int!
 }
 
+type LearnableConnection {
+  _id: String
+  name: String
+  dueCards: Int
+  nextDueCard: Date
+}
+
 extend type Query {
   decks: [Deck]
   nextCardForLearning(deckId: String!): Card
   deckQuery(deckId: String!): Deck
-  cardsForDeck(deckId: String!, pageNum: Int, perPage: Int, q: String, sort: String, order: String): CardConnection!
+  cardsForDeck(
+    deckId: String!
+    pageNum: Int
+    perPage: Int
+    q: String
+    sort: String
+    order: String
+  ): CardConnection!
+  learnable: [LearnableConnection]
 }
 
 extend type Mutation {

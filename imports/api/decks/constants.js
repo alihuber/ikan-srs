@@ -4,6 +4,27 @@ import { gql } from '@apollo/client';
 export const Decks = new Mongo.Collection('decks');
 export const Cards = new Mongo.Collection('cards');
 
+export const DECKS_NAME_QUERY = gql`
+  query {
+    decks {
+      _id
+      userId
+      name
+    }
+  }
+`;
+
+export const LEARNABLE_DECKS_QUERY = gql`
+  query {
+    learnable {
+      _id
+      name
+      dueCards
+      nextDueCard
+    }
+  }
+`;
+
 export const DECKS_QUERY = gql`
   query {
     decks {
