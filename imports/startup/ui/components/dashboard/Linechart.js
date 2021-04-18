@@ -63,8 +63,11 @@ const LineChart = ({ data }) => {
   });
   const datasets = Object.keys(collectedData).map((key) => {
     const values = collectedData[key];
+    let label = key;
+    label = key === 'decksCount' ? 'All decks' : label;
+    label = key === 'cardsCount' ? 'All cards' : label;
     const res = {
-      label: key,
+      label,
       data: values,
       fill: false,
       borderColor: stateColorMap[key],

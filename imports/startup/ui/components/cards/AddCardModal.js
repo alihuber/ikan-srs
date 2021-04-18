@@ -97,6 +97,7 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
   const [addCard, _] = useMutation(ADD_CARD_MUTATION);
   const location = useLocation();
   const onEditScreen = location.pathname.includes('editDeck');
+  const onDashboardScreen = location.pathname.includes('dashboard');
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
   const [model, setModel] = useState({ front: '', back: '', deckId: '' });
   const [open, setOpen] = useState(false);
@@ -132,7 +133,18 @@ const AddCardModal = ({ refetch, decks, deck, onClose }) => {
         setModel({ front: '', back: '' });
       }}
       trigger={
-        onEditScreen ? (
+        /* eslint-disable no-nested-ternary */
+        onDashboardScreen ? (
+          <Button
+            compact
+            name="addCardButton"
+            size="small"
+            primary
+            onClick={() => setOpen(true)}
+          >
+            Add Card
+          </Button>
+        ) : onEditScreen ? (
           <Button
             compact
             name="addCardButton"

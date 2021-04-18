@@ -17,7 +17,7 @@ const HomePage = () => {
   const history = useHistory();
 
   if (currentUser && currentUser._id && !currentUser.admin) {
-    history.push('/decks');
+    history.push('/dashboard');
     return null;
   } else {
     return (

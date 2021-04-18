@@ -157,7 +157,7 @@ const CardsList = ({ deck }) => {
       refetch();
       setDeleteDeckConfirmOpen(false);
       setDeleteDeckId('');
-      history.push('/');
+      history.push('/decks');
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
