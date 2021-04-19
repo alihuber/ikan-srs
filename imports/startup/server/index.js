@@ -125,7 +125,7 @@ Meteor.startup(() => {
 SyncedCron.add({
   name: 'collect stats',
   schedule: function (parser) {
-    return parser.text('at 11:59 am');
+    return parser.text('at 06:00 am');
   },
   job: async function () {
     const res = await CollectStatsJob.collectStats();

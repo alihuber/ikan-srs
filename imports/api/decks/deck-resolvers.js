@@ -100,8 +100,19 @@ export default {
       }
     },
     learnable(_, args, context) {
-      const user = context.user;
-      const deckIdsForUser = Decks.find({ userId: user._id }, { _id: 1 })
+      const reqUser = context.user;
+      if (!reqUser) {
+        logger.log({
+          level: 'warn',
+          message: `delete user requester with _id ${reqUser._id} is not found`,
+        });
+        throw new Error('not authorized');
+      }
+      logger.log({
+        level: 'info',
+        message: `got learnable request from _id ${reqUser._id}`,
+      });
+      const deckIdsForUser = Decks.find({ userId: reqUser._id }, { _id: 1 })
         .fetch()
         .map((d) => d._id);
       const dueCards = Cards.find({
@@ -126,6 +137,10 @@ export default {
           });
         });
       }
+      logger.log({
+        level: 'info',
+        message: `found ${res.length} learnable decks for user ${reqUser._id}`,
+      });
       return res;
     },
   },
