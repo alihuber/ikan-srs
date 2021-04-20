@@ -26,8 +26,8 @@ export const LEARNABLE_DECKS_QUERY = gql`
 `;
 
 export const DECKS_QUERY = gql`
-  query {
-    decks {
+  query decksQuery($pageNum: Int, $q: String, $order: String) {
+    decks(pageNum: $pageNum, q: $q, order: $order) {
       _id
       userId
       name

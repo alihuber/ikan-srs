@@ -131,6 +131,128 @@ if (Meteor.isServer) {
       assert.equal(res.data.decks[0].newCardsToday.numCards, 0);
       assert.equal(res.data.decks[1].newCardsToday.numCards, 10);
     });
+
+    it('returns max 5 results', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
+      });
+      for (let i = 0; i < 10; i++) {
+        Decks.insert({
+          userId,
+          name: `deck${i}`,
+          createdAt: new Date(`2021-01-0${i}`),
+          intervalModifier: 1,
+          newCardsToday: { date: new Date(), numCards: 0 },
+        });
+      }
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECKS_QUERY });
+      assert.equal(res.data.decks.length, 5);
+    });
+
+    it('returns paginated results', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
+      });
+      for (let i = 0; i < 10; i++) {
+        Decks.insert({
+          userId,
+          name: `deck${i}`,
+          createdAt: new Date(`2021-01-0${i}`),
+          intervalModifier: 1,
+          newCardsToday: { date: new Date(), numCards: 0 },
+        });
+      }
+
+      const { query } = createTestClient(server);
+      const res = await query({
+        query: DECKS_QUERY,
+        variables: { pageNum: 2 },
+      });
+      assert.equal(res.data.decks.length, 5);
+      // desc ordering: 4, 3, 2, 1, 0 on second page
+      assert.equal(res.data.decks[0].name, 'deck4');
+    });
+
+    it('returns asc sorted results', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
+      });
+      for (let i = 0; i < 10; i++) {
+        Decks.insert({
+          userId,
+          name: `deck${i}`,
+          createdAt: new Date(`2021-01-0${i}`),
+          intervalModifier: 1,
+          newCardsToday: { date: new Date(), numCards: 0 },
+        });
+      }
+
+      const { query } = createTestClient(server);
+      const res = await query({
+        query: DECKS_QUERY,
+        variables: { pageNum: 2, order: 'asc' },
+      });
+      assert.equal(res.data.decks.length, 5);
+      assert.equal(res.data.decks[0].name, 'deck5');
+    });
+
+    it('returns filtered results', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
+      });
+      for (let i = 0; i < 10; i++) {
+        Decks.insert({
+          userId,
+          name: `deck${i}`,
+          createdAt: new Date(`2021-01-0${i}`),
+          intervalModifier: 1,
+          newCardsToday: { date: new Date(), numCards: 0 },
+        });
+      }
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECKS_QUERY, variables: { q: '2' } });
+      assert.equal(res.data.decks.length, 1);
+      assert.equal(res.data.decks[0].name, 'deck2');
+    });
   });
 
   describe('Deck query', () => {

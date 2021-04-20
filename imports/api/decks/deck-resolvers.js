@@ -23,7 +23,10 @@ const logger = createLogger({
 
 export default {
   Query: {
-    decks(obj, args, context) {
+    decks(_, { pageNum = 1, q = '', order = 'desc' }, context) {
+      check(pageNum, Number);
+      check(q, String);
+      check(order, String);
       const reqUser = context.user;
       logger.log({
         level: 'info',
@@ -31,6 +34,10 @@ export default {
       });
       const user = reqUser && Meteor.users.findOne(reqUser._id);
       if (user) {
+        const skip = 5 * (pageNum - 1);
+        const ord = order === 'desc' ? -1 : 1;
+        const opt = {};
+        opt['createdAt'] = ord;
         const foundDecks = Decks.find({ userId: user._id }).fetch();
         const todayStart = startOfDay(new Date());
         const todayEnd = endOfDay(new Date());
@@ -44,10 +51,26 @@ export default {
             Decks.update({ _id: deck._id }, { $set: { newCardsToday } });
           }
         });
-        const updatedDecks = Decks.find(
-          { userId: user._id },
-          { sort: { createdAt: -1 } }
-        ).fetch();
+        let updatedDecks = [];
+        if (q.length === 0) {
+          updatedDecks = Decks.find(
+            { userId: user._id },
+            {
+              skip,
+              limit: 5,
+              sort: opt,
+            }
+          ).fetch();
+        } else {
+          updatedDecks = Decks.find(
+            { name: { $regex: q }, userId: user._id },
+            {
+              skip,
+              limit: 5,
+              sort: opt,
+            }
+          ).fetch();
+        }
         const decks = updatedDecks.map((deck) => {
           return collectCardStats(deck);
         });

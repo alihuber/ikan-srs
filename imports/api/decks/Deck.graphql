@@ -51,7 +51,7 @@ type LearnableConnection {
 }
 
 extend type Query {
-  decks: [Deck]
+  decks(pageNum: Int, q: String, order: String): [Deck]
   nextCardForLearning(deckId: String!): Card
   deckQuery(deckId: String!): Deck
   cardsForDeck(
