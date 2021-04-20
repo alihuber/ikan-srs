@@ -50,10 +50,21 @@ type LearnableConnection {
   nextDueCard: Date
 }
 
+type DecksConnection {
+  decksList: [Deck]
+  decksCount: Int
+}
+
+type DecksNameIdConnection {
+  _id: String
+  name: String
+}
+
 extend type Query {
-  decks(pageNum: Int, q: String, order: String): [Deck]
+  decks(pageNum: Int, q: String, order: String): DecksConnection
   nextCardForLearning(deckId: String!): Card
   deckQuery(deckId: String!): Deck
+  deckNameIds: [DecksNameIdConnection]
   cardsForDeck(
     deckId: String!
     pageNum: Int

@@ -13,6 +13,7 @@ import {
   Decks,
   Cards,
   DECKS_QUERY,
+  DECKS_NAME_QUERY,
   DECK_QUERY,
   CREATE_DECK_MUTATION,
   DELETE_DECK_MUTATION,
@@ -41,6 +42,59 @@ if (Meteor.isServer) {
     return { server };
   };
 
+  describe('DeckNameId query', () => {
+    it('returns no data if no data found for user', async () => {
+      resetDatabase();
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: 1, username: 'testuser', admin: false },
+        }),
+      });
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECKS_NAME_QUERY });
+      assert.deepEqual(res.data.deckNameIds, []);
+    });
+
+    it('returns decks if data found for user', async () => {
+      resetDatabase();
+      const userId = Accounts.createUser({
+        username: 'testuser',
+        admin: false,
+        password: 'example123',
+      });
+
+      const { server } = constructTestServer({
+        context: () => ({
+          user: { _id: userId, username: 'testuser', admin: false },
+        }),
+      });
+      const deckId1 = Decks.insert({
+        userId,
+        name: 'deck1',
+        createdAt: new Date(),
+        intervalModifier: 1,
+        newCardsToday: { date: new Date(), numCards: 0 },
+      });
+      const deckId2 = Decks.insert({
+        userId,
+        name: 'deck2',
+        createdAt: new Date(),
+        intervalModifier: 1,
+        newCardsToday: {
+          date: new Date(),
+          numCards: 0,
+        },
+      });
+
+      const { query } = createTestClient(server);
+      const res = await query({ query: DECKS_NAME_QUERY });
+      assert.deepEqual(res.data.deckNameIds, [
+        { _id: deckId1, name: 'deck1' },
+        { _id: deckId2, name: 'deck2' },
+      ]);
+    });
+  });
+
   describe('Decks query', () => {
     it('returns no decks if no data found for user', async () => {
       resetDatabase();
@@ -51,7 +105,7 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
-      assert.deepEqual(res.data.decks, []);
+      assert.deepEqual(res.data.decks, { decksCount: 0, decksList: [] });
     });
 
     it('returns decks if data found for user', async () => {
@@ -88,8 +142,9 @@ if (Meteor.isServer) {
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
       // sorted by createdAt, newest first
-      assert.equal(res.data.decks[0].name, 'deck2');
-      assert.equal(res.data.decks[1].name, 'deck1');
+      assert.equal(res.data.decks.decksCount, 2);
+      assert.equal(res.data.decks.decksList[0].name, 'deck2');
+      assert.equal(res.data.decks.decksList[1].name, 'deck1');
     });
 
     it('updates decks if new cards for today were altered', async () => {
@@ -126,10 +181,11 @@ if (Meteor.isServer) {
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
       // sorted by createdAt, newest first
-      assert.equal(res.data.decks[0].name, 'deck2');
-      assert.equal(res.data.decks[1].name, 'deck1');
-      assert.equal(res.data.decks[0].newCardsToday.numCards, 0);
-      assert.equal(res.data.decks[1].newCardsToday.numCards, 10);
+      assert.equal(res.data.decks.decksCount, 2);
+      assert.equal(res.data.decks.decksList[0].name, 'deck2');
+      assert.equal(res.data.decks.decksList[1].name, 'deck1');
+      assert.equal(res.data.decks.decksList[0].newCardsToday.numCards, 0);
+      assert.equal(res.data.decks.decksList[1].newCardsToday.numCards, 10);
     });
 
     it('returns max 5 results', async () => {
@@ -157,7 +213,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
-      assert.equal(res.data.decks.length, 5);
+      assert.equal(res.data.decks.decksCount, 10);
+      assert.equal(res.data.decks.decksList.length, 5);
     });
 
     it('returns paginated results', async () => {
@@ -188,9 +245,10 @@ if (Meteor.isServer) {
         query: DECKS_QUERY,
         variables: { pageNum: 2 },
       });
-      assert.equal(res.data.decks.length, 5);
+      assert.equal(res.data.decks.decksList.length, 5);
+      assert.equal(res.data.decks.decksCount, 10);
       // desc ordering: 4, 3, 2, 1, 0 on second page
-      assert.equal(res.data.decks[0].name, 'deck4');
+      assert.equal(res.data.decks.decksList[0].name, 'deck4');
     });
 
     it('returns asc sorted results', async () => {
@@ -221,8 +279,9 @@ if (Meteor.isServer) {
         query: DECKS_QUERY,
         variables: { pageNum: 2, order: 'asc' },
       });
-      assert.equal(res.data.decks.length, 5);
-      assert.equal(res.data.decks[0].name, 'deck5');
+      assert.equal(res.data.decks.decksList.length, 5);
+      assert.equal(res.data.decks.decksCount, 10);
+      assert.equal(res.data.decks.decksList[0].name, 'deck5');
     });
 
     it('returns filtered results', async () => {
@@ -250,8 +309,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY, variables: { q: '2' } });
-      assert.equal(res.data.decks.length, 1);
-      assert.equal(res.data.decks[0].name, 'deck2');
+      assert.equal(res.data.decks.decksCount, 1);
+      assert.equal(res.data.decks.decksList[0].name, 'deck2');
     });
   });
 

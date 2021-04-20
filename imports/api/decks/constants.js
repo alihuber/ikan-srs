@@ -6,9 +6,8 @@ export const Cards = new Mongo.Collection('cards');
 
 export const DECKS_NAME_QUERY = gql`
   query {
-    decks {
+    deckNameIds {
       _id
-      userId
       name
     }
   }
@@ -28,29 +27,32 @@ export const LEARNABLE_DECKS_QUERY = gql`
 export const DECKS_QUERY = gql`
   query decksQuery($pageNum: Int, $q: String, $order: String) {
     decks(pageNum: $pageNum, q: $q, order: $order) {
-      _id
-      userId
-      name
-      createdAt
-      intervalModifier
-      cards {
-        front
-        back
-        state
-        easeFactor
-        currentInterval
-        dueDate
-        currentStep
+      decksCount
+      decksList {
+        _id
+        userId
+        name
         createdAt
-      }
-      numCards
-      newCards
-      learningCards
-      relearningCards
-      graduatedCards
-      newCardsToday {
-        date
+        intervalModifier
+        cards {
+          front
+          back
+          state
+          easeFactor
+          currentInterval
+          dueDate
+          currentStep
+          createdAt
+        }
         numCards
+        newCards
+        learningCards
+        relearningCards
+        graduatedCards
+        newCardsToday {
+          date
+          numCards
+        }
       }
     }
   }

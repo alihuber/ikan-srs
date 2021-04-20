@@ -18,7 +18,7 @@ describe('user settings', () => {
     cy.get('input[type=submit]').click();
 
     cy.wait(1000);
-    cy.url().should('eq', 'http://localhost:3000/decks');
+    cy.url().should('eq', 'http://localhost:3000/dashboard');
 
     cy.window().then((win) => {
       // this allows accessing the window object within the browser

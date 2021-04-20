@@ -18,12 +18,13 @@ const createDeckSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(createDeckSchema);
 
-const handleSubmit = (values, createDeck, refetch) => {
+const handleSubmit = (values, createDeck, refetch, setAddOpen) => {
   const name = values.name;
   if (name) {
     createDeck({ variables: { name } })
       .then(() => {
         refetch();
+        setAddOpen(false);
         toast.success('Creation successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
@@ -37,7 +38,7 @@ const handleSubmit = (values, createDeck, refetch) => {
   }
 };
 
-const AddDeckModal = ({ refetch }) => {
+const AddDeckModal = ({ refetch, setAddOpen }) => {
   // eslint-disable-next-line no-unused-vars
   const [createDeck, _] = useMutation(CREATE_DECK_MUTATION);
   return (
@@ -45,7 +46,7 @@ const AddDeckModal = ({ refetch }) => {
       <AutoForm
         submitField={submitField}
         schema={bridge}
-        onSubmit={(doc) => handleSubmit(doc, createDeck, refetch)}
+        onSubmit={(doc) => handleSubmit(doc, createDeck, refetch, setAddOpen)}
       />
     </Modal.Content>
   );
@@ -53,6 +54,7 @@ const AddDeckModal = ({ refetch }) => {
 
 AddDeckModal.propTypes = {
   refetch: PropTypes.func.isRequired,
+  setAddOpen: PropTypes.func.isRequired,
 };
 
 export default AddDeckModal;

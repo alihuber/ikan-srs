@@ -23,6 +23,23 @@ const logger = createLogger({
 
 export default {
   Query: {
+    deckNameIds(_, __, context) {
+      const reqUser = context.user;
+      logger.log({
+        level: 'info',
+        message: `got deckNameIds request for _id ${reqUser && reqUser._id}`,
+      });
+      const user = reqUser && Meteor.users.findOne(reqUser._id);
+      if (user) {
+        return Decks.find(
+          { userId: reqUser._id },
+          { fields: { name: 1, _id: 1 } }
+        ).fetch();
+      } else {
+        logger.log({ level: 'info', message: 'user not found, returning []' });
+        return [];
+      }
+    },
     decks(_, { pageNum = 1, q = '', order = 'desc' }, context) {
       check(pageNum, Number);
       check(q, String);
@@ -38,7 +55,15 @@ export default {
         const ord = order === 'desc' ? -1 : 1;
         const opt = {};
         opt['createdAt'] = ord;
-        const foundDecks = Decks.find({ userId: user._id }).fetch();
+        let foundDecks = [];
+        if (q.length === 0) {
+          foundDecks = Decks.find({ userId: user._id }).fetch();
+        } else {
+          foundDecks = Decks.find({
+            name: { $regex: q },
+            userId: user._id,
+          }).fetch();
+        }
         const todayStart = startOfDay(new Date());
         const todayEnd = endOfDay(new Date());
         foundDecks.map((deck) => {
@@ -71,25 +96,28 @@ export default {
             }
           ).fetch();
         }
-        const decks = updatedDecks.map((deck) => {
+        const deckswithStats = updatedDecks.map((deck) => {
           return collectCardStats(deck);
         });
-        if (decks && decks.length !== 0) {
+        if (deckswithStats && deckswithStats.length !== 0) {
           logger.log({
             level: 'info',
             message: `found decks for user with _id ${user._id}`,
           });
-          return decks;
+          return {
+            decksCount: foundDecks.length,
+            decksList: deckswithStats,
+          };
         } else {
           logger.log({
             level: 'info',
             message: `found no decks for user with _id ${user._id}`,
           });
-          return [];
+          return { decksCount: 0, decksList: [] };
         }
       } else {
         logger.log({ level: 'info', message: 'user not found, returning []' });
-        return [];
+        return { decksCount: 0, decksList: [] };
       }
     },
     deckQuery(_, args, context) {
@@ -122,7 +150,7 @@ export default {
         return false;
       }
     },
-    learnable(_, args, context) {
+    learnable(_, __, context) {
       const reqUser = context.user;
       if (!reqUser) {
         logger.log({

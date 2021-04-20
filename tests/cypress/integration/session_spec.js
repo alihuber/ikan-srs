@@ -16,7 +16,7 @@ describe('login-logout-user', () => {
     cy.get('input[name=password]').type('testuser');
     cy.get('input[type=submit]').click();
 
-    cy.url().should('eq', 'http://localhost:3000/decks');
+    cy.url().should('eq', 'http://localhost:3000/dashboard');
 
     cy.window().then((win) => {
       // this allows accessing the window object within the browser

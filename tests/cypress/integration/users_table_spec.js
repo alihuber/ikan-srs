@@ -17,29 +17,28 @@ describe('display-users-table', () => {
     cy.get('input[type=submit]').click();
 
     cy.wait(1000);
-    cy.url().should('eq', 'http://localhost:3000/decks');
+    cy.url().should('eq', 'http://localhost:3000/dashboard');
 
     cy.window().then(() => {
       cy.get('a').should('not.contain', 'Users');
     });
   });
 
-  it('should redirect to decks when normal user visiting the url', () => {
+  it('should redirect to dashboard when normal user visiting the url', () => {
     cy.contains('Login').click();
     cy.get('input[name=username]').type('testuser');
     cy.get('input[name=password]').type('testuser');
     cy.get('input[type=submit]').click();
 
     cy.wait(1000);
-    cy.url().should('eq', 'http://localhost:3000/decks');
+    cy.url().should('eq', 'http://localhost:3000/dashboard');
     cy.visit('http://localhost:3000/users');
 
     cy.window().then(() => {
       cy.wait(1000);
-      cy.get('button').should('not.contain', 'Users');
       cy.get('div.header').should('not.contain', 'Users');
       cy.get('table').should('not.exist');
-      cy.url().should('eq', 'http://localhost:3000/decks');
+      cy.url().should('eq', 'http://localhost:3000/dashboard');
     });
   });
 

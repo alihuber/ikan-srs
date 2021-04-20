@@ -56,7 +56,7 @@ const Dashboard = () => {
     if (loading || decksLoading) {
       return <LoadingIndicator />;
     }
-    if (data && data.stats && deckData && deckData.decks) {
+    if (data && data.stats && deckData && deckData.deckNameIds) {
       return (
         <div className={animClass}>
           <Container text style={{ paddingTop: '4em' }}>
@@ -65,8 +65,11 @@ const Dashboard = () => {
                 <Header size="large" color="teal" textAlign="center">
                   Dashboard
                 </Header>
-                {deckData.decks.length !== 0 ? (
-                  <AddCardModal decks={deckData.decks} refetch={refetchDecks} />
+                {deckData.deckNameIds.length !== 0 ? (
+                  <AddCardModal
+                    decks={deckData.deckNameIds}
+                    refetch={refetchDecks}
+                  />
                 ) : null}
                 <Divider />
                 <Header as="h2" color="teal" textAlign="center">
