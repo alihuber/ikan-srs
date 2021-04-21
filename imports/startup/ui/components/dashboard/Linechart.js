@@ -1,4 +1,5 @@
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import format from 'date-fns/format';
 import {
@@ -80,7 +81,12 @@ const LineChart = ({ data }) => {
     datasets,
   };
   return (
-    <ReactChart options={options} type="line" data={chartData} height={100} />
+    <ReactChart
+      options={options}
+      type="line"
+      data={chartData}
+      height={Meteor.isCordova ? 200 : 100}
+    />
   );
 };
 

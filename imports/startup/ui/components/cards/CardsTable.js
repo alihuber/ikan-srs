@@ -62,7 +62,7 @@ const CardsTable = ({
                 size="small"
                 onClick={() => handleResetDeck(deckId)}
               >
-                Reset All Cards
+                Reset
               </Button>
             </Table.HeaderCell>
           </Table.Row>

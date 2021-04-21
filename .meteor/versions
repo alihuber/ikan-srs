@@ -32,6 +32,7 @@ email@2.0.0
 es5-shim@4.8.0
 fetch@0.1.1
 geojson-utils@1.0.10
+hot-code-push@1.0.4
 hot-module-replacement@0.2.0
 html-tools@1.1.1
 htmljs@1.1.0
@@ -41,10 +42,12 @@ inter-process-messaging@0.1.1
 jquery@1.11.11
 launch-screen@1.2.1
 littledata:synced-cron@1.5.1
+livedata@1.0.18
 lmieulet:meteor-coverage@3.2.0
 localstorage@1.2.0
 logging@1.2.0
 meteor@1.9.3
+meteor-base@1.4.0
 minifier-css@1.5.3
 minifier-js@2.6.0
 minimongo@1.6.2

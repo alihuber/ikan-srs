@@ -17,8 +17,12 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import 'uniforms-bridge-simple-schema-2';
 import './react-transitions.css';
 
+const graphqlUri =
+  process.env.NODE_ENV === 'development'
+    ? 'http://192.168.0.11:3000/graphql'
+    : 'http://ikansrs.herokuapp.com/graphql';
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: graphqlUri,
 });
 
 const authLink = setContext((_, { headers }) => {
