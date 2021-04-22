@@ -198,6 +198,7 @@ export default {
   Mutation: {
     renameDeck(_, args, context) {
       const user = context.user;
+      Match.test(args, { deckId: String });
       const deckId = args.deckId;
       logger.log({
         level: 'info',
@@ -220,10 +221,15 @@ export default {
           message: `renaming deck with _id ${deckId}`,
         });
         try {
+          Decks.update({ _id: deckId }, { $set: { name: args.name } });
+          logger.log({
+            level: 'info',
+            message: `renamed deck  for user with _id ${user._id} with ${deckId}`,
+          });
         } catch (err) {
           logger.log({
             level: 'error',
-            message: `renmming deck with _id ${deckId} failed: ${JSON.stringify(
+            message: `renaming deck with _id ${deckId} failed: ${JSON.stringify(
               err
             )}`,
           });
@@ -236,11 +242,6 @@ export default {
         });
         throw new Error('not authorized');
       }
-      Decks.update({ _id: deckId }, { $set: { name: args.name } });
-      logger.log({
-        level: 'info',
-        message: `renamed deck  for user with _id ${user._id} with ${deckId}`,
-      });
       return collectCardStats(Decks.findOne(deckId));
     },
     createDeck(_, args, context) {
