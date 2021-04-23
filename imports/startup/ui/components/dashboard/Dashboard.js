@@ -33,21 +33,18 @@ const Dashboard = () => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
   });
-  const {
-    data: deckData,
-    loading: decksLoading,
-    refetch: refetchDecks,
-  } = useQuery(DECKS_NAME_QUERY, {
+  const { data: deckData, loading: decksLoading } = useQuery(DECKS_NAME_QUERY, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
   });
-  const { data: learnableData, loading: learnableLoading } = useQuery(
-    LEARNABLE_DECKS_QUERY,
-    {
-      notifyOnNetworkStatusChange: true,
-      fetchPolicy: 'no-cache',
-    }
-  );
+  const {
+    data: learnableData,
+    loading: learnableLoading,
+    refetch: learnableRefetch,
+  } = useQuery(LEARNABLE_DECKS_QUERY, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
+  });
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {
     history.push('/');
@@ -68,7 +65,7 @@ const Dashboard = () => {
                 {deckData.deckNameIds.length !== 0 ? (
                   <AddCardModal
                     decks={deckData.deckNameIds}
-                    refetch={refetchDecks}
+                    refetch={learnableRefetch}
                   />
                 ) : null}
                 <Divider />
