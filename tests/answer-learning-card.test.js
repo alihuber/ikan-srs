@@ -84,15 +84,15 @@ if (Meteor.isServer) {
       const settings = Settings.findOne(settingsId);
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
 
-      assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
-      assert.equal(res.data.answerCard.state, 'LEARNING');
-      assert.equal(
+      assert.notStrictEqual(res.data.answerCard, null);
+      assert.strictEqual(res.data.answerCard.currentStep, 0);
+      assert.strictEqual(res.data.answerCard.state, 'LEARNING');
+      assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
         addMinutes(now, stepsInMinutes[0]).getTime()
       );
       const deck = Decks.findOne(deckId);
-      assert.notEqual(deck.newCardsToday.numCards, 1);
+      assert.notStrictEqual(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
 
@@ -144,16 +144,19 @@ if (Meteor.isServer) {
       const settings = Settings.findOne(settingsId);
       const stepsInMinutes = settings.learningSettings.stepsInMinutes;
 
-      assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 2);
-      assert.equal(res.data.answerCard.state, 'LEARNING');
-      assert.equal(
+      assert.notStrictEqual(res.data.answerCard, null);
+      assert.strictEqual(res.data.answerCard.currentStep, 2);
+      assert.strictEqual(res.data.answerCard.state, 'LEARNING');
+      assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
         addMinutes(now, stepsInMinutes[2]).getTime()
       );
-      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
+      assert.notStrictEqual(
+        now.getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
       const deck = Decks.findOne(deckId);
-      assert.notEqual(deck.newCardsToday.numCards, 1);
+      assert.notStrictEqual(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
 
@@ -207,20 +210,23 @@ if (Meteor.isServer) {
       const graduatingIntervalInDays =
         settings.learningSettings.graduatingIntervalInDays;
 
-      assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
-      assert.equal(res.data.answerCard.state, 'GRADUATED');
-      assert.equal(
+      assert.notStrictEqual(res.data.answerCard, null);
+      assert.strictEqual(res.data.answerCard.currentStep, 0);
+      assert.strictEqual(res.data.answerCard.state, 'GRADUATED');
+      assert.strictEqual(
         res.data.answerCard.currentInterval,
         graduatingIntervalInDays
       );
-      assert.equal(
+      assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
         addDays(now, graduatingIntervalInDays).getTime()
       );
-      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
+      assert.notStrictEqual(
+        now.getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
       const deck = Decks.findOne(deckId);
-      assert.notEqual(deck.newCardsToday.numCards, 1);
+      assert.notStrictEqual(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
     it('easy: it will graduate card', async () => {
@@ -271,17 +277,23 @@ if (Meteor.isServer) {
       const settings = Settings.findOne(settingsId);
       const easyIntervalInDays = settings.learningSettings.easyIntervalInDays;
 
-      assert.notEqual(res.data.answerCard, null);
-      assert.equal(res.data.answerCard.currentStep, 0);
-      assert.equal(res.data.answerCard.state, 'GRADUATED');
-      assert.equal(res.data.answerCard.currentInterval, easyIntervalInDays);
-      assert.equal(
+      assert.notStrictEqual(res.data.answerCard, null);
+      assert.strictEqual(res.data.answerCard.currentStep, 0);
+      assert.strictEqual(res.data.answerCard.state, 'GRADUATED');
+      assert.strictEqual(
+        res.data.answerCard.currentInterval,
+        easyIntervalInDays
+      );
+      assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
         addDays(now, easyIntervalInDays).getTime()
       );
-      assert.notEqual(now.getTime(), res.data.answerCard.dueDate.getTime());
+      assert.notStrictEqual(
+        now.getTime(),
+        res.data.answerCard.dueDate.getTime()
+      );
       const deck = Decks.findOne(deckId);
-      assert.notEqual(deck.newCardsToday.numCards, 1);
+      assert.notStrictEqual(deck.newCardsToday.numCards, 1);
       timekeeper.reset();
     });
   });

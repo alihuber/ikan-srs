@@ -4,6 +4,7 @@ import assert from 'assert';
 import './users-resolver.test';
 import './settings-resolver.test';
 import './decks-resolver.test';
+import './cards-resolver.test';
 import './next-card.test';
 import './answer-new-card.test';
 import './answer-learning-card.test';

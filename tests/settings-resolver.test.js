@@ -41,8 +41,8 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
-      assert.equal(res.data.settings.learningSettings, null);
-      assert.equal(res.data.settings.lapseSettings, null);
+      assert.strictEqual(res.data.settings.learningSettings, null);
+      assert.strictEqual(res.data.settings.lapseSettings, null);
     });
 
     it('returns settings if data found for user', async () => {
@@ -65,15 +65,17 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: SETTINGS_QUERY });
-      assert.equal(res.data.settings.lapseSettings.newInterval, 0.7);
-      assert.equal(res.data.settings.lapseSettings.leechAction, 'TAG');
-      assert.equal(res.data.settings.learningSettings.startingEase, 2.5);
-      assert.equal(res.data.settings.learningSettings.newCardsOrder, 'ADDED');
-      assert.deepEqual(res.data.settings.learningSettings.stepsInMinutes, [
-        15,
-        1440,
-        8640,
-      ]);
+      assert.strictEqual(res.data.settings.lapseSettings.newInterval, 0.7);
+      assert.strictEqual(res.data.settings.lapseSettings.leechAction, 'TAG');
+      assert.strictEqual(res.data.settings.learningSettings.startingEase, 2.5);
+      assert.strictEqual(
+        res.data.settings.learningSettings.newCardsOrder,
+        'ADDED'
+      );
+      assert.deepStrictEqual(
+        res.data.settings.learningSettings.stepsInMinutes,
+        [15, 1440, 8640]
+      );
     });
   });
 
@@ -117,34 +119,46 @@ if (Meteor.isServer) {
         mutation: UPDATE_SETTINGS_MUTATION,
         variables: { setting },
       });
-      assert.notEqual(res.data.updateSetting, null);
+      assert.notStrictEqual(res.data.updateSetting, null);
 
-      assert.equal(res.data.updateSetting.lapseSettings.newInterval, 1);
-      assert.equal(
+      assert.strictEqual(res.data.updateSetting.lapseSettings.newInterval, 1);
+      assert.strictEqual(
         res.data.updateSetting.lapseSettings.minimumIntervalInDays,
         2
       );
-      assert.equal(res.data.updateSetting.lapseSettings.leechThreshold, 10);
-      assert.equal(res.data.updateSetting.lapseSettings.leechAction, 'TAG');
+      assert.strictEqual(
+        res.data.updateSetting.lapseSettings.leechThreshold,
+        10
+      );
+      assert.strictEqual(
+        res.data.updateSetting.lapseSettings.leechAction,
+        'TAG'
+      );
 
-      assert.deepEqual(res.data.updateSetting.learningSettings.stepsInMinutes, [
-        2,
-        20,
-      ]);
-      assert.equal(
+      assert.deepStrictEqual(
+        res.data.updateSetting.learningSettings.stepsInMinutes,
+        [2, 20]
+      );
+      assert.strictEqual(
         res.data.updateSetting.learningSettings.newCardsOrder,
         'RANDOM'
       );
-      assert.equal(res.data.updateSetting.learningSettings.newCardsPerDay, 30);
-      assert.equal(
+      assert.strictEqual(
+        res.data.updateSetting.learningSettings.newCardsPerDay,
+        30
+      );
+      assert.strictEqual(
         res.data.updateSetting.learningSettings.graduatingIntervalInDays,
         2
       );
-      assert.equal(
+      assert.strictEqual(
         res.data.updateSetting.learningSettings.easyIntervalInDays,
         8
       );
-      assert.equal(res.data.updateSetting.learningSettings.startingEase, 1.9);
+      assert.strictEqual(
+        res.data.updateSetting.learningSettings.startingEase,
+        1.9
+      );
     });
   });
 }

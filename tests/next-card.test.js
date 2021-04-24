@@ -66,8 +66,8 @@ if (Meteor.isServer) {
         query: NEXT_CARD_FOR_LEARNING_QUERY,
         variables: { deckId },
       });
-      assert.equal(res.data.nextCardForLearning, null);
-      assert.equal(res.errors, null);
+      assert.strictEqual(res.data.nextCardForLearning, null);
+      assert.strictEqual(res.errors, undefined);
     });
 
     it.only('returns no card if no due cards found for user', async () => {
@@ -110,8 +110,8 @@ if (Meteor.isServer) {
         query: NEXT_CARD_FOR_LEARNING_QUERY,
         variables: { deckId },
       });
-      assert.equal(res.data.nextCardForLearning, null);
-      assert.equal(res.errors, null);
+      assert.strictEqual(res.data.nextCardForLearning, null);
+      assert.strictEqual(res.errors, undefined);
     });
 
     it('returns new cards in order if setting is ADDED', async () => {
@@ -155,11 +155,11 @@ if (Meteor.isServer) {
         query: NEXT_CARD_FOR_LEARNING_QUERY,
         variables: { deckId },
       });
-      assert.notEqual(res.data.nextCardForLearning, null);
-      assert.equal(res.data.nextCardForLearning.front, 'first');
+      assert.notStrictEqual(res.data.nextCardForLearning, undefined);
+      assert.strictEqual(res.data.nextCardForLearning.front, 'first');
       const cardId = Cards.find({ front: 'first' }).fetch()[0]._id;
-      assert.equal(res.data.nextCardForLearning._id, cardId);
-      assert.equal(res.errors, null);
+      assert.strictEqual(res.data.nextCardForLearning._id, cardId);
+      assert.strictEqual(res.errors, undefined);
     });
 
     it('returns new cards in random if setting is RANDOM', async () => {
@@ -207,8 +207,8 @@ if (Meteor.isServer) {
         query: NEXT_CARD_FOR_LEARNING_QUERY,
         variables: { deckId },
       });
-      assert.notEqual(res.data.nextCardForLearning, null);
-      assert.equal(res.errors, null);
+      assert.notStrictEqual(res.data.nextCardForLearning, undefined);
+      assert.strictEqual(res.errors, undefined);
     });
 
     it('returns other cards by dueDate', async () => {
@@ -257,10 +257,10 @@ if (Meteor.isServer) {
         query: NEXT_CARD_FOR_LEARNING_QUERY,
         variables: { deckId },
       });
-      assert.notEqual(res.data.nextCardForLearning, null);
-      assert.equal(res.data.nextCardForLearning.front, 'blaa');
-      assert.equal(res.data.nextCardForLearning.currentStep, 0);
-      assert.equal(res.errors, null);
+      assert.notStrictEqual(res.data.nextCardForLearning, undefined);
+      assert.strictEqual(res.data.nextCardForLearning.front, 'blaa');
+      assert.strictEqual(res.data.nextCardForLearning.currentStep, 0);
+      assert.strictEqual(res.errors, undefined);
     });
   });
 }

@@ -48,15 +48,15 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
-      assert.equal(res.data.users.usersList.length, 1);
-      assert.equal(res.data.users.usersCount, 1);
+      assert.strictEqual(res.data.users.usersList.length, 1);
+      assert.strictEqual(res.data.users.usersCount, 1);
       Accounts.createUser({
         username: 'testuser',
         password: 'example123',
       });
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 2);
-      assert.equal(res2.data.users.usersCount, 2);
+      assert.strictEqual(res2.data.users.usersList.length, 2);
+      assert.strictEqual(res2.data.users.usersCount, 2);
     });
 
     it('fetches no users if normal user queries the database', async () => {
@@ -74,7 +74,7 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: USERS_QUERY });
-      assert.equal(res.data.users.usersList.length, 0);
+      assert.strictEqual(res.data.users.usersList.length, 0);
     });
   });
 
@@ -90,8 +90,8 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: CURRENT_USER_QUERY });
-      assert.equal(res.data.currentUser.username, null);
-      assert.equal(res.data.currentUser.admin, null);
+      assert.strictEqual(res.data.currentUser.username, null);
+      assert.strictEqual(res.data.currentUser.admin, null);
     });
 
     it('fetches information about the current user if user', async () => {
@@ -105,8 +105,8 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: CURRENT_USER_QUERY });
-      assert.equal(res.data.currentUser.username, 'foouser');
-      assert.equal(res.data.currentUser.admin, null);
+      assert.strictEqual(res.data.currentUser.username, 'foouser');
+      assert.strictEqual(res.data.currentUser.admin, null);
     });
   });
 
@@ -131,8 +131,8 @@ if (Meteor.isServer) {
           admin: false,
         },
       });
-      assert.equal(res.errors[0].message, 'not authorized');
-      assert.equal(res.errors[0].path[0], 'createUser');
+      assert.strictEqual(res.errors[0].message, 'not authorized');
+      assert.strictEqual(res.errors[0].path[0], 'createUser');
     });
 
     it('throws error if param is missing', async () => {
@@ -145,7 +145,7 @@ if (Meteor.isServer) {
         mutation: CREATE_USER_MUTATION,
         variables: { password: 'newpassword', admin: false },
       });
-      assert.equal(
+      assert.strictEqual(
         res.errors[0].message,
         'Variable "$username" of required type "String!" was not provided.'
       );
@@ -172,13 +172,13 @@ if (Meteor.isServer) {
           admin: true,
         },
       });
-      assert.equal(res.data.createUser.username, 'newuser');
-      assert.equal(res.data.createUser.admin, true);
+      assert.strictEqual(res.data.createUser.username, 'newuser');
+      assert.strictEqual(res.data.createUser.admin, true);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 2);
-      assert.equal(res2.data.users.usersCount, 2);
+      assert.strictEqual(res2.data.users.usersList.length, 2);
+      assert.strictEqual(res2.data.users.usersCount, 2);
     });
 
     it('creates an non-admin user', async () => {
@@ -202,13 +202,13 @@ if (Meteor.isServer) {
           admin: false,
         },
       });
-      assert.equal(res.data.createUser.username, 'newuser');
-      assert.equal(res.data.createUser.admin, null);
+      assert.strictEqual(res.data.createUser.username, 'newuser');
+      assert.strictEqual(res.data.createUser.admin, null);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 2);
-      assert.equal(res2.data.users.usersCount, 2);
+      assert.strictEqual(res2.data.users.usersList.length, 2);
+      assert.strictEqual(res2.data.users.usersCount, 2);
     });
 
     it('creates default settings for user', async () => {
@@ -232,20 +232,20 @@ if (Meteor.isServer) {
           admin: false,
         },
       });
-      assert.equal(res.data.createUser.username, 'newuser');
-      assert.equal(res.data.createUser.admin, null);
+      assert.strictEqual(res.data.createUser.username, 'newuser');
+      assert.strictEqual(res.data.createUser.admin, null);
       const newUserId = res.data.createUser._id;
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 2);
-      assert.equal(res2.data.users.usersCount, 2);
+      assert.strictEqual(res2.data.users.usersList.length, 2);
+      assert.strictEqual(res2.data.users.usersCount, 2);
       const settings = Settings.findOne({ userId: newUserId });
-      assert.equal(settings.lapseSettings.newInterval, 0.7);
-      assert.equal(settings.lapseSettings.leechAction, 'TAG');
-      assert.equal(settings.learningSettings.startingEase, 2.5);
-      assert.equal(settings.learningSettings.newCardsOrder, 'ADDED');
-      assert.deepEqual(settings.learningSettings.stepsInMinutes, [
+      assert.strictEqual(settings.lapseSettings.newInterval, 0.7);
+      assert.strictEqual(settings.lapseSettings.leechAction, 'TAG');
+      assert.strictEqual(settings.learningSettings.startingEase, 2.5);
+      assert.strictEqual(settings.learningSettings.newCardsOrder, 'ADDED');
+      assert.deepStrictEqual(settings.learningSettings.stepsInMinutes, [
         15,
         1440,
         8640,
@@ -275,8 +275,8 @@ if (Meteor.isServer) {
           admin: false,
         },
       });
-      assert.equal(res.errors[0].message, 'not authorized');
-      assert.equal(res.errors[0].path[0], 'updateUser');
+      assert.strictEqual(res.errors[0].message, 'not authorized');
+      assert.strictEqual(res.errors[0].path[0], 'updateUser');
     });
 
     it('throws error if username param is missing', async () => {
@@ -294,7 +294,7 @@ if (Meteor.isServer) {
         mutation: UPDATE_USER_MUTATION,
         variables: { userId: id, password: 'newpassword', admin: false },
       });
-      assert.equal(
+      assert.strictEqual(
         res.errors[0].message,
         'Variable "$username" of required type "String!" was not provided.'
       );
@@ -321,7 +321,7 @@ if (Meteor.isServer) {
         mutation: UPDATE_USER_MUTATION,
         variables: { userId: id, username: 'changed', admin: false },
       });
-      assert.equal(res.errors, null);
+      assert.strictEqual(res.errors, undefined);
     });
 
     it('updates an user and resets the password', async () => {
@@ -350,15 +350,15 @@ if (Meteor.isServer) {
           admin: false,
         },
       });
-      assert.equal(res.data.updateUser.username, 'newuser');
-      assert.equal(res.data.updateUser.admin, false);
+      assert.strictEqual(res.data.updateUser.username, 'newuser');
+      assert.strictEqual(res.data.updateUser.admin, false);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 2);
-      assert.equal(res2.data.users.usersCount, 2);
-      assert.equal(res2.data.users.usersList[1].username, 'newuser');
-      assert.equal(res2.data.users.usersList[1].admin, false);
+      assert.strictEqual(res2.data.users.usersList.length, 2);
+      assert.strictEqual(res2.data.users.usersCount, 2);
+      assert.strictEqual(res2.data.users.usersList[1].username, 'newuser');
+      assert.strictEqual(res2.data.users.usersList[1].admin, false);
     });
   });
 
@@ -379,8 +379,8 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: '1' },
       });
-      assert.equal(res.errors[0].message, 'not authorized');
-      assert.equal(res.errors[0].path[0], 'deleteUser');
+      assert.strictEqual(res.errors[0].message, 'not authorized');
+      assert.strictEqual(res.errors[0].path[0], 'deleteUser');
     });
 
     it('returns null if called with non-existent userId', async () => {
@@ -393,7 +393,7 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: 'abc123' },
       });
-      assert.equal(res.data.deleteUser, null);
+      assert.strictEqual(res.data.deleteUser, null);
     });
 
     it('deletes an user', async () => {
@@ -418,12 +418,12 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: id },
       });
-      assert.equal(res.data.deleteUser, true);
+      assert.strictEqual(res.data.deleteUser, true);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 1);
-      assert.equal(res2.data.users.usersCount, 1);
+      assert.strictEqual(res2.data.users.usersList.length, 1);
+      assert.strictEqual(res2.data.users.usersCount, 1);
     });
 
     it('deletes settings for user', async () => {
@@ -452,15 +452,15 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: id },
       });
-      assert.equal(res.data.deleteUser, true);
+      assert.strictEqual(res.data.deleteUser, true);
 
       const { query } = createTestClient(server);
       const res2 = await query({ query: USERS_QUERY });
-      assert.equal(res2.data.users.usersList.length, 1);
-      assert.equal(res2.data.users.usersCount, 1);
+      assert.strictEqual(res2.data.users.usersList.length, 1);
+      assert.strictEqual(res2.data.users.usersCount, 1);
 
       const settings = Settings.findOne({ userId: id });
-      assert.equal(settings, null);
+      assert.strictEqual(settings, undefined);
     });
 
     it('deletes decks and cards for user', async () => {
@@ -503,12 +503,12 @@ if (Meteor.isServer) {
         mutation: DELETE_USER_MUTATION,
         variables: { userId: id },
       });
-      assert.equal(res.data.deleteUser, true);
+      assert.strictEqual(res.data.deleteUser, true);
 
       const deck = Decks.findOne({ userId: id });
       const card = Cards.findOne();
-      assert.equal(deck, null);
-      assert.equal(card, null);
+      assert.strictEqual(deck, undefined);
+      assert.strictEqual(card, undefined);
     });
   });
 }

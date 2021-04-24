@@ -55,7 +55,7 @@ if (Meteor.isServer) {
         query: CARDS_FOR_DECK_QUERY,
         variables: { deckId: 'foo123' },
       });
-      assert.deepEqual(res.data.cardsForDeck.cardsList, []);
+      assert.deepStrictEqual(res.data.cardsForDeck.cardsList, []);
     });
 
     it('returns cards if data found for user', async () => {
@@ -93,16 +93,16 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo', back: 'bar' },
       });
-      assert.notEqual(res1.data.addCard, null);
-      assert.equal(res1.errors, null);
+      assert.notStrictEqual(res1.data.addCard, undefined);
+      assert.strictEqual(res1.errors, undefined);
 
       const res = await query({
         query: CARDS_FOR_DECK_QUERY,
         variables: { deckId },
       });
-      assert.notDeepEqual(res.data.cardsForDeck.cardsList, []);
-      assert.equal(res.data.cardsForDeck.cardsList[0].front, 'foo');
-      assert.equal(res.data.cardsForDeck.cardsList[0].back, 'bar');
+      assert.notDeepStrictEqual(res.data.cardsForDeck.cardsList, []);
+      assert.strictEqual(res.data.cardsForDeck.cardsList[0].front, 'foo');
+      assert.strictEqual(res.data.cardsForDeck.cardsList[0].back, 'bar');
     });
   });
 
@@ -141,27 +141,27 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo', back: 'bar' },
       });
-      assert.notEqual(res.data.addCard, null);
-      assert.equal(res.errors, null);
+      assert.notStrictEqual(res.data.addCard, undefined);
+      assert.strictEqual(res.errors, undefined);
 
-      assert.equal(res.data.addCard.name, 'deck1');
-      assert.equal(res.data.addCard.userId, userId);
-      assert.equal(res.data.addCard.cards[0].front, 'foo');
-      assert.equal(res.data.addCard.cards[0].back, 'bar');
-      assert.equal(res.data.addCard.numCards, 1);
+      assert.strictEqual(res.data.addCard.name, 'deck1');
+      assert.strictEqual(res.data.addCard.userId, userId);
+      assert.strictEqual(res.data.addCard.cards[0].front, 'foo');
+      assert.strictEqual(res.data.addCard.cards[0].back, 'bar');
+      assert.strictEqual(res.data.addCard.numCards, 1);
 
       const card = Cards.findOne();
-      assert.equal(card.deckId, deckId);
-      assert.equal(card.front, 'foo');
-      assert.equal(card.back, 'bar');
-      assert.equal(card.state, 'NEW');
-      assert.equal(
+      assert.strictEqual(card.deckId, deckId);
+      assert.strictEqual(card.front, 'foo');
+      assert.strictEqual(card.back, 'bar');
+      assert.strictEqual(card.state, 'NEW');
+      assert.strictEqual(
         card.easeFactor,
         DEFAULT_SETTINGS.learningSettings.startingEase
       );
-      assert.equal(card.currentInterval, 0);
-      assert.equal(card.currentStep, 0);
-      assert.equal(card.lapseCount, 0);
+      assert.strictEqual(card.currentInterval, 0);
+      assert.strictEqual(card.currentStep, 0);
+      assert.strictEqual(card.lapseCount, 0);
     });
   });
 
@@ -200,8 +200,8 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo', back: 'bar' },
       });
-      assert.notEqual(res1.data.addCard, null);
-      assert.equal(res1.errors, null);
+      assert.notStrictEqual(res1.data.addCard, undefined);
+      assert.strictEqual(res1.errors, undefined);
       const cardId = Cards.find({}).fetch()[0]._id;
 
       const res = await mutate({
@@ -209,9 +209,9 @@ if (Meteor.isServer) {
         variables: { cardId },
       });
 
-      assert.equal(res.data.deleteCard, true);
+      assert.strictEqual(res.data.deleteCard, true);
       const card = Cards.findOne(cardId);
-      assert.equal(card, null);
+      assert.strictEqual(card, undefined);
     });
   });
 
@@ -252,8 +252,8 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo', back: 'bar' },
       });
-      assert.notEqual(res1.data.addCard, null);
-      assert.equal(res1.errors, null);
+      assert.notStrictEqual(res1.data.addCard, undefined);
+      assert.strictEqual(res1.errors, undefined);
       const cardId = Cards.find({}).fetch()[0]._id;
 
       const res = await mutate({
@@ -264,14 +264,14 @@ if (Meteor.isServer) {
       const settings = Settings.findOne({ userId });
       const easeFactor = settings.learningSettings.startingEase;
 
-      assert.equal(res.data.resetCard.front, 'foo');
-      assert.equal(res.data.resetCard.back, 'bar');
-      assert.equal(res.data.resetCard.state, 'NEW');
-      assert.equal(res.data.resetCard.easeFactor, easeFactor);
-      assert.equal(res.data.resetCard.currentInterval, 0);
-      assert.equal(res.data.resetCard.currentStep, 0);
-      assert.equal(res.data.resetCard.lapseCount, 0);
-      assert.equal(res.data.resetCard.dueDate.getTime(), now.getTime());
+      assert.strictEqual(res.data.resetCard.front, 'foo');
+      assert.strictEqual(res.data.resetCard.back, 'bar');
+      assert.strictEqual(res.data.resetCard.state, 'NEW');
+      assert.strictEqual(res.data.resetCard.easeFactor, easeFactor);
+      assert.strictEqual(res.data.resetCard.currentInterval, 0);
+      assert.strictEqual(res.data.resetCard.currentStep, 0);
+      assert.strictEqual(res.data.resetCard.lapseCount, 0);
+      assert.strictEqual(res.data.resetCard.dueDate.getTime(), now.getTime());
       timekeeper.reset();
     });
   });
@@ -311,8 +311,8 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo', back: 'bar' },
       });
-      assert.notEqual(res1.data.addCard, null);
-      assert.equal(res1.errors, null);
+      assert.notStrictEqual(res1.data.addCard, undefined);
+      assert.strictEqual(res1.errors, undefined);
 
       const cardId = Cards.find({}).fetch()[0]._id;
       const res = await mutate({
@@ -320,8 +320,8 @@ if (Meteor.isServer) {
         variables: { cardId, front: 'newf', back: 'newb' },
       });
 
-      assert.equal(res.data.updateCard.front, 'newf');
-      assert.equal(res.data.updateCard.back, 'newb');
+      assert.strictEqual(res.data.updateCard.front, 'newf');
+      assert.strictEqual(res.data.updateCard.back, 'newb');
     });
   });
 }

@@ -52,7 +52,7 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_NAME_QUERY });
-      assert.deepEqual(res.data.deckNameIds, []);
+      assert.deepStrictEqual(res.data.deckNameIds, []);
     });
 
     it('returns decks if data found for user', async () => {
@@ -88,7 +88,7 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_NAME_QUERY });
-      assert.deepEqual(res.data.deckNameIds, [
+      assert.deepStrictEqual(JSON.parse(JSON.stringify(res.data.deckNameIds)), [
         { _id: deckId1, name: 'deck1' },
         { _id: deckId2, name: 'deck2' },
       ]);
@@ -105,7 +105,10 @@ if (Meteor.isServer) {
       });
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
-      assert.deepEqual(res.data.decks, { decksCount: 0, decksList: [] });
+      assert.deepStrictEqual(JSON.parse(JSON.stringify(res.data.decks)), {
+        decksCount: 0,
+        decksList: [],
+      });
     });
 
     it('returns decks if data found for user', async () => {
@@ -142,9 +145,9 @@ if (Meteor.isServer) {
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
       // sorted by createdAt, newest first
-      assert.equal(res.data.decks.decksCount, 2);
-      assert.equal(res.data.decks.decksList[0].name, 'deck2');
-      assert.equal(res.data.decks.decksList[1].name, 'deck1');
+      assert.strictEqual(res.data.decks.decksCount, 2);
+      assert.strictEqual(res.data.decks.decksList[0].name, 'deck2');
+      assert.strictEqual(res.data.decks.decksList[1].name, 'deck1');
     });
 
     it('updates decks if new cards for today were altered', async () => {
@@ -181,11 +184,14 @@ if (Meteor.isServer) {
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
       // sorted by createdAt, newest first
-      assert.equal(res.data.decks.decksCount, 2);
-      assert.equal(res.data.decks.decksList[0].name, 'deck2');
-      assert.equal(res.data.decks.decksList[1].name, 'deck1');
-      assert.equal(res.data.decks.decksList[0].newCardsToday.numCards, 0);
-      assert.equal(res.data.decks.decksList[1].newCardsToday.numCards, 10);
+      assert.strictEqual(res.data.decks.decksCount, 2);
+      assert.strictEqual(res.data.decks.decksList[0].name, 'deck2');
+      assert.strictEqual(res.data.decks.decksList[1].name, 'deck1');
+      assert.strictEqual(res.data.decks.decksList[0].newCardsToday.numCards, 0);
+      assert.strictEqual(
+        res.data.decks.decksList[1].newCardsToday.numCards,
+        10
+      );
     });
 
     it('returns max 5 results', async () => {
@@ -213,8 +219,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY });
-      assert.equal(res.data.decks.decksCount, 10);
-      assert.equal(res.data.decks.decksList.length, 5);
+      assert.strictEqual(res.data.decks.decksCount, 10);
+      assert.strictEqual(res.data.decks.decksList.length, 5);
     });
 
     it('returns paginated results', async () => {
@@ -245,10 +251,10 @@ if (Meteor.isServer) {
         query: DECKS_QUERY,
         variables: { pageNum: 2 },
       });
-      assert.equal(res.data.decks.decksList.length, 5);
-      assert.equal(res.data.decks.decksCount, 10);
+      assert.strictEqual(res.data.decks.decksList.length, 5);
+      assert.strictEqual(res.data.decks.decksCount, 10);
       // desc ordering: 4, 3, 2, 1, 0 on second page
-      assert.equal(res.data.decks.decksList[0].name, 'deck4');
+      assert.strictEqual(res.data.decks.decksList[0].name, 'deck4');
     });
 
     it('returns asc sorted results', async () => {
@@ -279,9 +285,9 @@ if (Meteor.isServer) {
         query: DECKS_QUERY,
         variables: { pageNum: 2, order: 'asc' },
       });
-      assert.equal(res.data.decks.decksList.length, 5);
-      assert.equal(res.data.decks.decksCount, 10);
-      assert.equal(res.data.decks.decksList[0].name, 'deck5');
+      assert.strictEqual(res.data.decks.decksList.length, 5);
+      assert.strictEqual(res.data.decks.decksCount, 10);
+      assert.strictEqual(res.data.decks.decksList[0].name, 'deck5');
     });
 
     it('returns filtered results', async () => {
@@ -309,8 +315,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECKS_QUERY, variables: { q: '2' } });
-      assert.equal(res.data.decks.decksCount, 1);
-      assert.equal(res.data.decks.decksList[0].name, 'deck2');
+      assert.strictEqual(res.data.decks.decksCount, 1);
+      assert.strictEqual(res.data.decks.decksList[0].name, 'deck2');
     });
   });
 
@@ -327,7 +333,7 @@ if (Meteor.isServer) {
         query: DECK_QUERY,
         variables: { deckId: 'foo123' },
       });
-      assert.deepEqual(res.data.deckQuery, null);
+      assert.deepStrictEqual(res.data.deckQuery, null);
     });
 
     it('returns deck if data found for user', async () => {
@@ -353,8 +359,8 @@ if (Meteor.isServer) {
 
       const { query } = createTestClient(server);
       const res = await query({ query: DECK_QUERY, variables: { deckId } });
-      assert.equal(res.data.deckQuery.name, 'deck1');
-      assert.deepEqual(res.data.deckQuery.cards, []);
+      assert.strictEqual(res.data.deckQuery.name, 'deck1');
+      assert.deepStrictEqual(res.data.deckQuery.cards, []);
     });
   });
 
@@ -377,14 +383,14 @@ if (Meteor.isServer) {
         mutation: CREATE_DECK_MUTATION,
         variables: { name: 'deck1' },
       });
-      assert.notEqual(res.data.createDeck, null);
-      assert.equal(res.errors, null);
+      assert.notStrictEqual(res.data.createDeck, undefined);
+      assert.strictEqual(res.errors, undefined);
 
-      assert.equal(res.data.createDeck.name, 'deck1');
-      assert.equal(res.data.createDeck.userId, userId);
-      assert.deepEqual(res.data.createDeck.cards, []);
-      assert.equal(res.data.createDeck.numCards, 0);
-      assert.equal(res.data.createDeck.newCardsToday.numCards, 0);
+      assert.strictEqual(res.data.createDeck.name, 'deck1');
+      assert.strictEqual(res.data.createDeck.userId, userId);
+      assert.deepStrictEqual(res.data.createDeck.cards, []);
+      assert.strictEqual(res.data.createDeck.numCards, 0);
+      assert.strictEqual(res.data.createDeck.newCardsToday.numCards, 0);
     });
   });
 
@@ -419,9 +425,9 @@ if (Meteor.isServer) {
         variables: { deckId: id },
       });
 
-      assert.equal(res.data.deleteDeck, true);
+      assert.strictEqual(res.data.deleteDeck, true);
       const deck = Decks.findOne({ userId: id });
-      assert.equal(deck, null);
+      assert.strictEqual(deck, undefined);
     });
   });
 
@@ -466,13 +472,13 @@ if (Meteor.isServer) {
         mutation: ADD_CARD_MUTATION,
         variables: { deckId, front: 'foo2', back: 'bar2' },
       });
-      assert.notEqual(res1.data.addCard, null);
-      assert.equal(res1.errors, null);
-      assert.notEqual(res2.data.addCard, null);
-      assert.equal(res2.errors, null);
+      assert.notStrictEqual(res1.data.addCard, undefined);
+      assert.strictEqual(res1.errors, undefined);
+      assert.notStrictEqual(res2.data.addCard, undefined);
+      assert.strictEqual(res2.errors, undefined);
       Cards.update({}, { $set: { state: 'LEARNING' } }, { multi: true });
       const card = Cards.findOne();
-      assert.equal(card.state, 'LEARNING');
+      assert.strictEqual(card.state, 'LEARNING');
 
       const res = await mutate({
         mutation: RESET_DECK_MUTATION,
@@ -482,26 +488,26 @@ if (Meteor.isServer) {
       const settings = Settings.findOne({ userId });
       const easeFactor = settings.learningSettings.startingEase;
 
-      assert.equal(res.data.resetDeck.cards[0].front, 'foo');
-      assert.equal(res.data.resetDeck.cards[0].back, 'bar');
-      assert.equal(res.data.resetDeck.cards[0].state, 'NEW');
-      assert.equal(res.data.resetDeck.cards[0].easeFactor, easeFactor);
-      assert.equal(res.data.resetDeck.cards[0].currentInterval, 0);
-      assert.equal(res.data.resetDeck.cards[0].currentStep, 0);
-      assert.equal(res.data.resetDeck.cards[0].lapseCount, 0);
-      assert.equal(
+      assert.strictEqual(res.data.resetDeck.cards[0].front, 'foo');
+      assert.strictEqual(res.data.resetDeck.cards[0].back, 'bar');
+      assert.strictEqual(res.data.resetDeck.cards[0].state, 'NEW');
+      assert.strictEqual(res.data.resetDeck.cards[0].easeFactor, easeFactor);
+      assert.strictEqual(res.data.resetDeck.cards[0].currentInterval, 0);
+      assert.strictEqual(res.data.resetDeck.cards[0].currentStep, 0);
+      assert.strictEqual(res.data.resetDeck.cards[0].lapseCount, 0);
+      assert.strictEqual(
         res.data.resetDeck.cards[0].dueDate.getTime(),
         now.getTime()
       );
 
-      assert.equal(res.data.resetDeck.cards[1].front, 'foo2');
-      assert.equal(res.data.resetDeck.cards[1].back, 'bar2');
-      assert.equal(res.data.resetDeck.cards[1].state, 'NEW');
-      assert.equal(res.data.resetDeck.cards[1].easeFactor, easeFactor);
-      assert.equal(res.data.resetDeck.cards[1].currentInterval, 0);
-      assert.equal(res.data.resetDeck.cards[1].currentStep, 0);
-      assert.equal(res.data.resetDeck.cards[1].lapseCount, 0);
-      assert.equal(
+      assert.strictEqual(res.data.resetDeck.cards[1].front, 'foo2');
+      assert.strictEqual(res.data.resetDeck.cards[1].back, 'bar2');
+      assert.strictEqual(res.data.resetDeck.cards[1].state, 'NEW');
+      assert.strictEqual(res.data.resetDeck.cards[1].easeFactor, easeFactor);
+      assert.strictEqual(res.data.resetDeck.cards[1].currentInterval, 0);
+      assert.strictEqual(res.data.resetDeck.cards[1].currentStep, 0);
+      assert.strictEqual(res.data.resetDeck.cards[1].lapseCount, 0);
+      assert.strictEqual(
         res.data.resetDeck.cards[1].dueDate.getTime(),
         now.getTime()
       );
@@ -546,7 +552,7 @@ if (Meteor.isServer) {
         variables: { deckId, name: newName },
       });
 
-      assert.equal(res.data.renameDeck.name, 'renamed');
+      assert.strictEqual(res.data.renameDeck.name, 'renamed');
     });
   });
 }
