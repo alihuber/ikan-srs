@@ -10,6 +10,7 @@ import './answer-new-card.test';
 import './answer-learning-card.test';
 import './answer-relearning-card.test';
 import './answer-graduated-card.test';
+import './deck-notification-resolvers.test';
 
 describe('ikan-srs', function () {
   it('package.json has correct name', async function () {
