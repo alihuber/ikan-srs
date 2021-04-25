@@ -1,0 +1,12 @@
+type DeckNotificationConnection {
+  _id: String
+  dueDate: Date
+}
+
+extend type Query {
+  deckNotifications: [DeckNotificationConnection]
+}
+
+extend type Mutation {
+  markAsFetched(notificationId: String!): Boolean
+}

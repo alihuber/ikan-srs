@@ -12,11 +12,14 @@ import UserResolver from '../../api/users/resolvers';
 import SettingsSchema from '../../api/settings/Setting.graphql';
 import SettingsResolver from '../../api/settings/resolvers';
 import DecksSchema from '../../api/decks/Deck.graphql';
+import DecksNotificationsSchema from '../../api/deckNotifications/DeckNotification.graphql';
 import DecksResolver from '../../api/decks/deck-resolvers';
+import DeckNotificationResolver from '../../api/deckNotifications/deck-notification-resolvers';
 import CardsResolver from '../../api/decks/card-resolvers';
 import StatsSchema from '../../api/stats/Stats.graphql';
 import StatsResolver from '../../api/stats/stats-resolvers';
 import CollectStatsJob from './collectStatsJob';
+import CheckLearnableDecksJob from './checkLearnableDecksJob';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -31,7 +34,13 @@ const logger = createLogger({
   transports: [new transports.Console()],
 });
 
-const typeDefs = [UserSchema, SettingsSchema, DecksSchema, StatsSchema];
+const typeDefs = [
+  UserSchema,
+  SettingsSchema,
+  DecksSchema,
+  StatsSchema,
+  DecksNotificationsSchema,
+];
 
 const DateResolver = {
   Date: new GraphQLScalarType({
@@ -58,7 +67,8 @@ const resolvers = merge(
   SettingsResolver,
   DecksResolver,
   CardsResolver,
-  StatsResolver
+  StatsResolver,
+  DeckNotificationResolver
 );
 
 const server = new ApolloServer({
@@ -128,7 +138,18 @@ SyncedCron.add({
     return parser.text('at 06:00 am');
   },
   job: async function () {
-    const res = await CollectStatsJob.collectStats();
+    const res = CollectStatsJob.collectStats();
+    return res;
+  },
+});
+
+SyncedCron.add({
+  name: 'check learnable decks',
+  schedule: function (parser) {
+    return parser.text('every 1 minute');
+  },
+  job: async function () {
+    const res = CheckLearnableDecksJob.checkLearnableDecks();
     return res;
   },
 });
