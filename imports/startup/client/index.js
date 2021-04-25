@@ -27,7 +27,7 @@ import {
 const graphqlUri =
   process.env.NODE_ENV === 'development'
     ? 'http://192.168.0.11:3000/graphql'
-    : 'http://ikansrs.herokuapp.com/graphql';
+    : `${Meteor.absoluteUrl()}graphql`;
 const httpLink = createHttpLink({
   uri: graphqlUri,
 });
