@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from 'date-fns';
 import { Meteor } from 'meteor/meteor';
 import { Cards, Decks } from '../../api/decks/constants';
 import { Stats } from '../../api/stats/constants';
@@ -31,6 +32,16 @@ export default class CollectStatsJob {
       .fetch()
       .map((u) => u._id);
     userIds.forEach((userId) => {
+      // TODO: this is just to mitigate heroku/galaxy behaviour
+      // skip if there are already stats for this user today
+      if (
+        Stats.findOne({
+          userId,
+          date: { $gte: startOfDay(new Date()), $lte: endOfDay(new Date()) },
+        })
+      ) {
+        return;
+      }
       const result = { date: new Date(), userId };
       const decks = Decks.find({ userId }, { fields: { _id: 1 } }).fetch();
       const deckIds = decks.map((d) => d._id);

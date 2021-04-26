@@ -135,7 +135,7 @@ Meteor.startup(() => {
 SyncedCron.add({
   name: 'collect stats',
   schedule: function (parser) {
-    return parser.text('at 06:00 am');
+    return parser.text('every 15 minutes');
   },
   job: async function () {
     const res = CollectStatsJob.collectStats();
@@ -146,7 +146,7 @@ SyncedCron.add({
 SyncedCron.add({
   name: 'check learnable decks',
   schedule: function (parser) {
-    return parser.text('every 1 minute');
+    return parser.text('every 15 minutes');
   },
   job: async function () {
     const res = CheckLearnableDecksJob.checkLearnableDecks();
