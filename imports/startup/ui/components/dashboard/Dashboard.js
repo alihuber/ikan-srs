@@ -29,7 +29,7 @@ const learnableDecksList = (learnable) => {
   return (
     <>
       <Header as="h2" color="teal" textAlign="center">
-        Learnable Decks
+        {`Learnable Decks (${learnable.length})`}
       </Header>
       <Card.Group>
         {learnable.map((deck) => (
