@@ -25,7 +25,7 @@ const handleLearn = (deckId, hist) => {
   hist.push(`/learn/${deckId}`);
 };
 
-const learnableDecksList = (learnable) => {
+const learnableDecksList = (learnable, history) => {
   return (
     <>
       <Header as="h2" color="teal" textAlign="center">
@@ -114,7 +114,7 @@ const Dashboard = () => {
                   : learnableData &&
                     learnableData.learnable &&
                     learnableData.learnable.length !== 0 &&
-                    learnableDecksList(learnableData.learnable)}
+                    learnableDecksList(learnableData.learnable, history)}
               </Grid.Column>
             </Grid>
           </Container>
