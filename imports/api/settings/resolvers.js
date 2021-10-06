@@ -21,7 +21,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    settings(obj, args, context) {
+    async settings(obj, args, context) {
       const reqUser = context.user;
       logger.log({
         level: 'info',
@@ -50,7 +50,7 @@ export default {
     },
   },
   Mutation: {
-    updateSetting(_, args, context) {
+    async updateSetting(_, args, context) {
       Match.test(args, { setting: Object });
       const user = context.user;
       logger.log({

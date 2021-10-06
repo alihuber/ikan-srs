@@ -23,7 +23,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    deckNameIds(_, __, context) {
+    async deckNameIds(_, __, context) {
       const reqUser = context.user;
       logger.log({
         level: 'info',
@@ -40,7 +40,7 @@ export default {
         return [];
       }
     },
-    decks(_, { pageNum = 1, q = '', order = 'desc' }, context) {
+    async decks(_, { pageNum = 1, q = '', order = 'desc' }, context) {
       check(pageNum, Number);
       check(q, String);
       check(order, String);
@@ -120,7 +120,7 @@ export default {
         return { decksCount: 0, decksList: [] };
       }
     },
-    deckQuery(_, args, context) {
+    async deckQuery(_, args, context) {
       Match.test(args, { deckId: String });
       const { deckId } = args;
       const reqUser = context.user;
@@ -150,7 +150,7 @@ export default {
         return false;
       }
     },
-    learnable(_, __, context) {
+    async learnable(_, __, context) {
       const reqUser = context.user;
       if (!reqUser) {
         logger.log({
@@ -196,7 +196,7 @@ export default {
     },
   },
   Mutation: {
-    renameDeck(_, args, context) {
+    async renameDeck(_, args, context) {
       const user = context.user;
       Match.test(args, { deckId: String });
       const deckId = args.deckId;
@@ -244,7 +244,7 @@ export default {
       }
       return collectCardStats(Decks.findOne(deckId));
     },
-    createDeck(_, args, context) {
+    async createDeck(_, args, context) {
       Match.test(args, { name: String });
       const user = context.user;
       logger.log({
@@ -275,7 +275,7 @@ export default {
       });
       return collectCardStats(Decks.findOne(newId));
     },
-    deleteDeck(_, args, context) {
+    async deleteDeck(_, args, context) {
       Match.test(args, { deckId: String });
       const { deckId } = args;
       const reqUser = context.user;
@@ -318,7 +318,7 @@ export default {
         return false;
       }
     },
-    resetDeck(_, args, context) {
+    async resetDeck(_, args, context) {
       Match.test(args, { deckId: String });
       const { deckId } = args;
       const reqUser = context.user;

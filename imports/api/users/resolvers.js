@@ -21,7 +21,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    currentUser(_, __, context) {
+    async currentUser(_, __, context) {
       const reqUser = context.user;
       logger.log({
         level: 'info',
@@ -42,7 +42,7 @@ export default {
         return {};
       }
     },
-    users(
+    async users(
       _,
       { pageNum = 1, perPage = 10, q = '', sort = 'createdAt', order = 'asc' },
       context
@@ -115,7 +115,7 @@ export default {
     },
   },
   Mutation: {
-    createUser(_, args, context) {
+    async createUser(_, args, context) {
       Match.test(args, { username: String, admin: Boolean, password: String });
       const { username, admin, password } = args;
       const reqUser = context.user;
@@ -154,7 +154,7 @@ export default {
       Settings.insert({ userId, ...DEFAULT_SETTINGS });
       return newUser;
     },
-    updateUser(_, args, context) {
+    async updateUser(_, args, context) {
       Match.test(args, {
         userId: String,
         username: String,
@@ -204,7 +204,7 @@ export default {
         { fields: { admin: 1, username: 1 } }
       );
     },
-    deleteUser(_, args, context) {
+    async deleteUser(_, args, context) {
       Match.test(args, { userId: String });
       const { userId } = args;
       const reqUser = context.user;

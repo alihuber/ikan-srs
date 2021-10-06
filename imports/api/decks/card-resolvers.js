@@ -21,7 +21,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    cardsForDeck(
+    async cardsForDeck(
       _,
       {
         deckId,
@@ -90,7 +90,7 @@ export default {
         cardsCount,
       };
     },
-    nextCardForLearning(_, args, context) {
+    async nextCardForLearning(_, args, context) {
       Match.test(args, { deckId: String });
       const user = context.user;
       logger.log({
@@ -148,7 +148,7 @@ export default {
     },
   },
   Mutation: {
-    addCard(_, args, context) {
+    async addCard(_, args, context) {
       Match.test(args, { deckId: String, front: String, back: String });
       const user = context.user;
       logger.log({
@@ -193,7 +193,7 @@ export default {
       });
       return collectCardStats(Decks.findOne(deckId));
     },
-    updateCard(_, args, context) {
+    async updateCard(_, args, context) {
       Match.test(args, { cardId: String, front: String, back: String });
       const user = context.user;
       logger.log({
@@ -226,7 +226,7 @@ export default {
       });
       return Cards.findOne(cardId);
     },
-    deleteCard(_, args, context) {
+    async deleteCard(_, args, context) {
       Match.test(args, { cardId: String });
       const user = context.user;
       logger.log({
@@ -277,7 +277,7 @@ export default {
         return false;
       }
     },
-    resetCard(_, args, context) {
+    async resetCard(_, args, context) {
       Match.test(args, { cardId: String });
       const user = context.user;
       logger.log({
@@ -343,7 +343,7 @@ export default {
         throw new Error('not authorized');
       }
     },
-    answerCard(_, args, context) {
+    async answerCard(_, args, context) {
       Match.test(args, { cardId: String, answer: String });
       const user = context.user;
       logger.log({

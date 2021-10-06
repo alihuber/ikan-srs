@@ -16,7 +16,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    stats(obj, args, context) {
+    async stats(obj, args, context) {
       const reqUser = context.user;
       logger.log({
         level: 'info',

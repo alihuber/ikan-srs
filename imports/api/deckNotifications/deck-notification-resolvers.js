@@ -21,7 +21,7 @@ const logger = createLogger({
 
 export default {
   Query: {
-    deckNotifications(_, __, context) {
+    async deckNotifications(_, __, context) {
       const reqUser = context.user;
       logger.log({
         level: 'info',
@@ -47,7 +47,7 @@ export default {
     },
   },
   Mutation: {
-    markAsFetched(_, args, context) {
+    async markAsFetched(_, args, context) {
       Match.test(args, { notificationId: String });
       const user = context.user;
       const notificationId = args.notificationId;

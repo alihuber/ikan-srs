@@ -3,12 +3,13 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import {
-  ApolloClient,
-  createHttpLink,
-  ApolloProvider,
   InMemoryCache,
+  ApolloProvider,
+  ApolloClient,
+  ApolloLink,
 } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { MeteorAccountsLink } from 'meteor/apollo';
+import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import React from 'react';
 import { render } from 'react-dom';
 import 'semantic-ui-css/components/icon.min.css';
@@ -26,24 +27,21 @@ import {
 
 const graphqlUri =
   process.env.NODE_ENV === 'development'
-    ? 'http://192.168.0.11:3000/graphql'
+    ? 'http://192.168.0.13:3000/graphql'
     : `${Meteor.absoluteUrl()}graphql`;
-const httpLink = createHttpLink({
-  uri: graphqlUri,
-});
 
-const authLink = setContext((_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-      authorization: Accounts._storedLoginToken(),
-    },
-  };
-});
+const link = ApolloLink.from([
+  MeteorAccountsLink(),
+  new BatchHttpLink({
+    uri: graphqlUri,
+  }),
+]);
 
+const cache = new InMemoryCache().restore(window.__APOLLO_STATE__);
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  uri: graphqlUri,
+  cache,
+  link,
 });
 
 const ApolloApp = () => {
