@@ -63,6 +63,7 @@ type DecksNameIdConnection {
 extend type Query {
   decks(pageNum: Int, q: String, order: String): DecksConnection
   nextCardForLearning(deckId: String!): Card
+  nextDueCard(deckId: String!): Card
   deckQuery(deckId: String!): Deck
   deckNameIds: [DecksNameIdConnection]
   cardsForDeck(

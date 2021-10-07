@@ -19,6 +19,7 @@ import {
   SubmitField,
 } from 'uniforms-semantic';
 import { ADD_CARD_MUTATION } from '../../../../api/decks/constants';
+import { scheduleNotificationForCard } from '../../../client';
 
 const addCardSchema = new SimpleSchema({
   deckId: {
@@ -78,6 +79,7 @@ const handleSubmit = (
         toast.success('Card added!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
+        scheduleNotificationForCard();
       })
       .catch((error) => {
         console.log(error);

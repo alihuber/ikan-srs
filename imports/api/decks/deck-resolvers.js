@@ -132,7 +132,7 @@ export default {
       if (!user) {
         logger.log({
           level: 'warn',
-          message: `delete user requester with _id ${user._id} is not found`,
+          message: `deck requester with _id ${user._id} is not found`,
         });
         throw new Error('not authorized');
       }
@@ -145,7 +145,7 @@ export default {
       } else {
         logger.log({
           level: 'info',
-          message: `could not delete deck with _id ${deckId}`,
+          message: `could find deck deck with _id ${deckId}`,
         });
         return false;
       }
@@ -155,7 +155,7 @@ export default {
       if (!reqUser) {
         logger.log({
           level: 'warn',
-          message: `delete user requester with _id ${reqUser._id} is not found`,
+          message: `learnable user requester with _id ${reqUser._id} is not found`,
         });
         throw new Error('not authorized');
       }
@@ -193,6 +193,45 @@ export default {
         message: `found ${res.length} learnable decks for user ${reqUser._id}`,
       });
       return res;
+    },
+    async nextDueCard(_, args, context) {
+      Match.test(args, { deckId: String });
+      const reqUser = context.user;
+      const { deckId } = args;
+      if (!reqUser) {
+        logger.log({
+          level: 'warn',
+          message: `card requester with _id ${reqUser._id} is not found`,
+        });
+        throw new Error('not authorized');
+      }
+      logger.log({
+        level: 'info',
+        message: `got next due card request from _id ${reqUser._id}`,
+      });
+      const deckForUser = Decks.findOne(
+        { userId: reqUser._id, _id: deckId },
+        { cards: 1 }
+      );
+      if (!deckForUser) {
+        logger.log({
+          level: 'warn',
+          message: `card requester with _id ${reqUser._id} is not found`,
+        });
+        throw new Error('not authorized');
+      }
+      const cards = Cards.find({ deckId }).fetch();
+      const nextDueCard = cards.sort((a, b) => {
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      })[0];
+      if (nextDueCard) {
+        return {
+          _id: nextDueCard._id,
+          dueDate: nextDueCard.dueDate,
+        };
+      } else {
+        return {};
+      }
     },
   },
   Mutation: {

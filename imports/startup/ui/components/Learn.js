@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { Meteor } from 'meteor/meteor';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import MarkdownIt from 'markdown-it';
@@ -19,9 +20,11 @@ import CurrentUserContext from '../contexts/CurrentUserContext';
 import {
   NEXT_CARD_FOR_LEARNING_QUERY,
   ANSWER_CARD_MUTATION,
+  NEXT_DUE_CARD_QUERY,
 } from '../../../api/decks/constants';
 import LoadingIndicator from '../LoadingIndicator';
 import './learnCard.css';
+import { scheduleNotificationForDeck } from '../../client';
 
 const mdParser = new MarkdownIt({
   html: true,
@@ -72,6 +75,15 @@ const Learn = () => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
   });
+  const {
+    data: nextDueCardData,
+    loading: nextDueCardLoading,
+    refetch: nextDueCardRefetch,
+  } = useQuery(NEXT_DUE_CARD_QUERY, {
+    variables: { deckId },
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
+  });
   const [answerShown, setAnswerShown] = useState(false);
 
   const showAnswer = (
@@ -80,9 +92,16 @@ const Learn = () => {
     </Button>
   );
 
-  const handleAnswer = (cardId, answerCardFunc, answer, reFetch) => {
+  const handleAnswer = (
+    cardId,
+    answerCardFunc,
+    answer,
+    reFetch,
+    dueRefetch
+  ) => {
     answerCardFunc({ variables: { cardId, answer } }).then(() => {
       reFetch();
+      dueRefetch();
       setAnswerShown(false);
     });
   };
@@ -98,21 +117,45 @@ const Learn = () => {
           <Button
             basic
             color="red"
-            onClick={() => handleAnswer(cardId, answerCard, 'again', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'again',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Again
           </Button>
           <Button
             basic
             color="blue"
-            onClick={() => handleAnswer(cardId, answerCard, 'good', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'good',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Good
           </Button>
           <Button
             basic
             color="green"
-            onClick={() => handleAnswer(cardId, answerCard, 'easy', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'easy',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Easy
           </Button>
@@ -124,28 +167,60 @@ const Learn = () => {
           <Button
             basic
             color="red"
-            onClick={() => handleAnswer(cardId, answerCard, 'again', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'again',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Again
           </Button>
           <Button
             basic
             color="yellow"
-            onClick={() => handleAnswer(cardId, answerCard, 'hard', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'hard',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Hard
           </Button>
           <Button
             basic
             color="blue"
-            onClick={() => handleAnswer(cardId, answerCard, 'good', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'good',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Good
           </Button>
           <Button
             basic
             color="green"
-            onClick={() => handleAnswer(cardId, answerCard, 'easy', refetch)}
+            onClick={() =>
+              handleAnswer(
+                cardId,
+                answerCard,
+                'easy',
+                refetch,
+                nextDueCardRefetch
+              )
+            }
           >
             Easy
           </Button>
@@ -158,11 +233,20 @@ const Learn = () => {
     history.push('/');
     return null;
   } else {
-    if (loading) {
+    if (loading || nextDueCardLoading) {
       return <LoadingIndicator />;
     }
+    console.log(nextDueCardData.nextDueCard);
     if (data) {
       const card = data.nextCardForLearning;
+      if (
+        Meteor.isCordova &&
+        !card &&
+        nextDueCardData &&
+        nextDueCardData.nextDueCard
+      ) {
+        scheduleNotificationForDeck(nextDueCardData.nextDueCard.dueDate);
+      }
       return (
         <div className={animClass}>
           <Container text style={{ paddingTop: '4em' }}>

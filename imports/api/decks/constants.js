@@ -24,6 +24,15 @@ export const LEARNABLE_DECKS_QUERY = gql`
   }
 `;
 
+export const NEXT_DUE_CARD_QUERY = gql`
+  query nextDueCard($deckId: String!) {
+    nextDueCard(deckId: $deckId) {
+      _id
+      dueDate
+    }
+  }
+`;
+
 export const DECKS_QUERY = gql`
   query decksQuery($pageNum: Int, $q: String, $order: String) {
     decks(pageNum: $pageNum, q: $q, order: $order) {
