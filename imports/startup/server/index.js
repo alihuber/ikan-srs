@@ -3,7 +3,6 @@ import { Accounts } from 'meteor/accounts-base';
 import { SyncedCron } from 'meteor/littledata:synced-cron';
 import { startApolloServer } from './apollo';
 import CollectStatsJob from './collectStatsJob';
-import CheckLearnableDecksJob from './checkLearnableDecksJob';
 
 const { createLogger, transports, format } = require('winston');
 
@@ -67,17 +66,6 @@ SyncedCron.add({
   },
   job: async function () {
     const res = CollectStatsJob.collectStats();
-    return res;
-  },
-});
-
-SyncedCron.add({
-  name: 'check learnable decks',
-  schedule: function (parser) {
-    return parser.text('every 15 minutes');
-  },
-  job: async function () {
-    const res = CheckLearnableDecksJob.checkLearnableDecks();
     return res;
   },
 });

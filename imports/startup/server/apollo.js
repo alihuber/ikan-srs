@@ -9,20 +9,12 @@ import UserResolver from '../../api/users/resolvers';
 import SettingsSchema from '../../api/settings/Setting.graphql';
 import SettingsResolver from '../../api/settings/resolvers';
 import DecksSchema from '../../api/decks/Deck.graphql';
-import DecksNotificationsSchema from '../../api/deckNotifications/DeckNotification.graphql';
 import DecksResolver from '../../api/decks/deck-resolvers';
-import DeckNotificationResolver from '../../api/deckNotifications/deck-notification-resolvers';
 import CardsResolver from '../../api/decks/card-resolvers';
 import StatsSchema from '../../api/stats/Stats.graphql';
 import StatsResolver from '../../api/stats/stats-resolvers';
 
-const typeDefs = [
-  UserSchema,
-  SettingsSchema,
-  DecksSchema,
-  StatsSchema,
-  DecksNotificationsSchema,
-];
+const typeDefs = [UserSchema, SettingsSchema, DecksSchema, StatsSchema];
 
 const DateResolver = {
   Date: new GraphQLScalarType({
@@ -49,8 +41,7 @@ const resolvers = merge(
   SettingsResolver,
   DecksResolver,
   CardsResolver,
-  StatsResolver,
-  DeckNotificationResolver
+  StatsResolver
 );
 
 const server = new ApolloServer({
