@@ -16,6 +16,7 @@ import {
   Modal,
   Button,
 } from 'semantic-ui-react';
+import debounce from 'lodash/debounce';
 import AnimContext from '../../contexts/AnimContext';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import { DECKS_QUERY } from '../../../../api/decks/constants';
@@ -50,9 +51,14 @@ const Decks = () => {
     return null;
   } else {
     const showPagination = data && data.decks && data.decks.decksCount / 5 > 1;
-    if (!data) {
-      return <LoadingIndicator />;
-    }
+    const setQuery = debounce(
+      (value) => {
+        setQ(value);
+      },
+      500,
+      { leading: true }
+    );
+
     return (
       <div className={animClass}>
         <Container text style={{ paddingTop: '4em' }}>
@@ -90,9 +96,10 @@ const Decks = () => {
                 }}
               >
                 <Input
-                  onChange={(evt) => setQ(evt.target.value)}
+                  onChange={(evt) => setQuery(evt.target.value)}
                   icon="search"
                   placeholder="Search deck name"
+                  value={q}
                 />
                 <Checkbox
                   style={{ justifyContent: 'center' }}
