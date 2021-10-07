@@ -59,25 +59,19 @@ Accounts.onLogin(function () {
   return client.resetStore(); // make all active queries re-run when the log-in process completed
 });
 
-// const fetchBackgroundTask = async () => {
-//   const { data: notificationsData } = await client.query({
-//     query: DECK_NOTIFICATIONS_QUERY,
-//   });
-//   if (notificationsData && notificationsData.deckNotifications) {
-//     notificationsData.deckNotifications.forEach((not) => {
-//       let notDate = not.dueDate;
-//       if (not.dueDate < new Date()) {
-//         notDate = addMinutes(new Date(), 2);
-//       }
-//       cordova.plugins.notification.local.schedule({
-//         title: 'Deck to learn!',
-//         text: 'You have due cards...',
-//         trigger: { at: new Date(notDate) },
-//       });
-//       client.mutate({
-//         mutation: FETCHED_NOTIFICATION_MUTATION,
-//         variables: { notificationId: not._id },
-//       });
-//     });
-//   }
-// };
+export const scheduleNotificationForDeck = (dueDate) => {
+  cordova.plugins.notification.local.schedule({
+    title: 'Deck to learn!',
+    text: 'You have due cards...',
+    trigger: { at: new Date(dueDate) },
+  });
+};
+
+export const scheduleNotificationForCard = () => {
+  const date = addMinutes(new Date(), 15);
+  cordova.plugins.notification.local.schedule({
+    title: 'Card to learn!',
+    text: 'You have due cards...',
+    trigger: { at: date },
+  });
+};
