@@ -25,7 +25,7 @@ const learningSettingsSchema = new SimpleSchema({
   stepsInMinutes: {
     type: Array,
     minCount: 1,
-    maxCount: 5,
+    maxCount: 10,
   },
   'stepsInMinutes.$': {
     type: SimpleSchema.Integer,
