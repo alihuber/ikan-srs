@@ -383,7 +383,7 @@ if (Meteor.isServer) {
       assert.notStrictEqual(res.data.answerCard, null);
       assert.strictEqual(res.data.answerCard.currentStep, 0);
       assert.strictEqual(res.data.answerCard.state, 'RELEARNING');
-      assert.strictEqual(res.data.answerCard.currentInterval, 2);
+      assert.strictEqual(res.data.answerCard.currentInterval, 1);
       assert.strictEqual(res.data.answerCard.easeFactor, 1.5);
       assert.strictEqual(
         addMinutes(now, stepInMinutes).getTime(),
@@ -448,7 +448,7 @@ if (Meteor.isServer) {
       assert.notStrictEqual(res.data.answerCard, null);
       assert.strictEqual(res.data.answerCard.currentStep, 0);
       assert.strictEqual(res.data.answerCard.state, 'RELEARNING');
-      assert.strictEqual(res.data.answerCard.currentInterval, 2);
+      assert.strictEqual(res.data.answerCard.currentInterval, 1);
       assert.strictEqual(res.data.answerCard.easeFactor, 1.3);
       assert.strictEqual(
         addMinutes(now, stepInMinutes).getTime(),

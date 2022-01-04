@@ -53,6 +53,7 @@ export const updateCard = (settings, card, answer, deckId) => {
       // new easeFactor -0.20
       // The easeFactor can not get lower than 1.3
       // will be shown again in lapseSetting stepInMinutes
+      // sets currentInterval to 0 again
       const stepInMinutes = settings.lapseSettings.stepInMinutes;
       const currentEaseFactor = card.easeFactor;
       let newEaseFactor = currentEaseFactor;
@@ -68,6 +69,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             state: 'RELEARNING',
             dueDate: addMinutes(new Date(), stepInMinutes),
             easeFactor: newEaseFactor,
+            currentInterval: 1,
           },
         }
       );

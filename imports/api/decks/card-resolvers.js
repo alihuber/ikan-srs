@@ -348,7 +348,7 @@ export default {
       const user = context.user;
       logger.log({
         level: 'info',
-        message: `got add card request from _id ${user && user._id}`,
+        message: `got answer card request from _id ${user && user._id}`,
       });
       const foundUser = user && Meteor.users.findOne(user._id);
       if (!foundUser) {
