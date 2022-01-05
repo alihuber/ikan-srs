@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
 import format from 'date-fns/format';
@@ -11,15 +11,16 @@ import CardsList from '../cards/CardsList';
 
 const EditDeck = () => {
   const animClass = useContext(AnimContext);
-  const history = useHistory();
-  const deckId = history.location.pathname.split('/')[2];
+  const navigate = useNavigate();
+  const params = useParams();
+  const deckId = params.deckId;
   const currentUser = useContext(CurrentUserContext);
   const { data, loading } = useQuery(DECK_QUERY, {
     notifyOnNetworkStatusChange: true,
     variables: { deckId },
   });
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    history.push('/');
+    navigate('/');
     return null;
   } else {
     if (loading) {

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
 import LoadingIndicator from '../../LoadingIndicator';
@@ -9,7 +9,7 @@ import AnimContext from '../../contexts/AnimContext';
 import SettingsForm from './SettingsForm';
 
 const Settings = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const animClass = useContext(AnimContext);
   const currentUser = useContext(CurrentUserContext);
 
@@ -18,7 +18,7 @@ const Settings = () => {
   });
 
   if (currentUser && !currentUser._id) {
-    history.push('/');
+    navigate('/');
     return null;
   } else {
     if (loading) {

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Divider,
@@ -14,10 +14,10 @@ import AnimContext from '../contexts/AnimContext';
 const HomePage = () => {
   const animClass = useContext(AnimContext);
   const currentUser = useContext(CurrentUserContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   if (currentUser && currentUser._id && !currentUser.admin) {
-    history.push('/dashboard');
+    navigate('/dashboard');
     return null;
   } else {
     return (

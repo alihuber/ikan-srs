@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
@@ -65,7 +65,7 @@ const editorConfig = {
 
 const Learn = () => {
   const animClass = useContext(AnimContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const currentUser = useContext(CurrentUserContext);
   const { deckId } = useParams();
   // eslint-disable-next-line no-unused-vars
@@ -230,13 +230,12 @@ const Learn = () => {
   };
 
   if (currentUser && !currentUser._id) {
-    history.push('/');
+    navigate('/');
     return null;
   } else {
     if (loading || nextDueCardLoading) {
       return <LoadingIndicator />;
     }
-    console.log(nextDueCardData.nextDueCard);
     if (data) {
       const card = data.nextCardForLearning;
       if (

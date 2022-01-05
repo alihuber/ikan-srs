@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { toast } from 'react-toastify';
 import { Button, Divider, Segment, Modal, Confirm } from 'semantic-ui-react';
@@ -19,8 +19,9 @@ import {
 } from '../../../../api/decks/constants';
 
 const CardsList = ({ deck }) => {
-  const history = useHistory();
-  const deckId = history.location.pathname.split('/')[2];
+  const navigate = useNavigate();
+  const params = useParams();
+  const deckId = params.deckId;
   const [pageNum, setPageNum] = useState(1);
   const { data, loading, refetch, fetchMore } = useQuery(CARDS_FOR_DECK_QUERY, {
     notifyOnNetworkStatusChange: true,
@@ -157,7 +158,7 @@ const CardsList = ({ deck }) => {
       refetch();
       setDeleteDeckConfirmOpen(false);
       setDeleteDeckId('');
-      history.push('/decks');
+      navigate('/decks');
       toast.success('Deletion successful!', {
         position: toast.POSITION.BOTTOM_CENTER,
       });

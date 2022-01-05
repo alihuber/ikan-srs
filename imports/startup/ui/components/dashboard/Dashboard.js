@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import {
   Button,
@@ -21,11 +21,11 @@ import {
   LEARNABLE_DECKS_QUERY,
 } from '../../../../api/decks/constants';
 
-const handleLearn = (deckId, hist) => {
-  hist.push(`/learn/${deckId}`);
+const handleLearn = (deckId, nav) => {
+  nav(`/learn/${deckId}`);
 };
 
-const learnableDecksList = (learnable, history) => {
+const learnableDecksList = (learnable, navigate) => {
   return (
     <>
       <Header as="h2" color="teal" textAlign="center">
@@ -38,7 +38,7 @@ const learnableDecksList = (learnable, history) => {
               <Button
                 color="green"
                 floated="right"
-                onClick={() => handleLearn(deck._id, history)}
+                onClick={() => handleLearn(deck._id, navigate)}
               >
                 Learn now
               </Button>
@@ -63,7 +63,7 @@ const learnableDecksList = (learnable, history) => {
 
 const Dashboard = () => {
   const animClass = useContext(AnimContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const currentUser = useContext(CurrentUserContext);
   const { data, loading } = useQuery(STATS_QUERY, {
     notifyOnNetworkStatusChange: true,
@@ -83,7 +83,7 @@ const Dashboard = () => {
   });
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    history.push('/');
+    navigate('/');
     return null;
   } else {
     if (loading || decksLoading) {
@@ -114,7 +114,7 @@ const Dashboard = () => {
                   : learnableData &&
                     learnableData.learnable &&
                     learnableData.learnable.length !== 0 &&
-                    learnableDecksList(learnableData.learnable, history)}
+                    learnableDecksList(learnableData.learnable, navigate)}
               </Grid.Column>
             </Grid>
           </Container>

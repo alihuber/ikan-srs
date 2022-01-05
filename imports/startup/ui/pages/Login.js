@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   AutoFields,
   AutoForm,
@@ -29,15 +29,15 @@ const loginSchema = new SimpleSchema({
 
 const bridge = new SimpleSchema2Bridge(loginSchema);
 
-const handleLogin = (history) => {
-  history.push('/login');
+const handleLogin = (navigate) => {
+  navigate('/login');
 };
 
-const handleDashboard = (history) => {
-  history.push('/dashboard');
+const handleDashboard = (navigate) => {
+  navigate('/dashboard');
 };
 
-const handleSubmit = (values, history) => {
+const handleSubmit = (values, navigate) => {
   if (values.username && values.password) {
     Meteor.loginWithPassword(values.username, values.password, (err) => {
       if (err) {
@@ -45,12 +45,12 @@ const handleSubmit = (values, history) => {
         toast.error('Login error!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
-        handleLogin(history);
+        handleLogin(navigate);
       } else {
         toast.success('Login successful!', {
           position: toast.POSITION.BOTTOM_CENTER,
         });
-        handleDashboard(history);
+        handleDashboard(navigate);
       }
     });
   }
@@ -58,7 +58,7 @@ const handleSubmit = (values, history) => {
 
 const Login = () => {
   const animClass = useContext(AnimContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <div className={animClass}>
       <Container text style={{ paddingTop: '4em' }}>
@@ -71,7 +71,7 @@ const Login = () => {
             <Segment>
               <AutoForm
                 schema={bridge}
-                onSubmit={(doc) => handleSubmit(doc, history)}
+                onSubmit={(doc) => handleSubmit(doc, navigate)}
               >
                 <AutoFields />
                 <ErrorsField />

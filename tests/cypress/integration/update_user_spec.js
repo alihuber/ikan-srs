@@ -44,7 +44,7 @@ describe('update-user', () => {
             cy.get('input[name=password]').type('testuser');
             cy.get('input[type=submit]').click();
 
-            cy.url().should('eq', 'http://localhost:3000/');
+            cy.url().should('eq', 'http://localhost:3000/dashboard');
 
             cy.window().then((win) => {
               const user = win.Meteor.user();

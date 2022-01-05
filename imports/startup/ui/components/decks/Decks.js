@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import format from 'date-fns/format';
 import isBefore from 'date-fns/isBefore';
 import { useQuery } from '@apollo/client';
@@ -26,7 +26,7 @@ import AddCardModal from '../cards/AddCardModal';
 
 const Decks = () => {
   const animClass = useContext(AnimContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const currentUser = useContext(CurrentUserContext);
   const [addOpen, setAddOpen] = useState(false);
   const [q, setQ] = useState('');
@@ -38,16 +38,16 @@ const Decks = () => {
     fetchPolicy: 'no-cache',
   });
 
-  const handleLearn = (deckId, hist) => {
-    hist.push(`/learn/${deckId}`);
+  const handleLearn = (deckId, nav) => {
+    nav(`/learn/${deckId}`);
   };
 
-  const handleEdit = (deckId, hist) => {
-    hist.push(`/editDeck/${deckId}`);
+  const handleEdit = (deckId, nav) => {
+    nav(`/editDeck/${deckId}`);
   };
 
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    history.push('/');
+    navigate('/');
     return null;
   } else {
     const showPagination = data && data.decks && data.decks.decksCount / 5 > 1;
@@ -156,7 +156,7 @@ const Decks = () => {
                           <Card.Content>
                             <Button
                               floated="right"
-                              onClick={() => handleEdit(deck._id, history)}
+                              onClick={() => handleEdit(deck._id, navigate)}
                             >
                               Edit
                             </Button>
@@ -215,7 +215,7 @@ const Decks = () => {
                               disabled={learnDisabled}
                               basic
                               color="green"
-                              onClick={() => handleLearn(deck._id, history)}
+                              onClick={() => handleLearn(deck._id, navigate)}
                             >
                               Learn now
                             </Button>

@@ -1,16 +1,19 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Container, Grid, Header } from 'semantic-ui-react';
 import UsersList from './UsersList';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import AnimContext from '../../contexts/AnimContext';
 
 const Users = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const animClass = useContext(AnimContext);
   const currentUser = useContext(CurrentUserContext);
   if (currentUser && !currentUser.admin) {
-    history.push('/');
+    return Meteor.setTimeout(() => {
+      navigate('/dashboard', { replace: true });
+    }, 0);
   }
   return (
     <div className={animClass}>

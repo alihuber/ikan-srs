@@ -1,42 +1,42 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, Menu, Dropdown } from 'semantic-ui-react';
 
 import CurrentUserContext from './contexts/CurrentUserContext';
 
-const handleLogout = (history) => {
+const handleLogout = (navigate) => {
   Meteor.logout(() => {
     toast.success('Logout successful!', {
       position: toast.POSITION.BOTTOM_CENTER,
     });
-    history.push('/');
+    navigate('/');
   });
 };
 
-const handleDashboard = (history) => {
-  history.push('/dashboard');
+const handleDashboard = (navigate) => {
+  navigate('/dashboard');
 };
 
-const handleUsers = (history) => {
-  history.push('/users');
+const handleUsers = (navigate) => {
+  navigate('/users');
 };
 
-const handleLogin = (history) => {
-  history.push('/login');
+const handleLogin = (navigate) => {
+  navigate('/login');
 };
 
-const handleDecks = (history) => {
-  history.push('/decks');
+const handleDecks = (navigate) => {
+  navigate('/decks');
 };
 
-const handleSettings = (history) => {
-  history.push('/settings');
+const handleSettings = (navigate) => {
+  navigate('/settings');
 };
 
 const Navbar = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const currentUser = useContext(CurrentUserContext);
   return (
     <Menu fixed="top" inverted>
@@ -44,7 +44,7 @@ const Navbar = () => {
         {currentUser && currentUser._id && !currentUser.admin ? (
           <Menu.Item
             as="a"
-            onClick={() => handleDashboard(history)}
+            onClick={() => handleDashboard(navigate)}
             itemname="dashboardButton"
           >
             Dashboard
@@ -53,7 +53,7 @@ const Navbar = () => {
         {currentUser && currentUser.admin ? (
           <Menu.Item
             as="a"
-            onClick={() => handleUsers(history)}
+            onClick={() => handleUsers(navigate)}
             itemname="usersButton"
           >
             Users
@@ -65,7 +65,7 @@ const Navbar = () => {
             position="right"
             as="a"
             header
-            onClick={() => handleLogin(history)}
+            onClick={() => handleLogin(navigate)}
             itemname="loginButton"
           >
             Login
@@ -75,13 +75,13 @@ const Navbar = () => {
           <Menu.Menu position="right">
             <Dropdown item text="Menu">
               <Dropdown.Menu>
-                <Dropdown.Item as="a" onClick={() => handleDecks(history)}>
+                <Dropdown.Item as="a" onClick={() => handleDecks(navigate)}>
                   Decks
                 </Dropdown.Item>
-                <Dropdown.Item as="a" onClick={() => handleSettings(history)}>
+                <Dropdown.Item as="a" onClick={() => handleSettings(navigate)}>
                   Settings
                 </Dropdown.Item>
-                <Dropdown.Item as="a" onClick={() => handleLogout(history)}>
+                <Dropdown.Item as="a" onClick={() => handleLogout(navigate)}>
                   Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -92,7 +92,7 @@ const Navbar = () => {
           <Menu.Item
             position="right"
             as="a"
-            onClick={() => handleLogout(history)}
+            onClick={() => handleLogout(navigate)}
             itemname="logoutButton"
           >
             Logout
