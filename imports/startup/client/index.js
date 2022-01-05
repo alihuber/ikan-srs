@@ -60,18 +60,22 @@ Accounts.onLogin(function () {
 });
 
 export const scheduleNotificationForDeck = (dueDate) => {
-  cordova.plugins.notification.local.schedule({
-    title: 'Deck to learn!',
-    text: 'You have due cards...',
-    trigger: { at: new Date(dueDate) },
-  });
+  if (Meteor.isCordova) {
+    cordova.plugins.notification.local.schedule({
+      title: 'Deck to learn!',
+      text: 'You have due cards...',
+      trigger: { at: new Date(dueDate) },
+    });
+  }
 };
 
 export const scheduleNotificationForCard = () => {
   const date = addMinutes(new Date(), 15);
-  cordova.plugins.notification.local.schedule({
-    title: 'Card to learn!',
-    text: 'You have due cards...',
-    trigger: { at: date },
-  });
+  if (Meteor.isCordova) {
+    cordova.plugins.notification.local.schedule({
+      title: 'Card to learn!',
+      text: 'You have due cards...',
+      trigger: { at: date },
+    });
+  }
 };
