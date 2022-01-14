@@ -96,7 +96,7 @@ export const updateCard = (settings, card, answer, deckId) => {
       {
         $set: {
           currentInterval: newInterval,
-          dueDate: addDays(new Date(), newInterval),
+          dueDate: addMinutes(new Date(), newInterval * 1440),
           easeFactor: newEaseFactor,
         },
       }
@@ -115,7 +115,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: addDays(new Date(), newInterval),
+            dueDate: addMinutes(new Date(), newInterval * 1440),
           },
         }
       );
@@ -169,7 +169,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: addDays(new Date(), newInterval),
+            dueDate: addMinutes(new Date(), newInterval * 1440),
           },
         }
       );
@@ -189,7 +189,7 @@ export const updateCard = (settings, card, answer, deckId) => {
             currentStep: 0,
             lapseCount: 0,
             currentInterval: newInterval,
-            dueDate: addDays(new Date(), newInterval),
+            dueDate: addMinutes(new Date(), newInterval * 1440),
           },
         }
       );
@@ -224,7 +224,7 @@ export const updateCard = (settings, card, answer, deckId) => {
         {
           $set: {
             currentInterval: newInterval,
-            dueDate: addDays(new Date(), newInterval),
+            dueDate: addMinutes(new Date(), newInterval * 1440),
             easeFactor: newEaseFactor,
           },
         }

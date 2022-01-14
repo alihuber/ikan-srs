@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
-import addDays from 'date-fns/addDays';
 import addMinutes from 'date-fns/addMinutes';
 import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
@@ -100,7 +99,7 @@ if (Meteor.isServer) {
       assert.strictEqual(res.data.answerCard.easeFactor, 2.65);
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, newInterval).getTime()
+        addMinutes(now, newInterval * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),
@@ -174,7 +173,7 @@ if (Meteor.isServer) {
       assert.strictEqual(res.data.answerCard.easeFactor, 2.5);
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, newInterval).getTime()
+        addMinutes(now, newInterval * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),
@@ -246,7 +245,7 @@ if (Meteor.isServer) {
       assert.strictEqual(res.data.answerCard.easeFactor, 2.35);
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, newInterval).getTime()
+        addMinutes(now, newInterval * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),
@@ -318,7 +317,7 @@ if (Meteor.isServer) {
       assert.strictEqual(res.data.answerCard.easeFactor, 1.3);
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, newInterval).getTime()
+        addMinutes(now, newInterval * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),

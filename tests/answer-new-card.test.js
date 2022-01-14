@@ -3,7 +3,6 @@ import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import merge from 'lodash/merge';
 import addMinutes from 'date-fns/addMinutes';
-import addDays from 'date-fns/addDays';
 import timekeeper from 'timekeeper';
 import { ApolloServer } from 'apollo-server-express';
 import assert from 'assert';
@@ -219,7 +218,7 @@ if (Meteor.isServer) {
       );
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, graduatingIntervalInDays).getTime()
+        addMinutes(now, graduatingIntervalInDays * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),
@@ -286,7 +285,7 @@ if (Meteor.isServer) {
       );
       assert.strictEqual(
         res.data.answerCard.dueDate.getTime(),
-        addDays(now, easyIntervalInDays).getTime()
+        addMinutes(now, easyIntervalInDays * 1440).getTime()
       );
       assert.notStrictEqual(
         now.getTime(),
