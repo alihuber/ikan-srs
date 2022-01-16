@@ -11,6 +11,7 @@ import {
   LineElement,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import takeRight from 'lodash/takeRight';
 import { ReactChart } from 'chartjs-react';
 
 ReactChart.register(
@@ -47,7 +48,10 @@ const stateColorMap = {
   decksCount: 'rgb(161, 219, 255)',
 };
 
-const LineChart = ({ data }) => {
+const LineChart = ({ data, isTabletOrMobile }) => {
+  if (Meteor.isCordova || isTabletOrMobile) {
+    data = takeRight(data, 7);
+  }
   const dates = data.map((d) => format(d.date, 'dd.MM.yyyy'));
   const collectedData = {
     NEW: [],

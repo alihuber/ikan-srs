@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 import { useQuery } from '@apollo/client';
 import {
   Button,
@@ -63,6 +64,7 @@ const learnableDecksList = (learnable, navigate) => {
 
 const Dashboard = () => {
   const animClass = useContext(AnimContext);
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
   const navigate = useNavigate();
   const currentUser = useContext(CurrentUserContext);
   const { data, loading } = useQuery(STATS_QUERY, {
@@ -108,7 +110,10 @@ const Dashboard = () => {
                 <Header as="h2" color="teal" textAlign="center">
                   Stats
                 </Header>
-                <LineChart data={data.stats} />
+                <LineChart
+                  data={data.stats}
+                  isTabletOrMobile={isTabletOrMobile}
+                />
                 {learnableLoading
                   ? null
                   : learnableData &&
