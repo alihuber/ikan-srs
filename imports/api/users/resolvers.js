@@ -5,19 +5,9 @@ import first from 'lodash/first';
 import objMap from 'lodash/map';
 import { Settings, DEFAULT_SETTINGS } from '../settings/constants';
 import { Decks, Cards } from '../decks/constants';
+import { getLogger } from '../../startup/server/getLogger';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, label, printf } = format;
-
-const loggerFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: combine(label({ label: 'UserResolver' }), timestamp(), loggerFormat),
-  transports: [new transports.Console()],
-});
+const logger = getLogger('UserResolver');
 
 export default {
   Query: {

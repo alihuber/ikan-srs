@@ -1,18 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { getLogger } from '../../startup/server/getLogger';
 import { Stats } from './constants';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, label, printf } = format;
-
-const loggerFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: combine(label({ label: 'StatsResolver' }), timestamp(), loggerFormat),
-  transports: [new transports.Console()],
-});
+const logger = getLogger('StatsResolver');
 
 export default {
   Query: {

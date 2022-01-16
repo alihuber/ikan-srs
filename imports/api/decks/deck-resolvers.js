@@ -7,19 +7,9 @@ import groupBy from 'lodash/groupBy';
 import { Decks, Cards } from './constants';
 import { Settings } from '../settings/constants';
 import { collectCardStats } from './utils';
+import { getLogger } from '../../startup/server/getLogger';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, label, printf } = format;
-
-const loggerFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: combine(label({ label: 'DecksResolver' }), timestamp(), loggerFormat),
-  transports: [new transports.Console()],
-});
+const logger = getLogger('DecksResolver');
 
 export default {
   Query: {

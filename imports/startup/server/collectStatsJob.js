@@ -2,23 +2,9 @@ import { endOfDay, startOfDay } from 'date-fns';
 import { Meteor } from 'meteor/meteor';
 import { Cards, Decks } from '../../api/decks/constants';
 import { Stats } from '../../api/stats/constants';
+import { getLogger } from './getLogger';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, label, printf } = format;
-
-const loggerFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: combine(
-    label({ label: 'server/collectStatsJob' }),
-    timestamp(),
-    loggerFormat
-  ),
-  transports: [new transports.Console()],
-});
+const logger = getLogger('server/collectStatsJob');
 
 export default class CollectStatsJob {
   static collectStats() {

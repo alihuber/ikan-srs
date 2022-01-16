@@ -3,19 +3,9 @@ import { Accounts } from 'meteor/accounts-base';
 import { SyncedCron } from 'meteor/littledata:synced-cron';
 import { startApolloServer } from './apollo';
 import CollectStatsJob from './collectStatsJob';
+import { getLogger } from './getLogger';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, label, printf } = format;
-
-const loggerFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: combine(label({ label: 'MeteorServer' }), timestamp(), loggerFormat),
-  transports: [new transports.Console()],
-});
+const logger = getLogger('MeteorServer');
 
 Accounts.onLogin((loginObj) => {
   logger.log({
