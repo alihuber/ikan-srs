@@ -12,7 +12,7 @@ es5-shim@4.8.0                # ECMAScript 5 compatibility for older browsers
 ecmascript@0.16.1              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 mobile-experience@1.1.0
-mongo@1.13.0
+mongo@1.14.0
 accounts-password@2.2.0
 
 apollo
