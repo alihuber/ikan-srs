@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
@@ -19,8 +19,14 @@ const EditDeck = () => {
     notifyOnNetworkStatusChange: true,
     variables: { deckId },
   });
+
+  useEffect(() => {
+    if (currentUser && (!currentUser._id || currentUser.admin)) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    navigate('/');
     return null;
   } else {
     if (loading) {

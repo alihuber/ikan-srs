@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import format from 'date-fns/format';
 import isBefore from 'date-fns/isBefore';
@@ -46,8 +46,13 @@ const Decks = () => {
     nav(`/editDeck/${deckId}`);
   };
 
+  useEffect(() => {
+    if (currentUser && (!currentUser._id || currentUser.admin)) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    navigate('/');
     return null;
   } else {
     const showPagination = data && data.decks && data.decks.decksCount / 5 > 1;

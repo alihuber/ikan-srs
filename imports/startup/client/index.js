@@ -11,7 +11,7 @@ import {
 import { MeteorAccountsLink } from 'meteor/apollo';
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import 'semantic-ui-css/components/icon.min.css';
 import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -48,7 +48,9 @@ const ApolloApp = () => {
 };
 
 Meteor.startup(() => {
-  render(<ApolloApp />, document.getElementById('render-target'));
+  const container = document.getElementById('render-target');
+  const root = createRoot(container);
+  root.render(<ApolloApp />);
 });
 
 Accounts.onLogout(function () {

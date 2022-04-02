@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Container, Grid, Header } from 'semantic-ui-react';
@@ -17,8 +17,13 @@ const Settings = () => {
     notifyOnNetworkStatusChange: true,
   });
 
+  useEffect(() => {
+    if (currentUser && !currentUser._id) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   if (currentUser && !currentUser._id) {
-    navigate('/');
     return null;
   } else {
     if (loading) {

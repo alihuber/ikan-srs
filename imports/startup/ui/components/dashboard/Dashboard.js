@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import { useQuery } from '@apollo/client';
@@ -84,8 +84,13 @@ const Dashboard = () => {
     fetchPolicy: 'no-cache',
   });
 
+  useEffect(() => {
+    if (currentUser && (!currentUser._id || currentUser.admin)) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   if (currentUser && (!currentUser._id || currentUser.admin)) {
-    navigate('/');
     return null;
   } else {
     if (loading || decksLoading) {

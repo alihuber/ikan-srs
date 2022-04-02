@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -15,9 +15,13 @@ const HomePage = () => {
   const animClass = useContext(AnimContext);
   const currentUser = useContext(CurrentUserContext);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (currentUser && currentUser._id && !currentUser.admin) {
+      navigate('/dashboard');
+    }
+  }, [currentUser]);
 
   if (currentUser && currentUser._id && !currentUser.admin) {
-    navigate('/dashboard');
     return null;
   } else {
     return (

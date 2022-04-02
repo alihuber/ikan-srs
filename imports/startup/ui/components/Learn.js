@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
@@ -229,8 +229,13 @@ const Learn = () => {
     }
   };
 
+  useEffect(() => {
+    if (currentUser && !currentUser._id) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   if (currentUser && !currentUser._id) {
-    navigate('/');
     return null;
   } else {
     if (loading || nextDueCardLoading) {
